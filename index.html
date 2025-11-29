@@ -124,6 +124,20 @@
         /* ANIMATION */
         .fade-in { animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CIRCULAR TIMER FOR BREAK */
+        .timer-circle {
+            width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--bg-input);
+            display: grid; place-items: center; font-size: 2rem; font-weight: 800; font-family: var(--font-mono);
+            color: var(--primary); margin: 0 auto 20px auto; position: relative;
+        }
+        .timer-circle::after {
+            content: ''; position: absolute; inset: -4px; border-radius: 50%;
+            border: 4px solid var(--primary); border-left-color: transparent; border-bottom-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
     </style>
 </head>
 
@@ -208,7 +222,10 @@
                         </div>
                     </div>
                     <div style="border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: 16px;">
-                         <button id="btn-logout" class="btn btn-secondary" style="width: 100%; font-size: 0.8rem;">LOGOUT SESSION</button>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 10px;">
+                            AUTO-LOGOUT PROTECTION: ACTIVE
+                        </div>
+                        <button id="btn-logout" class="btn btn-secondary" style="width: 100%; font-size: 0.8rem;">LOGOUT SESSION</button>
                     </div>
                 </div>
             </aside>
@@ -221,7 +238,7 @@
         import { getFirestore, doc, onSnapshot, updateDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // 2. YOUR CONFIGURATION
+        // 2. CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyCmd6vmuXUPslLJf0w7I518C8UIaO2DoAA",
             authDomain: "pnle-class.firebaseapp.com",
@@ -232,95 +249,279 @@
             measurementId: "G-JLS5ZGFP3J"
         };
 
-        // 3. START APP
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        const loginBtn = document.getElementById('btn-login');
-        const inpUser = document.getElementById('inp-user');
-        const inpPass = document.getElementById('inp-pass');
+        // =======================================================
+        // AUTO LOGOUT LOGIC (INACTIVITY)
+        // =======================================================
+        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Minutes (adjust as needed)
+        let inactivityTimer;
 
-        // PNLE Quiz questions randomized generator function for cycles after 5 questions
-        const baseQuizQuestions = [
+        function resetInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            // Only set timer if user is actually logged in
+            if (auth.currentUser) {
+                inactivityTimer = setTimeout(() => {
+                    alert("System Notice: You have been logged out due to inactivity.");
+                    handleLogout();
+                }, INACTIVITY_LIMIT);
+            }
+        }
+
+        // Listen for user activity events
+        window.onload = resetInactivityTimer;
+        document.onmousemove = resetInactivityTimer;
+        document.onkeypress = resetInactivityTimer;
+        document.ontouchstart = resetInactivityTimer;
+        document.onclick = resetInactivityTimer;
+
+
+        // =======================================================
+        // QUIZ DATA & LOGIC
+        // =======================================================
+        
+        // This is the "Pool" of questions. Add as many as you want here.
+        // The system will randomly pick 5 from this list every cycle.
+        const questionPool = [
           {
             question: "What is the legal age requirement to take the Philippine Nursing Board Exam?",
-            choices: [
-              "18 years old",
-              "21 years old",
-              "17 years old",
-              "20 years old"
-            ],
+            choices: ["18 years old", "21 years old", "17 years old", "20 years old"],
             answer: "18 years old",
             rationale: "By law, a nursing candidate must be at least 18 years old to qualify for the board exam.",
             reference: "https://www.prc.gov.ph/licensure-examination"
           },
           {
             question: "Which government agency administers the Philippine Nursing Board Exam?",
-            choices: [
-              "Professional Regulation Commission (PRC)",
-              "Department of Health (DOH)",
-              "Philippine Nurses Association",
-              "Commission on Higher Education (CHED)"
-            ],
+            choices: ["Professional Regulation Commission (PRC)", "Department of Health (DOH)", "Philippine Nurses Association", "Commission on Higher Education (CHED)"],
             answer: "Professional Regulation Commission (PRC)",
             rationale: "The PRC is responsible for licensing and regulation of nursing professionals in the Philippines.",
             reference: "https://www.prc.gov.ph"
           },
           {
             question: "How many years of nursing education is required to qualify for the Philippine Nursing Board Exam?",
-            choices: [
-              "3 years",
-              "4 years",
-              "5 years",
-              "2 years"
-            ],
+            choices: ["3 years", "4 years", "5 years", "2 years"],
             answer: "4 years",
             rationale: "A bachelor's degree in nursing, which is typically 4 years, is required.",
             reference: "https://ched.gov.ph"
           },
           {
             question: "What is the minimum passing score for the Philippine Nursing Board Exam?",
-            choices: [
-              "75%",
-              "80%",
-              "70%",
-              "85%"
-            ],
+            choices: ["75%", "80%", "70%", "85%"],
             answer: "75%",
             rationale: "To pass, examinees must obtain at least 75% overall.",
             reference: "https://www.prc.gov.ph/licensure-examination"
           },
           {
             question: "How many questions are typically included in the Philippine Nursing Board Exam?",
-            choices: [
-              "300 questions",
-              "500 questions",
-              "600 questions",
-              "400 questions"
-            ],
+            choices: ["300 questions", "500 questions", "600 questions", "400 questions"],
             answer: "500 questions",
             rationale: "The exam usually consists of 500 multiple-choice questions covering nursing subjects.",
             reference: "https://www.prc.gov.ph/licensure-examination"
+          },
+          {
+             question: "Which is the primary prevention against Hepatitis B?",
+             choices: ["Vaccination", "Antibiotics", "Physical Therapy", "Isolation"],
+             answer: "Vaccination",
+             rationale: "Hepatitis B vaccination is the most effective way to prevent infection.",
+             reference: "https://doh.gov.ph"
+          },
+          {
+             question: "In the nursing process, what comes after Assessment?",
+             choices: ["Planning", "Diagnosis", "Implementation", "Evaluation"],
+             answer: "Diagnosis",
+             rationale: "The standard nursing process is Assessment, Diagnosis, Planning, Implementation, Evaluation (ADPIE).",
+             reference: "https://nursingworld.org"
           }
         ];
 
-        // State variables
-        let quizQuestions = [];
+        let activeQuizSet = []; // Stores the current 5 questions
         let currentQuestionIndex = 0;
         let score = 0;
-        let countdownInterval;
+        let questionTimerInterval;
+        let breakInterval;
 
-        // Function to shuffle and generate new batch (auto new questions after 5)
-        function generateNewQuiz() {
-          quizQuestions = [...baseQuizQuestions];
-          // shuffle choices and questions to add dynamic behavior
-          for(let q of quizQuestions){
-            q.choices = q.choices.sort(() => Math.random() - 0.5);
+        // Function to pick 5 random questions
+        function generateNewQuizSet() {
+            // Shuffle the entire pool
+            let shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+            // Take the first 5
+            activeQuizSet = shuffled.slice(0, 5);
+            
+            // Shuffle choices inside the questions
+            for(let q of activeQuizSet){
+                q.choices = q.choices.sort(() => Math.random() - 0.5);
+            }
+            
+            currentQuestionIndex = 0;
+            score = 0;
+        }
+
+        // Logic to move to next question or start break
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            // Check if we finished the set of 5
+            if (currentQuestionIndex >= activeQuizSet.length) {
+                startBreakSequence();
+            } else {
+                renderQuestion(currentQuestionIndex);
+            }
+        }
+
+        // THE BREAK SEQUENCE (1 Minute Countdown)
+        function startBreakSequence() {
+            const quizDiv = document.getElementById('view-quiz');
+            let breakTime = 60; // 60 Seconds Break
+
+            quizDiv.innerHTML = `
+                <div class="card fade-in" style="text-align: center; max-width: 600px; margin: 40px auto; padding: 40px;">
+                    <h2 class="text-primary" style="margin-bottom: 20px;">SET COMPLETED</h2>
+                    <p class="text-muted" style="margin-bottom: 30px;">
+                        Good job! Taking a short break before the next set of questions loads.
+                    </p>
+                    
+                    <div class="timer-circle" id="break-display">
+                        ${breakTime}
+                    </div>
+
+                    <p style="font-size: 0.9rem;">
+                        Preparing new random questions...
+                    </p>
+                </div>
+            `;
+
+            clearInterval(breakInterval);
+            const breakDisplay = document.getElementById('break-display');
+
+            breakInterval = setInterval(() => {
+                breakTime--;
+                if(breakDisplay) breakDisplay.innerText = breakTime;
+
+                if (breakTime <= 0) {
+                    clearInterval(breakInterval);
+                    generateNewQuizSet(); // Generate NEW questions
+                    renderQuestion(0); // Start index 0
+                }
+            }, 1000);
+        }
+
+        function renderQuestion(index) {
+          const quizDiv = document.getElementById('view-quiz');
+          const q = activeQuizSet[index];
+          const totalQ = activeQuizSet.length;
+
+          quizDiv.innerHTML = `
+            <div class="card fade-in" style="padding: 24px; max-width: 650px; margin: 0 auto;">
+              <div class="flex justify-between items-center" style="margin-bottom: 12px;">
+                 <span class="text-muted text-mono text-xs">QUESTION ${index + 1} OF ${totalQ}</span>
+                 <span class="text-success text-mono text-xs">SCORE: ${score}</span>
+              </div>
+
+              <h2 class="text-primary" style="margin-bottom: 24px; font-size: 1.2rem; line-height: 1.5;">
+                ${q.question}
+              </h2>
+
+              <form id="quiz-form">
+                ${q.choices.map(choice =>
+                  `<label style="display:flex; align-items:center; padding: 12px; margin-bottom: 10px; cursor:pointer; background: var(--bg-input); border-radius: var(--radius-sm); border: 1px solid transparent; transition:0.2s;" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='transparent'">
+                    <input type="radio" name="answer" value="${choice}" required style="margin-right: 12px; accent-color: var(--primary);"/>
+                    ${choice}
+                  </label>`
+                ).join('')}
+                <button type="submit" class="btn btn-primary" style="margin-top: 16px; width: 100%;">SUBMIT ANSWER</button>
+              </form>
+
+              <div id="quiz-feedback" style="margin-top: 24px; font-size: 0.95rem; line-height: 1.5;"></div>
+
+              <div style="margin-top:20px; border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
+                 <span class="text-muted text-xs">ANSWER TIMER</span>
+                 <span id="question-timer" class="text-mono font-bold text-error">03:00</span>
+              </div>
+            </div>
+          `;
+
+          const form = document.getElementById('quiz-form');
+          const feedback = document.getElementById('quiz-feedback');
+          const timerEl = document.getElementById('question-timer');
+
+          // Question Timer (3 minutes per question limit)
+          clearInterval(questionTimerInterval);
+          let timeRemaining = 180;
+          timerEl.textContent = formatTime(timeRemaining);
+
+          questionTimerInterval = setInterval(() => {
+            timeRemaining--;
+            timerEl.textContent = formatTime(timeRemaining);
+            if (timeRemaining <= 0) {
+              clearInterval(questionTimerInterval);
+              handleTimeUp(q, form, feedback);
+            }
+          }, 1000);
+
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            clearInterval(questionTimerInterval);
+            const chosen = form.answer.value;
+            disableForm(form);
+
+            let isCorrect = (chosen === q.answer);
+            if (isCorrect) score++;
+
+            displayFeedback(isCorrect, q, feedback);
+
+            // Wait 5 seconds (fast feedback) then go next
+            setTimeout(() => {
+              nextQuestion();
+            }, 5000); 
+          });
+        }
+
+        function handleTimeUp(q, form, feedback) {
+            disableForm(form);
+            feedback.innerHTML = `<div style="padding: 16px; background: var(--error-bg); border: 1px solid var(--error); border-radius: 8px; color: var(--error);">
+                <strong>TIME'S UP!</strong>
+            </div>`;
+            setTimeout(() => nextQuestion(), 3000);
+        }
+
+        function displayFeedback(isCorrect, q, feedbackEl) {
+            const colorClass = isCorrect ? 'text-success' : 'text-error';
+            const bgClass = isCorrect ? 'var(--success-bg)' : 'var(--error-bg)';
+            const borderClass = isCorrect ? 'var(--success)' : 'var(--error)';
+            const title = isCorrect ? 'CORRECT ANSWER' : 'INCORRECT';
+
+            feedbackEl.innerHTML = `
+                <div class="fade-in" style="padding: 16px; background: ${bgClass}; border: 1px solid ${borderClass}; border-radius: 8px;">
+                    <div class="${colorClass} font-bold" style="margin-bottom: 8px;">${title}</div>
+                    <div style="margin-bottom: 8px;">Correct Answer: <strong>${q.answer}</strong></div>
+                    <p class="text-muted" style="font-size: 0.85rem;">${q.rationale}</p>
+                </div>
+            `;
+        }
+
+        // =======================================================
+        // UTILITIES & AUTH
+        // =======================================================
+
+        const loginBtn = document.getElementById('btn-login');
+        const inpUser = document.getElementById('inp-user');
+        const inpPass = document.getElementById('inp-pass');
+
+        function formatTime(sec) {
+          const m = Math.floor(sec / 60).toString().padStart(2, '0');
+          const s = (sec % 60).toString().padStart(2, '0');
+          return `${m}:${s}`;
+        }
+
+        function disableForm(form) {
+          Array.from(form.elements).forEach(elem => elem.disabled = true);
+          const btn = form.querySelector('button[type="submit"]');
+          if (btn) {
+              btn.innerText = "PROCESSING...";
+              btn.disabled = true;
           }
-          quizQuestions = quizQuestions.sort(() => Math.random() - 0.5);
-          currentQuestionIndex = 0;
-          score = 0;
         }
 
         function showView(viewId) {
@@ -339,147 +540,19 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function formatTime(sec) {
-          const m = Math.floor(sec / 60).toString().padStart(2, '0');
-          const s = (sec % 60).toString().padStart(2, '0');
-          return `${m}:${s}`;
-        }
-
-        function disableForm(form) {
-          Array.from(form.elements).forEach(elem => elem.disabled = true);
-          const btn = form.querySelector('button[type="submit"]');
-          if (btn) btn.disabled = true;
-        }
-
-        function renderScore() {
-          const scoreBoardEl = document.getElementById('scoreboard');
-          if(!scoreBoardEl) return;
-          scoreBoardEl.textContent = `Score: ${score} / ${quizQuestions.length}`;
-        }
-
-        // Switch to next question, if end of questions regenerate quiz set and reset score
-        function nextQuestion() {
-          currentQuestionIndex++;
-          if (currentQuestionIndex >= quizQuestions.length) {
-            generateNewQuiz();
-          }
-          renderQuestion(currentQuestionIndex);
-        }
-
-        // Render question, start 3 minute timer, disable after submit or time up
-        function renderQuestion(index) {
-          const quizDiv = document.getElementById('view-quiz');
-          const q = quizQuestions[index];
-
-          quizDiv.innerHTML = `
-            <div class="card" style="padding: 24px; max-width: 650px; margin: 0 auto;">
-              <h2 class="text-primary" style="margin-bottom: 12px;">
-                Philippine Nursing Board Practice Question (${index + 1}/${quizQuestions.length})
-              </h2>
-              <p style="font-weight: 600; margin-bottom: 24px;">${q.question}</p>
-
-              <form id="quiz-form">
-                ${q.choices.map(choice =>
-                  `<label style="display:block; margin-bottom: 10px; cursor:pointer;">
-                    <input type="radio" name="answer" value="${choice}" required style="margin-right: 8px;"/>
-                    ${choice}
-                  </label>`
-                ).join('')}
-                <button type="submit" class="btn btn-primary" style="margin-top: 16px;">Submit Answer</button>
-              </form>
-
-              <div id="quiz-feedback" style="margin-top: 16px; font-size: 0.9rem; line-height: 1.4;"></div>
-
-              <div style="margin-top: 32px; padding: 16px; background: rgba(6, 182, 212, 0.1); border: 1px solid var(--primary); border-radius: 8px;">
-                <strong>STATUS: MONITORING ACTIVE</strong><br>
-                <span style="font-size: 0.8rem">Do not close this window. Admin can revoke access remotely.</span>
-              </div>
-
-              <div style="margin-top:20px; font-family: var(--font-mono); font-size: 0.95rem;">
-                Time Remaining: <span id="countdown-timer">03:00</span>
-              </div>
-
-              <div id="scoreboard" style="margin-top:20px; font-weight: 700; color: var(--success); font-family: var(--font-mono);"></div>
-            </div>
-          `;
-
-          const form = document.getElementById('quiz-form');
-          const feedback = document.getElementById('quiz-feedback');
-          const timerEl = document.getElementById('countdown-timer');
-
-          clearInterval(countdownInterval);
-          let timeRemaining = 180;
-          timerEl.textContent = formatTime(timeRemaining);
-
-          countdownInterval = setInterval(() => {
-            timeRemaining--;
-            timerEl.textContent = formatTime(timeRemaining);
-            if (timeRemaining <= 0) {
-              clearInterval(countdownInterval);
-              feedback.innerHTML = `<span class="text-error font-bold">Time's up! The correct answer is: <span class="text-success">${q.answer}</span></span>`;
-              feedback.innerHTML += `<p style="margin-top:8px;">${q.rationale} <br/> <a href="${q.reference}" target="_blank" rel="noopener" style="color: var(--primary);">Source</a></p>`;
-              disableForm(form);
-
-              setTimeout(() => {
-                nextQuestion();
-              }, 10000);
-            }
-          }, 1000);
-
-          form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            clearInterval(countdownInterval);
-
-            const chosen = form.answer.value;
-            disableForm(form);
-
-            if (chosen === q.answer) {
-              score++;
-              feedback.innerHTML = `<span class="text-success font-bold">Correct!</span>`;
-            } else {
-              feedback.innerHTML = `<span class="text-error font-bold">Wrong answer. The correct answer is: ${q.answer}</span>`;
-            }
-
-            feedback.innerHTML += `<p style="margin-top:8px;">${q.rationale} <br/> <a href="${q.reference}" target="_blank" rel="noopener" style="color: var(--primary);">Source</a></p>`;
-            
-            renderScore();
-
-            setTimeout(() => {
-              nextQuestion();
-            }, 15000);
-          });
-
-          renderScore();
-        }
-
-        function renderQuiz() {
-          // If quizQuestions is empty, generate new quiz questions first
-          if(quizQuestions.length === 0) {
-            generateNewQuiz();
-          }
-          renderQuestion(currentQuestionIndex);
-        }
-
-        // AUTH STATE LISTENER
+        // AUTH LISTENER
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                resetInactivityTimer(); // Start inactivity watch
                 const userRef = doc(db, "users", user.uid);
-
+                
                 if(window.userDocUnsub) window.userDocUnsub();
                 window.userDocUnsub = onSnapshot(userRef, (docSnap) => {
                     if (docSnap.exists()) {
                         const userData = docSnap.data();
 
                         if (userData.isBlocked) {
-                            document.body.innerHTML = `
-                                <div style="height:100vh; background:black; display:grid; place-items:center; color:red; text-align:center;">
-                                    <h1 style="font-size:3rem;">ACCESS DENIED</h1>
-                                    <p>Your account has been suspended by the administrator.</p>
-                                </div>
-                            `;
-                            setTimeout(() => {
-                                signOut(auth).then(() => window.location.reload());
-                            }, 3000);
+                            handleLogout();
                             return;
                         }
 
@@ -490,9 +563,14 @@
                         } else {
                             showView('view-quiz');
                             document.getElementById('display-username').innerText = userData.username;
-                            renderQuiz();
+                            // Generate initial set if empty
+                            if(activeQuizSet.length === 0) {
+                                generateNewQuizSet();
+                                renderQuestion(0);
+                            }
                         }
                     } else {
+                        // Create basic user doc if missing
                         setDoc(userRef, {
                             username: user.email.split('@')[0],
                             role: 'user',
@@ -503,6 +581,7 @@
                 });
 
             } else {
+                clearTimeout(inactivityTimer); // Stop inactivity watch
                 showView('view-login');
                 document.getElementById('display-username').innerText = "Guest";
             }
@@ -526,7 +605,7 @@
                 showToast("Login Successful", "success");
             } catch (error) {
                 console.error(error);
-                showToast("Invalid Credentials or Network Error", "error");
+                showToast("Invalid Credentials", "error");
                 loginBtn.innerText = "SECURE LOGIN";
                 loginBtn.disabled = false;
             }
@@ -536,6 +615,7 @@
         document.getElementById('btn-logout').addEventListener('click', handleLogout);
         document.getElementById('btn-admin-logout').addEventListener('click', handleLogout);
 
+        // Admin Table Logic
         function initAdminTable() {
             const tbody = document.querySelector('#table-users tbody');
             onSnapshot(collection(db, "users"), (snapshot) => {
@@ -544,13 +624,16 @@
                     const data = docSnap.data();
                     const uid = docSnap.id;
                     if (data.role === 'admin') return;
-                    const row = document.createElement('tr');
+                    
                     const statusBadge = data.isBlocked 
                         ? `<span class="text-error font-bold">BLOCKED</span>` 
                         : `<span class="text-success">ACTIVE</span>`;
+                    
                     const toggleBtn = data.isBlocked
                         ? `<button class="btn btn-action btn-success" onclick="window.unblockUser('${uid}')">UNBLOCK</button>`
                         : `<button class="btn btn-action btn-warning" onclick="window.blockUser('${uid}')">BLOCK</button>`;
+                    
+                    const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>
                             <div class="font-bold">${data.username}</div>
@@ -568,23 +651,15 @@
             });
         }
 
+        // Expose admin functions globally
         window.blockUser = async (uid) => {
-            if(confirm("Block this user? They will be kicked out immediately.")) {
-                await updateDoc(doc(db, "users", uid), { isBlocked: true });
-                showToast("User Blocked & Session Terminated", "warning");
-            }
+            if(confirm("Block this user?")) await updateDoc(doc(db, "users", uid), { isBlocked: true });
         };
-
         window.unblockUser = async (uid) => {
             await updateDoc(doc(db, "users", uid), { isBlocked: false });
-            showToast("User Access Restored", "success");
         };
-
         window.deleteUser = async (uid) => {
-            if(confirm("Reset/Delete this user?")) {
-                await updateDoc(doc(db, "users", uid), { isBlocked: true, username: "DELETED_USER" });
-                showToast("User Reset Successful", "error");
-            }
+            if(confirm("Reset this user?")) await updateDoc(doc(db, "users", uid), { isBlocked: true, username: "DELETED_USER" });
         };
 
         // Clock
