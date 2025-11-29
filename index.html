@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PNLE PRO | REAL-TIME SECURE SYSTEM</title>
+    <title>PNLE PRO | UNLIMITED REVIEWER</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -52,7 +52,6 @@
         .flex { display: flex; }
         .justify-between { justify-content: space-between; }
         .items-center { align-items: center; }
-        .gap-4 { gap: 16px; }
         .hidden { display: none !important; }
         .text-mono { font-family: var(--font-mono); }
         .text-primary { color: var(--primary); }
@@ -125,18 +124,18 @@
         .fade-in { animation: fadeIn 0.4s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* CIRCULAR TIMER FOR BREAK */
-        .timer-circle {
-            width: 120px; height: 120px; border-radius: 50%; border: 4px solid var(--bg-input);
-            display: grid; place-items: center; font-size: 2rem; font-weight: 800; font-family: var(--font-mono);
-            color: var(--primary); margin: 0 auto 20px auto; position: relative;
+        /* RESULT & TIMER STYLES */
+        .result-badge {
+            font-size: 4rem; font-weight: 900; font-family: var(--font-mono); margin-bottom: 10px;
+            text-shadow: 0 0 30px currentColor;
         }
-        .timer-circle::after {
-            content: ''; position: absolute; inset: -4px; border-radius: 50%;
-            border: 4px solid var(--primary); border-left-color: transparent; border-bottom-color: transparent;
-            animation: spin 1s linear infinite;
+        .countdown-bar {
+            height: 4px; background: var(--bg-input); width: 100%; margin-top: 20px; border-radius: 2px; overflow: hidden;
         }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .countdown-fill {
+            height: 100%; background: var(--primary); width: 100%;
+            transition: width 1s linear;
+        }
 
     </style>
 </head>
@@ -149,7 +148,7 @@
     <div class="wrapper">
         <header class="header flex justify-between items-center">
             <div class="brand-logo">
-                <span class="text-primary">PNLE</span> PRO <span style="font-size: 0.8rem; margin-left: 10px; color: var(--text-muted); font-weight: 400;">ENTERPRISE</span>
+                <span class="text-primary">PNLE</span> PRO <span style="font-size: 0.8rem; margin-left: 10px; color: var(--text-muted); font-weight: 400;">ULTIMATE</span>
             </div>
             <div class="system-status">
                 <span class="status-dot"></span> ONLINE <span style="margin: 0 8px; color: var(--border-color)">|</span> <span id="clock" class="text-mono">00:00:00</span>
@@ -161,8 +160,8 @@
                 
                 <div id="view-login" class="card fade-in">
                     <div style="margin-bottom: 24px;">
-                        <h2 style="font-size: 1.5rem; margin-bottom: 8px;">System Access Login</h2>
-                        <p class="text-muted">Enter credentials. Multi-factor device binding is active.</p>
+                        <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Reviewer Login</h2>
+                        <p class="text-muted">Enter credentials to start the secure session.</p>
                     </div>
 
                     <div style="margin-bottom: 16px;">
@@ -175,9 +174,9 @@
                         <input type="password" id="inp-pass" class="input" placeholder="••••••••" />
                     </div>
 
-                    <button id="btn-login" class="btn btn-primary" style="width: 100%;">SECURE LOGIN</button>
+                    <button id="btn-login" class="btn btn-primary" style="width: 100%;">START SESSION</button>
                     <p class="text-muted" style="font-size: 0.75rem; margin-top: 20px; text-align: center;">
-                        Secured by Firebase Auth & Firestore Real-time DB
+                        Secured by Firebase Auth & Firestore
                     </p>
                 </div>
 
@@ -185,23 +184,21 @@
                     <div class="flex justify-between items-center" style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color);">
                         <div>
                             <h2 class="text-primary">Admin Control Center</h2>
-                            <p class="text-muted" style="font-size: 0.85rem;">Real-time User Management</p>
+                            <p class="text-muted" style="font-size: 0.85rem;">User Management</p>
                         </div>
                         <button id="btn-admin-logout" class="btn btn-secondary text-xs">EXIT ADMIN</button>
                     </div>
-
                     <div style="overflow-x: auto;">
                         <table class="data-table" id="table-users">
                             <thead>
                                 <tr>
                                     <th>Username / Email</th>
                                     <th>Status</th>
-                                    <th>Security Hash</th>
+                                    <th>Security</th>
                                     <th>Controls</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -217,7 +214,7 @@
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                         </div>
                         <div>
-                            <div class="text-muted" style="font-size: 0.75rem;">CURRENT SESSION</div>
+                            <div class="text-muted" style="font-size: 0.75rem;">CURRENT CANDIDATE</div>
                             <div id="display-username" class="font-bold text-primary">Guest</div>
                         </div>
                     </div>
@@ -233,7 +230,7 @@
     </div>
 
     <script type="module">
-        // 1. IMPORT FIREBASE SDKs
+        // 1. IMPORT FIREBASE
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, doc, onSnapshot, updateDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -254,14 +251,13 @@
         const auth = getAuth(app);
 
         // =======================================================
-        // AUTO LOGOUT LOGIC (INACTIVITY)
+        // AUTO LOGOUT (5 MINS INACTIVITY)
         // =======================================================
-        const INACTIVITY_LIMIT = 5 * 60 * 1000; // 5 Minutes (adjust as needed)
+        const INACTIVITY_LIMIT = 5 * 60 * 1000;
         let inactivityTimer;
 
         function resetInactivityTimer() {
             clearTimeout(inactivityTimer);
-            // Only set timer if user is actually logged in
             if (auth.currentUser) {
                 inactivityTimer = setTimeout(() => {
                     alert("System Notice: You have been logged out due to inactivity.");
@@ -270,153 +266,266 @@
             }
         }
 
-        // Listen for user activity events
         window.onload = resetInactivityTimer;
         document.onmousemove = resetInactivityTimer;
         document.onkeypress = resetInactivityTimer;
-        document.ontouchstart = resetInactivityTimer;
         document.onclick = resetInactivityTimer;
 
 
         // =======================================================
-        // QUIZ DATA & LOGIC
+        // EXTENDED QUESTION POOL (Prevent Repetition)
         // =======================================================
         
-        // This is the "Pool" of questions. Add as many as you want here.
-        // The system will randomly pick 5 from this list every cycle.
+        // This pool is larger to demonstrate the "no repeat" feature better
         const questionPool = [
+          // --- FUNDAMENTALS ---
           {
             question: "What is the legal age requirement to take the Philippine Nursing Board Exam?",
             choices: ["18 years old", "21 years old", "17 years old", "20 years old"],
             answer: "18 years old",
-            rationale: "By law, a nursing candidate must be at least 18 years old to qualify for the board exam.",
-            reference: "https://www.prc.gov.ph/licensure-examination"
+            rationale: "RA 9173 specifies 18 years as the minimum age.",
+            reference: "RA 9173"
           },
           {
-            question: "Which government agency administers the Philippine Nursing Board Exam?",
-            choices: ["Professional Regulation Commission (PRC)", "Department of Health (DOH)", "Philippine Nurses Association", "Commission on Higher Education (CHED)"],
-            answer: "Professional Regulation Commission (PRC)",
-            rationale: "The PRC is responsible for licensing and regulation of nursing professionals in the Philippines.",
-            reference: "https://www.prc.gov.ph"
+            question: "Which government agency administers the PNLE?",
+            choices: ["PRC", "DOH", "PNA", "CHED"],
+            answer: "PRC",
+            rationale: "Professional Regulation Commission regulates licensure exams.",
+            reference: "PRC"
           },
           {
-            question: "How many years of nursing education is required to qualify for the Philippine Nursing Board Exam?",
-            choices: ["3 years", "4 years", "5 years", "2 years"],
-            answer: "4 years",
-            rationale: "A bachelor's degree in nursing, which is typically 4 years, is required.",
-            reference: "https://ched.gov.ph"
+            question: "In the nursing process, what comes after Assessment?",
+            choices: ["Planning", "Diagnosis", "Implementation", "Evaluation"],
+            answer: "Diagnosis",
+            rationale: "ADPIE: Assessment, Diagnosis, Planning, Implementation, Evaluation.",
+            reference: "Nursing Process"
+          },
+          // --- MCN ---
+          {
+            question: "Which hormone is responsible for the ejection of milk?",
+            choices: ["Oxytocin", "Prolactin", "Estrogen", "Progesterone"],
+            answer: "Oxytocin",
+            rationale: "Oxytocin causes the let-down reflex. Prolactin makes the milk.",
+            reference: "MCN"
           },
           {
-            question: "What is the minimum passing score for the Philippine Nursing Board Exam?",
-            choices: ["75%", "80%", "70%", "85%"],
-            answer: "75%",
-            rationale: "To pass, examinees must obtain at least 75% overall.",
-            reference: "https://www.prc.gov.ph/licensure-examination"
+            question: "What is the normal fetal heart rate range?",
+            choices: ["120-160 bpm", "100-140 bpm", "80-120 bpm", "140-180 bpm"],
+            answer: "120-160 bpm",
+            rationale: "Normal baseline FHR is typically 110-160 or 120-160 depending on the reference.",
+            reference: "MCN"
           },
           {
-            question: "How many questions are typically included in the Philippine Nursing Board Exam?",
-            choices: ["300 questions", "500 questions", "600 questions", "400 questions"],
-            answer: "500 questions",
-            rationale: "The exam usually consists of 500 multiple-choice questions covering nursing subjects.",
-            reference: "https://www.prc.gov.ph/licensure-examination"
+            question: "A woman who has given birth for the first time is called:",
+            choices: ["Primipara", "Nullipara", "Multipara", "Primigravida"],
+            answer: "Primipara",
+            rationale: "Para indicates the number of births after viability.",
+            reference: "MCN"
           },
+          // --- MEDSURG ---
           {
              question: "Which is the primary prevention against Hepatitis B?",
              choices: ["Vaccination", "Antibiotics", "Physical Therapy", "Isolation"],
              answer: "Vaccination",
-             rationale: "Hepatitis B vaccination is the most effective way to prevent infection.",
-             reference: "https://doh.gov.ph"
+             rationale: "Immunization is primary prevention.",
+             reference: "DOH"
           },
           {
-             question: "In the nursing process, what comes after Assessment?",
-             choices: ["Planning", "Diagnosis", "Implementation", "Evaluation"],
-             answer: "Diagnosis",
-             rationale: "The standard nursing process is Assessment, Diagnosis, Planning, Implementation, Evaluation (ADPIE).",
-             reference: "https://nursingworld.org"
+            question: "Which term refers to difficulty in breathing?",
+            choices: ["Dyspnea", "Apnea", "Eupnea", "Tachypnea"],
+            answer: "Dyspnea",
+            rationale: "Dyspnea is subjective difficulty in breathing.",
+            reference: "MedSurg"
+          },
+          {
+            question: "What is the hallmark sign of pyloric stenosis?",
+            choices: ["Projectile vomiting", "Currant jelly stool", "Ribbon-like stool", "Steatorrhea"],
+            answer: "Projectile vomiting",
+            rationale: "Projectile vomiting occurs shortly after feeding in pyloric stenosis.",
+            reference: "Pedia"
+          },
+          {
+            question: "What is the most common cause of COPD?",
+            choices: ["Smoking", "Air pollution", "Genetics", "Infection"],
+            answer: "Smoking",
+            rationale: "Cigarette smoking is the leading cause of COPD.",
+            reference: "MedSurg"
+          },
+          // --- PAL ---
+          {
+            question: "Who is considered the 'Mother of Modern Nursing'?",
+            choices: ["Florence Nightingale", "Clara Barton", "Mary Jolley", "Lillian Wald"],
+            answer: "Florence Nightingale",
+            rationale: "She established the principles of modern nursing.",
+            reference: "History"
+          },
+          {
+            question: "What refers to the commission of an act that a prudent nurse would not do?",
+            choices: ["Negligence", "Malpractice", "Assault", "Battery"],
+            answer: "Negligence",
+            rationale: "Negligence is failure to use such care as a reasonably prudent and careful person would use.",
+            reference: "Jurisprudence"
+          },
+          // --- PHARMA ---
+          {
+            question: "What is the antidote for Acetaminophen overdose?",
+            choices: ["Acetylcysteine", "Naloxone", "Atropine", "Vitamin K"],
+            answer: "Acetylcysteine",
+            rationale: "Mucomyst (Acetylcysteine) prevents liver damage.",
+            reference: "Pharma"
+          },
+          {
+            question: "Which medication is an example of an ACE inhibitor?",
+            choices: ["Captopril", "Amlodipine", "Losartan", "Metoprolol"],
+            answer: "Captopril",
+            rationale: "Drugs ending in -pril are typically ACE inhibitors.",
+            reference: "Pharma"
+          },
+           {
+            question: "When administering insulin, which site has the fastest absorption?",
+            choices: ["Abdomen", "Thigh", "Arm", "Buttocks"],
+            answer: "Abdomen",
+            rationale: "The abdomen provides the most rapid and consistent absorption.",
+            reference: "Pharma"
           }
         ];
 
-        let activeQuizSet = []; // Stores the current 5 questions
+        // LOGIC VARIABLES
+        let seenIndices = new Set(); // Tracks which questions have been asked
+        let activeQuizSet = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let questionTimerInterval;
         let breakInterval;
 
-        // Function to pick 5 random questions
+        // SMART GENERATOR: Ensures no repeats until pool is exhausted
         function generateNewQuizSet() {
-            // Shuffle the entire pool
-            let shuffled = [...questionPool].sort(() => 0.5 - Math.random());
-            // Take the first 5
-            activeQuizSet = shuffled.slice(0, 5);
-            
-            // Shuffle choices inside the questions
-            for(let q of activeQuizSet){
-                q.choices = q.choices.sort(() => Math.random() - 0.5);
+            const setSize = 5;
+            let availableIndices = [];
+
+            // 1. Find indices that haven't been seen yet
+            for(let i=0; i < questionPool.length; i++) {
+                if(!seenIndices.has(i)) {
+                    availableIndices.push(i);
+                }
             }
+
+            // 2. If not enough fresh questions, reset the tracker (Unlimited cycle)
+            if (availableIndices.length < setSize) {
+                seenIndices.clear();
+                // Refill available
+                availableIndices = questionPool.map((_, i) => i);
+                showToast("Question pool exhausted. Reshuffling...", "warning");
+            }
+
+            // 3. Shuffle available indices
+            availableIndices.sort(() => Math.random() - 0.5);
+
+            // 4. Pick top 5
+            const selectedIndices = availableIndices.slice(0, setSize);
+
+            // 5. Mark them as seen and build the quiz set
+            activeQuizSet = selectedIndices.map(index => {
+                seenIndices.add(index);
+                // Create a copy to shuffle choices locally without affecting master
+                let q = {...questionPool[index]}; 
+                q.choices = [...q.choices].sort(() => Math.random() - 0.5);
+                return q;
+            });
             
             currentQuestionIndex = 0;
             score = 0;
         }
 
-        // Logic to move to next question or start break
+        // NAVIGATION LOGIC
         function nextQuestion() {
             currentQuestionIndex++;
-            
-            // Check if we finished the set of 5
             if (currentQuestionIndex >= activeQuizSet.length) {
-                startBreakSequence();
+                showResultAndBreak();
             } else {
                 renderQuestion(currentQuestionIndex);
             }
         }
 
-        // THE BREAK SEQUENCE (1 Minute Countdown)
-        function startBreakSequence() {
+        // =======================================================
+        // RESULT & BREAK SEQUENCE (UPDATED)
+        // =======================================================
+        function showResultAndBreak() {
             const quizDiv = document.getElementById('view-quiz');
             let breakTime = 60; // 60 Seconds Break
+            
+            // CALCULATE PASS/FAIL
+            // Threshold: 3 out of 5
+            const isPassed = score >= 3;
+            const statusText = isPassed ? "PASSED" : "FAILED";
+            const statusColor = isPassed ? "var(--success)" : "var(--error)";
+            const statusMsg = isPassed 
+                ? "Excellent work! Keep maintaining this momentum." 
+                : "Review the rationale carefully. You can do better next set.";
 
             quizDiv.innerHTML = `
                 <div class="card fade-in" style="text-align: center; max-width: 600px; margin: 40px auto; padding: 40px;">
-                    <h2 class="text-primary" style="margin-bottom: 20px;">SET COMPLETED</h2>
-                    <p class="text-muted" style="margin-bottom: 30px;">
-                        Good job! Taking a short break before the next set of questions loads.
-                    </p>
+                    <div style="font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px;">SET RESULT</div>
                     
-                    <div class="timer-circle" id="break-display">
-                        ${breakTime}
+                    <div class="result-badge" style="color: ${statusColor}">
+                        ${statusText}
                     </div>
 
-                    <p style="font-size: 0.9rem;">
-                        Preparing new random questions...
+                    <div style="font-size: 1.5rem; margin-bottom: 16px;">
+                        Score: <strong>${score} / 5</strong>
+                    </div>
+
+                    <p style="color: var(--text-muted); margin-bottom: 30px; max-width: 400px; margin-left: auto; margin-right: auto;">
+                        ${statusMsg}
                     </p>
+                    
+                    <div style="background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); margin-top: 20px;">
+                        <div class="flex justify-between" style="font-size: 0.8rem; margin-bottom: 8px;">
+                            <span>NEXT SET LOADING IN</span>
+                            <span id="break-timer-text" class="text-mono text-primary font-bold">01:00</span>
+                        </div>
+                        <div class="countdown-bar">
+                            <div id="countdown-fill" class="countdown-fill"></div>
+                        </div>
+                    </div>
                 </div>
             `;
 
             clearInterval(breakInterval);
-            const breakDisplay = document.getElementById('break-display');
+            const timerText = document.getElementById('break-timer-text');
+            const filler = document.getElementById('countdown-fill');
 
             breakInterval = setInterval(() => {
                 breakTime--;
-                if(breakDisplay) breakDisplay.innerText = breakTime;
+                const min = Math.floor(breakTime / 60).toString().padStart(2,'0');
+                const sec = (breakTime % 60).toString().padStart(2,'0');
+                
+                if(timerText) timerText.innerText = `${min}:${sec}`;
+                
+                // Update bar width percentage
+                const percentage = (breakTime / 60) * 100;
+                if(filler) filler.style.width = `${percentage}%`;
 
                 if (breakTime <= 0) {
                     clearInterval(breakInterval);
-                    generateNewQuizSet(); // Generate NEW questions
-                    renderQuestion(0); // Start index 0
+                    generateNewQuizSet();
+                    renderQuestion(0);
                 }
             }, 1000);
         }
 
+        // =======================================================
+        // RENDERING
+        // =======================================================
         function renderQuestion(index) {
           const quizDiv = document.getElementById('view-quiz');
           const q = activeQuizSet[index];
-          const totalQ = activeQuizSet.length;
-
+          
           quizDiv.innerHTML = `
             <div class="card fade-in" style="padding: 24px; max-width: 650px; margin: 0 auto;">
               <div class="flex justify-between items-center" style="margin-bottom: 12px;">
-                 <span class="text-muted text-mono text-xs">QUESTION ${index + 1} OF ${totalQ}</span>
-                 <span class="text-success text-mono text-xs">SCORE: ${score}</span>
+                 <span class="text-muted text-mono text-xs">QUESTION ${index + 1} OF 5</span>
+                 <span class="text-mono text-xs" style="color: var(--text-muted)">CURRENT SCORE: <span class="text-white">${score}</span></span>
               </div>
 
               <h2 class="text-primary" style="margin-bottom: 24px; font-size: 1.2rem; line-height: 1.5;">
@@ -436,7 +545,7 @@
               <div id="quiz-feedback" style="margin-top: 24px; font-size: 0.95rem; line-height: 1.5;"></div>
 
               <div style="margin-top:20px; border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
-                 <span class="text-muted text-xs">ANSWER TIMER</span>
+                 <span class="text-muted text-xs">TIMER</span>
                  <span id="question-timer" class="text-mono font-bold text-error">03:00</span>
               </div>
             </div>
@@ -446,9 +555,8 @@
           const feedback = document.getElementById('quiz-feedback');
           const timerEl = document.getElementById('question-timer');
 
-          // Question Timer (3 minutes per question limit)
           clearInterval(questionTimerInterval);
-          let timeRemaining = 180;
+          let timeRemaining = 180; // 3 minutes per question
           timerEl.textContent = formatTime(timeRemaining);
 
           questionTimerInterval = setInterval(() => {
@@ -471,7 +579,7 @@
 
             displayFeedback(isCorrect, q, feedback);
 
-            // Wait 5 seconds (fast feedback) then go next
+            // 5 second delay to read rationale before next question
             setTimeout(() => {
               nextQuestion();
             }, 5000); 
@@ -504,7 +612,6 @@
         // =======================================================
         // UTILITIES & AUTH
         // =======================================================
-
         const loginBtn = document.getElementById('btn-login');
         const inpUser = document.getElementById('inp-user');
         const inpPass = document.getElementById('inp-pass');
@@ -518,10 +625,7 @@
         function disableForm(form) {
           Array.from(form.elements).forEach(elem => elem.disabled = true);
           const btn = form.querySelector('button[type="submit"]');
-          if (btn) {
-              btn.innerText = "PROCESSING...";
-              btn.disabled = true;
-          }
+          if (btn) { btn.innerText = "PROCESSING..."; btn.disabled = true; }
         }
 
         function showView(viewId) {
@@ -540,10 +644,9 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // AUTH LISTENER
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                resetInactivityTimer(); // Start inactivity watch
+                resetInactivityTimer();
                 const userRef = doc(db, "users", user.uid);
                 
                 if(window.userDocUnsub) window.userDocUnsub();
@@ -563,14 +666,12 @@
                         } else {
                             showView('view-quiz');
                             document.getElementById('display-username').innerText = userData.username;
-                            // Generate initial set if empty
                             if(activeQuizSet.length === 0) {
                                 generateNewQuizSet();
                                 renderQuestion(0);
                             }
                         }
                     } else {
-                        // Create basic user doc if missing
                         setDoc(userRef, {
                             username: user.email.split('@')[0],
                             role: 'user',
@@ -579,9 +680,8 @@
                         });
                     }
                 });
-
             } else {
-                clearTimeout(inactivityTimer); // Stop inactivity watch
+                clearTimeout(inactivityTimer);
                 showView('view-login');
                 document.getElementById('display-username').innerText = "Guest";
             }
@@ -590,23 +690,18 @@
         loginBtn.addEventListener('click', async () => {
             const user = inpUser.value.trim();
             const pass = inpPass.value;
-
-            if (!user || !pass) {
-                showToast("Please enter username and password", "warning");
-                return;
-            }
+            if (!user || !pass) return showToast("Enter details", "warning");
+            
             const email = user.includes('@') ? user : `${user}@pnle.com`;
-
             loginBtn.innerText = "AUTHENTICATING...";
             loginBtn.disabled = true;
 
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
-                showToast("Login Successful", "success");
+                showToast("Welcome Back", "success");
             } catch (error) {
-                console.error(error);
                 showToast("Invalid Credentials", "error");
-                loginBtn.innerText = "SECURE LOGIN";
+                loginBtn.innerText = "START SESSION";
                 loginBtn.disabled = false;
             }
         });
@@ -615,7 +710,6 @@
         document.getElementById('btn-logout').addEventListener('click', handleLogout);
         document.getElementById('btn-admin-logout').addEventListener('click', handleLogout);
 
-        // Admin Table Logic
         function initAdminTable() {
             const tbody = document.querySelector('#table-users tbody');
             onSnapshot(collection(db, "users"), (snapshot) => {
@@ -635,38 +729,21 @@
                     
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>
-                            <div class="font-bold">${data.username}</div>
-                            <div class="text-muted" style="font-size:0.75rem">${uid}</div>
-                        </td>
+                        <td><div class="font-bold">${data.username}</div><div class="text-muted" style="font-size:0.75rem">${uid}</div></td>
                         <td>${statusBadge}</td>
-                        <td class="text-mono text-muted" style="font-size:0.7rem">SHA256-ENCRYPTED</td>
-                        <td>
-                            ${toggleBtn}
-                            <button class="btn btn-action btn-danger" onclick="window.deleteUser('${uid}')">RESET</button>
-                        </td>
+                        <td class="text-mono text-muted" style="font-size:0.7rem">ENCRYPTED</td>
+                        <td>${toggleBtn} <button class="btn btn-action btn-danger" onclick="window.deleteUser('${uid}')">RESET</button></td>
                     `;
                     tbody.appendChild(row);
                 });
             });
         }
 
-        // Expose admin functions globally
-        window.blockUser = async (uid) => {
-            if(confirm("Block this user?")) await updateDoc(doc(db, "users", uid), { isBlocked: true });
-        };
-        window.unblockUser = async (uid) => {
-            await updateDoc(doc(db, "users", uid), { isBlocked: false });
-        };
-        window.deleteUser = async (uid) => {
-            if(confirm("Reset this user?")) await updateDoc(doc(db, "users", uid), { isBlocked: true, username: "DELETED_USER" });
-        };
+        window.blockUser = async (uid) => { if(confirm("Block?")) await updateDoc(doc(db, "users", uid), { isBlocked: true }); };
+        window.unblockUser = async (uid) => { await updateDoc(doc(db, "users", uid), { isBlocked: false }); };
+        window.deleteUser = async (uid) => { if(confirm("Reset?")) await updateDoc(doc(db, "users", uid), { isBlocked: true, username: "DELETED_USER" }); };
 
-        // Clock
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB');
-        }, 1000);
-
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
     </script>
 </body>
 </html>
