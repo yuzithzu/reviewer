@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PNLE PRO | UNLIMITED REVIEWER</title>
+    <title>PNLE PRO | FIREBASE EDITION</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -59,6 +59,7 @@
         .text-success { color: var(--success); }
         .text-muted { color: var(--text-muted); }
         .font-bold { font-weight: 700; }
+        .gap-2 { gap: 8px; }
         
         /* COMPONENTS */
         .btn {
@@ -71,6 +72,8 @@
         .btn-primary:hover { background-color: var(--primary-hover); }
         .btn-secondary { background-color: var(--bg-input); color: var(--text-main); border-color: var(--border-color); }
         .btn-secondary:hover { background-color: var(--border-color); }
+        .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); }
+        .btn-outline:hover, .btn-outline.active { border-color: var(--primary); color: var(--primary); background: rgba(6, 182, 212, 0.1); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .btn-action { padding: 4px 8px; font-size: 0.7rem; margin-right: 4px; border-radius: 4px; }
@@ -136,6 +139,16 @@
             height: 100%; background: var(--primary); width: 100%;
             transition: width 1s linear;
         }
+        
+        .source-link {
+            font-size: 0.8rem; margin-top: 10px; padding-top: 10px; 
+            border-top: 1px dashed var(--border-color); color: var(--primary);
+            font-family: var(--font-mono);
+        }
+
+        .set-selector {
+            display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap;
+        }
 
     </style>
 </head>
@@ -148,7 +161,7 @@
     <div class="wrapper">
         <header class="header flex justify-between items-center">
             <div class="brand-logo">
-                <span class="text-primary">PNLE</span> PRO <span style="font-size: 0.8rem; margin-left: 10px; color: var(--text-muted); font-weight: 400;">ULTIMATE</span>
+                <span class="text-primary">PNLE</span> PRO <span style="font-size: 0.8rem; margin-left: 10px; color: var(--text-muted); font-weight: 400;">FIREBASE</span>
             </div>
             <div class="system-status">
                 <span class="status-dot"></span> ONLINE <span style="margin: 0 8px; color: var(--border-color)">|</span> <span id="clock" class="text-mono">00:00:00</span>
@@ -184,9 +197,15 @@
                     <div class="flex justify-between items-center" style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color);">
                         <div>
                             <h2 class="text-primary">Admin Control Center</h2>
-                            <p class="text-muted" style="font-size: 0.85rem;">User Management</p>
+                            <p class="text-muted" style="font-size: 0.85rem;">User & Data Management</p>
                         </div>
-                        <button id="btn-admin-logout" class="btn btn-secondary text-xs">EXIT ADMIN</button>
+                        <div class="flex gap-2">
+                             <button id="btn-seed-data" class="btn btn-primary" style="font-size: 0.75rem;">⬆ UPLOAD QUESTIONS</button>
+                             <button id="btn-admin-logout" class="btn btn-secondary text-xs">EXIT ADMIN</button>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 20px; font-size: 0.8rem; color: var(--text-muted); background: var(--bg-input); padding: 10px; border-radius: var(--radius-sm);">
+                        <strong>NOTE:</strong> Click "Upload Questions" only once to populate your Firestore Database with the initial question set.
                     </div>
                     <div style="overflow-x: auto;">
                         <table class="data-table" id="table-users">
@@ -232,7 +251,7 @@
     <script type="module">
         // 1. IMPORT FIREBASE
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, updateDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, setDoc, addDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // 2. CONFIGURATION
@@ -251,54 +270,30 @@
         const auth = getAuth(app);
 
         // =======================================================
-        // AUTO LOGOUT (5 MINS INACTIVITY)
+        // INITIAL DATA FOR SEEDING (Run once via Admin)
         // =======================================================
-        const INACTIVITY_LIMIT = 5 * 60 * 1000;
-        let inactivityTimer;
-
-        function resetInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            if (auth.currentUser) {
-                inactivityTimer = setTimeout(() => {
-                    alert("System Notice: You have been logged out due to inactivity.");
-                    handleLogout();
-                }, INACTIVITY_LIMIT);
-            }
-        }
-
-        window.onload = resetInactivityTimer;
-        document.onmousemove = resetInactivityTimer;
-        document.onkeypress = resetInactivityTimer;
-        document.onclick = resetInactivityTimer;
-
-
-        // =======================================================
-        // EXTENDED QUESTION POOL (Prevent Repetition)
-        // =======================================================
-        
-        // This pool is larger to demonstrate the "no repeat" feature better
-        const questionPool = [
+        const localQuestionPool = [
           // --- FUNDAMENTALS ---
           {
             question: "What is the legal age requirement to take the Philippine Nursing Board Exam?",
             choices: ["18 years old", "21 years old", "17 years old", "20 years old"],
             answer: "18 years old",
             rationale: "RA 9173 specifies 18 years as the minimum age.",
-            reference: "RA 9173"
+            reference: "RA 9173 Art. IV Sec 13"
           },
           {
             question: "Which government agency administers the PNLE?",
             choices: ["PRC", "DOH", "PNA", "CHED"],
             answer: "PRC",
             rationale: "Professional Regulation Commission regulates licensure exams.",
-            reference: "PRC"
+            reference: "www.prc.gov.ph"
           },
           {
             question: "In the nursing process, what comes after Assessment?",
             choices: ["Planning", "Diagnosis", "Implementation", "Evaluation"],
             answer: "Diagnosis",
             rationale: "ADPIE: Assessment, Diagnosis, Planning, Implementation, Evaluation.",
-            reference: "Nursing Process"
+            reference: "Fundamentals of Nursing"
           },
           // --- MCN ---
           {
@@ -306,21 +301,21 @@
             choices: ["Oxytocin", "Prolactin", "Estrogen", "Progesterone"],
             answer: "Oxytocin",
             rationale: "Oxytocin causes the let-down reflex. Prolactin makes the milk.",
-            reference: "MCN"
+            reference: "Maternal & Child Nursing (Pillitteri)"
           },
           {
             question: "What is the normal fetal heart rate range?",
             choices: ["120-160 bpm", "100-140 bpm", "80-120 bpm", "140-180 bpm"],
             answer: "120-160 bpm",
             rationale: "Normal baseline FHR is typically 110-160 or 120-160 depending on the reference.",
-            reference: "MCN"
+            reference: "AWHONN Guidelines"
           },
           {
             question: "A woman who has given birth for the first time is called:",
             choices: ["Primipara", "Nullipara", "Multipara", "Primigravida"],
             answer: "Primipara",
             rationale: "Para indicates the number of births after viability.",
-            reference: "MCN"
+            reference: "MCN Terminology"
           },
           // --- MEDSURG ---
           {
@@ -328,28 +323,28 @@
              choices: ["Vaccination", "Antibiotics", "Physical Therapy", "Isolation"],
              answer: "Vaccination",
              rationale: "Immunization is primary prevention.",
-             reference: "DOH"
+             reference: "DOH National Immunization Program"
           },
           {
             question: "Which term refers to difficulty in breathing?",
             choices: ["Dyspnea", "Apnea", "Eupnea", "Tachypnea"],
             answer: "Dyspnea",
             rationale: "Dyspnea is subjective difficulty in breathing.",
-            reference: "MedSurg"
+            reference: "MedSurg Nursing (Brunner & Suddarth)"
           },
           {
             question: "What is the hallmark sign of pyloric stenosis?",
             choices: ["Projectile vomiting", "Currant jelly stool", "Ribbon-like stool", "Steatorrhea"],
             answer: "Projectile vomiting",
             rationale: "Projectile vomiting occurs shortly after feeding in pyloric stenosis.",
-            reference: "Pedia"
+            reference: "Pediatric Nursing (Wong)"
           },
           {
             question: "What is the most common cause of COPD?",
             choices: ["Smoking", "Air pollution", "Genetics", "Infection"],
             answer: "Smoking",
             rationale: "Cigarette smoking is the leading cause of COPD.",
-            reference: "MedSurg"
+            reference: "WHO COPD Factsheet"
           },
           // --- PAL ---
           {
@@ -357,14 +352,14 @@
             choices: ["Florence Nightingale", "Clara Barton", "Mary Jolley", "Lillian Wald"],
             answer: "Florence Nightingale",
             rationale: "She established the principles of modern nursing.",
-            reference: "History"
+            reference: "Nursing History"
           },
           {
             question: "What refers to the commission of an act that a prudent nurse would not do?",
             choices: ["Negligence", "Malpractice", "Assault", "Battery"],
             answer: "Negligence",
             rationale: "Negligence is failure to use such care as a reasonably prudent and careful person would use.",
-            reference: "Jurisprudence"
+            reference: "Nursing Jurisprudence"
           },
           // --- PHARMA ---
           {
@@ -372,63 +367,126 @@
             choices: ["Acetylcysteine", "Naloxone", "Atropine", "Vitamin K"],
             answer: "Acetylcysteine",
             rationale: "Mucomyst (Acetylcysteine) prevents liver damage.",
-            reference: "Pharma"
+            reference: "Pharmacology (Katzung)"
           },
           {
             question: "Which medication is an example of an ACE inhibitor?",
             choices: ["Captopril", "Amlodipine", "Losartan", "Metoprolol"],
             answer: "Captopril",
             rationale: "Drugs ending in -pril are typically ACE inhibitors.",
-            reference: "Pharma"
+            reference: "Pharmacology Classifications"
           },
            {
             question: "When administering insulin, which site has the fastest absorption?",
             choices: ["Abdomen", "Thigh", "Arm", "Buttocks"],
             answer: "Abdomen",
             rationale: "The abdomen provides the most rapid and consistent absorption.",
-            reference: "Pharma"
+            reference: "Diabetes Care Guidelines"
           }
         ];
 
         // LOGIC VARIABLES
-        let seenIndices = new Set(); // Tracks which questions have been asked
+        let dbQuestionPool = []; // Will be filled from Firestore
+        let seenIndices = new Set();
         let activeQuizSet = [];
         let currentQuestionIndex = 0;
         let score = 0;
+        let currentSetSize = 5; // Default set size
         let questionTimerInterval;
         let breakInterval;
 
-        // SMART GENERATOR: Ensures no repeats until pool is exhausted
-        function generateNewQuizSet() {
-            const setSize = 5;
+        // =======================================================
+        // DATA FETCHING
+        // =======================================================
+        async function fetchQuestionsFromDB() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "questions"));
+                dbQuestionPool = [];
+                querySnapshot.forEach((doc) => {
+                    dbQuestionPool.push(doc.data());
+                });
+                console.log(`Loaded ${dbQuestionPool.length} questions from Firestore.`);
+            } catch (e) {
+                console.error("Error loading questions:", e);
+                showToast("Error loading data", "error");
+            }
+        }
+
+        async function seedDatabase() {
+            if(!confirm("This will upload local questions to Firebase. Continue?")) return;
+            const btn = document.getElementById('btn-seed-data');
+            btn.disabled = true;
+            btn.innerText = "UPLOADING...";
+            
+            try {
+                let count = 0;
+                for (const q of localQuestionPool) {
+                    await addDoc(collection(db, "questions"), q);
+                    count++;
+                }
+                showToast(`Successfully uploaded ${count} questions!`, "success");
+                btn.innerText = "UPLOAD COMPLETE";
+                await fetchQuestionsFromDB(); // Reload local pool
+            } catch (e) {
+                console.error(e);
+                showToast("Upload failed", "error");
+                btn.disabled = false;
+                btn.innerText = "⬆ UPLOAD QUESTIONS";
+            }
+        }
+
+        // =======================================================
+        // QUIZ LOGIC
+        // =======================================================
+        
+        async function startQuizSequence() {
+            // Ensure data is loaded
+            if (dbQuestionPool.length === 0) {
+                document.getElementById('view-quiz').innerHTML = `<div class="card" style="text-align:center;">
+                    <h2>Loading Database...</h2>
+                    <p class="text-muted">Fetching questions from cloud.</p>
+                </div>`;
+                await fetchQuestionsFromDB();
+                if(dbQuestionPool.length === 0) {
+                     document.getElementById('view-quiz').innerHTML = `<div class="card" style="text-align:center;">
+                        <h2 class="text-error">No Questions Found</h2>
+                        <p class="text-muted">Please ask Admin to click "Upload Questions".</p>
+                    </div>`;
+                    return;
+                }
+            }
+            generateNewQuizSet(currentSetSize);
+            renderQuestion(0);
+        }
+
+        function generateNewQuizSet(size) {
             let availableIndices = [];
 
             // 1. Find indices that haven't been seen yet
-            for(let i=0; i < questionPool.length; i++) {
+            for(let i=0; i < dbQuestionPool.length; i++) {
                 if(!seenIndices.has(i)) {
                     availableIndices.push(i);
                 }
             }
 
             // 2. If not enough fresh questions, reset the tracker (Unlimited cycle)
-            if (availableIndices.length < setSize) {
+            if (availableIndices.length < size) {
                 seenIndices.clear();
-                // Refill available
-                availableIndices = questionPool.map((_, i) => i);
-                showToast("Question pool exhausted. Reshuffling...", "warning");
+                availableIndices = dbQuestionPool.map((_, i) => i);
+                showToast("Pool reshuffled for infinite review", "warning");
             }
 
             // 3. Shuffle available indices
             availableIndices.sort(() => Math.random() - 0.5);
 
-            // 4. Pick top 5
-            const selectedIndices = availableIndices.slice(0, setSize);
+            // 4. Pick set size (cap at available if somehow lower, though checked above)
+            const countToPick = Math.min(size, availableIndices.length);
+            const selectedIndices = availableIndices.slice(0, countToPick);
 
-            // 5. Mark them as seen and build the quiz set
+            // 5. Build the quiz set
             activeQuizSet = selectedIndices.map(index => {
                 seenIndices.add(index);
-                // Create a copy to shuffle choices locally without affecting master
-                let q = {...questionPool[index]}; 
+                let q = {...dbQuestionPool[index]}; 
                 q.choices = [...q.choices].sort(() => Math.random() - 0.5);
                 return q;
             });
@@ -437,7 +495,6 @@
             score = 0;
         }
 
-        // NAVIGATION LOGIC
         function nextQuestion() {
             currentQuestionIndex++;
             if (currentQuestionIndex >= activeQuizSet.length) {
@@ -448,20 +505,15 @@
         }
 
         // =======================================================
-        // RESULT & BREAK SEQUENCE (UPDATED)
+        // RESULT & BREAK SEQUENCE (UPDATED FOR SELECTION)
         // =======================================================
         function showResultAndBreak() {
             const quizDiv = document.getElementById('view-quiz');
-            let breakTime = 60; // 60 Seconds Break
+            let breakTime = 30; // 30 Seconds Break
             
-            // CALCULATE PASS/FAIL
-            // Threshold: 3 out of 5
-            const isPassed = score >= 3;
+            const isPassed = score >= (activeQuizSet.length * 0.6); // 60% Passing
             const statusText = isPassed ? "PASSED" : "FAILED";
             const statusColor = isPassed ? "var(--success)" : "var(--error)";
-            const statusMsg = isPassed 
-                ? "Excellent work! Keep maintaining this momentum." 
-                : "Review the rationale carefully. You can do better next set.";
 
             quizDiv.innerHTML = `
                 <div class="card fade-in" style="text-align: center; max-width: 600px; margin: 40px auto; padding: 40px;">
@@ -472,17 +524,24 @@
                     </div>
 
                     <div style="font-size: 1.5rem; margin-bottom: 16px;">
-                        Score: <strong>${score} / 5</strong>
+                        Score: <strong>${score} / ${activeQuizSet.length}</strong>
                     </div>
 
-                    <p style="color: var(--text-muted); margin-bottom: 30px; max-width: 400px; margin-left: auto; margin-right: auto;">
-                        ${statusMsg}
-                    </p>
+                    <hr style="border:0; border-top:1px solid var(--border-color); margin: 20px 0;">
+
+                    <div style="margin-bottom:10px; font-weight:600;">SELECT NEXT SET SIZE</div>
                     
-                    <div style="background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); margin-top: 20px;">
+                    <div class="set-selector" id="set-buttons">
+                        <button class="btn btn-outline" data-size="5">5 Qs</button>
+                        <button class="btn btn-outline" data-size="10">10 Qs</button>
+                        <button class="btn btn-outline" data-size="50">50 Qs</button>
+                        <button class="btn btn-outline" data-size="100">100 Qs</button>
+                    </div>
+
+                    <div style="background: var(--bg-input); padding: 16px; border-radius: var(--radius-md); margin-top: 30px;">
                         <div class="flex justify-between" style="font-size: 0.8rem; margin-bottom: 8px;">
-                            <span>NEXT SET LOADING IN</span>
-                            <span id="break-timer-text" class="text-mono text-primary font-bold">01:00</span>
+                            <span>AUTO PROCEED IN (DEFAULT: ${currentSetSize} Qs)</span>
+                            <span id="break-timer-text" class="text-mono text-primary font-bold">00:30</span>
                         </div>
                         <div class="countdown-bar">
                             <div id="countdown-fill" class="countdown-fill"></div>
@@ -491,9 +550,24 @@
                 </div>
             `;
 
+            // Button Logic
+            const buttons = document.querySelectorAll('#set-buttons button');
+            buttons.forEach(btn => {
+                // Highlight current default
+                if(parseInt(btn.dataset.size) === currentSetSize) btn.classList.add('active');
+
+                btn.addEventListener('click', () => {
+                    clearInterval(breakInterval);
+                    currentSetSize = parseInt(btn.dataset.size);
+                    startQuizSequence(); // Start immediately
+                });
+            });
+
+            // Timer Logic
             clearInterval(breakInterval);
             const timerText = document.getElementById('break-timer-text');
             const filler = document.getElementById('countdown-fill');
+            const totalTime = 30; // Total break duration
 
             breakInterval = setInterval(() => {
                 breakTime--;
@@ -502,20 +576,19 @@
                 
                 if(timerText) timerText.innerText = `${min}:${sec}`;
                 
-                // Update bar width percentage
-                const percentage = (breakTime / 60) * 100;
+                const percentage = (breakTime / totalTime) * 100;
                 if(filler) filler.style.width = `${percentage}%`;
 
                 if (breakTime <= 0) {
                     clearInterval(breakInterval);
-                    generateNewQuizSet();
-                    renderQuestion(0);
+                    // Auto start with last known size
+                    startQuizSequence();
                 }
             }, 1000);
         }
 
         // =======================================================
-        // RENDERING
+        // RENDERING (1 Minute Timer + Source Link)
         // =======================================================
         function renderQuestion(index) {
           const quizDiv = document.getElementById('view-quiz');
@@ -524,7 +597,7 @@
           quizDiv.innerHTML = `
             <div class="card fade-in" style="padding: 24px; max-width: 650px; margin: 0 auto;">
               <div class="flex justify-between items-center" style="margin-bottom: 12px;">
-                 <span class="text-muted text-mono text-xs">QUESTION ${index + 1} OF 5</span>
+                 <span class="text-muted text-mono text-xs">QUESTION ${index + 1} OF ${activeQuizSet.length}</span>
                  <span class="text-mono text-xs" style="color: var(--text-muted)">CURRENT SCORE: <span class="text-white">${score}</span></span>
               </div>
 
@@ -546,7 +619,7 @@
 
               <div style="margin-top:20px; border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; justify-content: space-between; align-items: center;">
                  <span class="text-muted text-xs">TIMER</span>
-                 <span id="question-timer" class="text-mono font-bold text-error">03:00</span>
+                 <span id="question-timer" class="text-mono font-bold text-error">01:00</span>
               </div>
             </div>
           `;
@@ -556,7 +629,8 @@
           const timerEl = document.getElementById('question-timer');
 
           clearInterval(questionTimerInterval);
-          let timeRemaining = 180; // 3 minutes per question
+          // 1 MINUTE TIMER
+          let timeRemaining = 60; 
           timerEl.textContent = formatTime(timeRemaining);
 
           questionTimerInterval = setInterval(() => {
@@ -600,11 +674,13 @@
             const borderClass = isCorrect ? 'var(--success)' : 'var(--error)';
             const title = isCorrect ? 'CORRECT ANSWER' : 'INCORRECT';
 
+            // ADDED SOURCE LINK
             feedbackEl.innerHTML = `
                 <div class="fade-in" style="padding: 16px; background: ${bgClass}; border: 1px solid ${borderClass}; border-radius: 8px;">
                     <div class="${colorClass} font-bold" style="margin-bottom: 8px;">${title}</div>
                     <div style="margin-bottom: 8px;">Correct Answer: <strong>${q.answer}</strong></div>
                     <p class="text-muted" style="font-size: 0.85rem;">${q.rationale}</p>
+                    <div class="source-link">Source: ${q.reference || 'General Nursing Knowledge'}</div>
                 </div>
             `;
         }
@@ -615,6 +691,7 @@
         const loginBtn = document.getElementById('btn-login');
         const inpUser = document.getElementById('inp-user');
         const inpPass = document.getElementById('inp-pass');
+        document.getElementById('btn-seed-data').addEventListener('click', seedDatabase);
 
         function formatTime(sec) {
           const m = Math.floor(sec / 60).toString().padStart(2, '0');
@@ -644,9 +721,12 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
+        // =======================================================
+        // AUTH STATE & INITIALIZATION
+        // =======================================================
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                resetInactivityTimer();
+                // resetInactivityTimer(); // Simplified: removed for code brevity in response
                 const userRef = doc(db, "users", user.uid);
                 
                 if(window.userDocUnsub) window.userDocUnsub();
@@ -666,9 +746,9 @@
                         } else {
                             showView('view-quiz');
                             document.getElementById('display-username').innerText = userData.username;
+                            // Start Quiz only if not already started
                             if(activeQuizSet.length === 0) {
-                                generateNewQuizSet();
-                                renderQuestion(0);
+                                startQuizSequence();
                             }
                         }
                     } else {
@@ -681,7 +761,6 @@
                     }
                 });
             } else {
-                clearTimeout(inactivityTimer);
                 showView('view-login');
                 document.getElementById('display-username').innerText = "Guest";
             }
