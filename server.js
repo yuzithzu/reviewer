@@ -1,40 +1,55 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const cors = require("cors");
+
 const app = express();
 const PORT = 3000;
-
-app.use(express.json());
-app.use(express.static("public")); // serve frontend files
-
 const DB_FILE = path.join(__dirname, "users.json");
 
-// Load users database
+app.use(cors());
+app.use(express.json());
+
+// Load users from file
 function loadUsers() {
   if (!fs.existsSync(DB_FILE)) return {};
   return JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
 }
 
-// Save users database
+// Save users to file
 function saveUsers(users) {
   fs.writeFileSync(DB_FILE, JSON.stringify(users, null, 2));
 }
 
-// Login route
+// Public user data (without password)
+function publicUsers(users) {
+  return Object.entries(users).reduce((acc, [uname, data]) => {
+    acc[uname] = {
+      role: data.role,
+      isBlocked: data.isBlocked || false,
+      deviceHash: data.deviceHash || null,
+    };
+    return acc;
+  }, {});
+}
+
+// LOGIN: Validate user + device hash binding
 app.post("/api/login", (req, res) => {
   const { username, password, deviceHash } = req.body;
+  if (!username || !password || !deviceHash) {
+    return res.status(400).json({ message: "Missing fields" });
+  }
   const users = loadUsers();
   const user = users[username.toLowerCase()];
-
   if (!user || user.pass !== password) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
   if (user.isBlocked) {
     return res.status(403).json({ message: "Account blocked" });
   }
-  // Check device hash binding
+  // Device binding
   if (!user.deviceHash) {
-    user.deviceHash = deviceHash;
+    user.deviceHash = deviceHash; // Bind device on first login
     saveUsers(users);
   } else if (user.deviceHash !== deviceHash) {
     return res.status(403).json({ message: "Device mismatch. Access denied." });
@@ -42,37 +57,52 @@ app.post("/api/login", (req, res) => {
   return res.json({ success: true, role: user.role });
 });
 
-// Admin routes (add/block/unblock/reset)
-app.post("/api/admin/addUser", (req, res) => {
-  const { username, password, role } = req.body;
-  if (!username || !password) return res.status(400).json({ message: "Missing fields" });
+// GET USERS (admin only)
+app.get("/api/admin/users", (req, res) => {
   const users = loadUsers();
-  if (users[username.toLowerCase()]) {
-    return res.status(400).json({ message: "User already exists" });
-  }
-  users[username.toLowerCase()] = { pass: password, role, isBlocked: false };
-  saveUsers(users);
-  return res.json({ success: true });
+  res.json(publicUsers(users));
 });
 
+// ADD USER (admin only)
+app.post("/api/admin/addUser", (req, res) => {
+  const { username, password, role } = req.body;
+  if (!username || !password || !role) {
+    return res.status(400).json({ message: "Missing fields" });
+  }
+  const users = loadUsers();
+  const uname = username.toLowerCase();
+  if (users[uname]) {
+    return res.status(400).json({ message: "User already exists" });
+  }
+  users[uname] = { pass: password, role, isBlocked: false };
+  saveUsers(users);
+  res.json({ success: true });
+});
+
+// BLOCK / UNBLOCK USER
 app.post("/api/admin/blockUser", (req, res) => {
   const { username, block } = req.body;
+  if (!username || typeof block !== "boolean") {
+    return res.status(400).json({ message: "Missing or invalid parameters" });
+  }
   const users = loadUsers();
   const user = users[username.toLowerCase()];
   if (!user) return res.status(404).json({ message: "User not found" });
-  user.isBlocked = Boolean(block);
+  user.isBlocked = block;
   saveUsers(users);
-  return res.json({ success: true });
+  res.json({ success: true });
 });
 
+// RESET DEVICE BINDING
 app.post("/api/admin/resetDevice", (req, res) => {
   const { username } = req.body;
+  if (!username) return res.status(400).json({ message: "Missing username" });
   const users = loadUsers();
   const user = users[username.toLowerCase()];
   if (!user) return res.status(404).json({ message: "User not found" });
   delete user.deviceHash;
   saveUsers(users);
-  return res.json({ success: true });
+  res.json({ success: true });
 });
 
 app.listen(PORT, () => {
