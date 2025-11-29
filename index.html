@@ -1,1062 +1,597 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>PNLE PRO | ENTERPRISE LICENSURE SYSTEM</title>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PNLE PRO | REAL-TIME SECURE SYSTEM</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link
-  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
-  rel="stylesheet"
-/>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
 
-<style>
-  /* Base styles and variables */
-  :root {
-    --bg-input: #1e293b;
-    --bg-panel: #0f172a;
-    --primary: #06b6d4;
-    --primary-hover: #0e94a8;
-    --text-main: #e2e8f0;
-    --text-muted: #94a3b8;
-    --text-dim: #64748b;
-    --border-color: #334155;
-    --status-green: #22c55e;
-    --status-red: #ef4444;
-    --radius-sm: 6px;
-    --font-main: 'Inter', sans-serif;
-  }
+    <style>
+        /* ==================================================================================
+           THEME & VARIABLES
+           ================================================================================== */
+        :root {
+            --bg-body: #09090b;
+            --bg-card: #18181b;
+            --bg-input: #27272a;
+            --border-color: #3f3f46;
+            --text-main: #f4f4f5;
+            --text-muted: #a1a1aa;
+            --primary: #06b6d4; 
+            --primary-hover: #0891b2; 
+            --success: #22c55e;
+            --success-bg: rgba(34, 197, 94, 0.1);
+            --warning: #f59e0b;
+            --warning-bg: rgba(245, 158, 11, 0.1);
+            --error: #ef4444;
+            --error-bg: rgba(239, 68, 68, 0.15);
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --container-width: 1280px;
+            --font-main: "Inter", sans-serif;
+            --font-mono: "JetBrains Mono", monospace;
+        }
 
-  /* Global */
-  * {
-    box-sizing: border-box;
-  }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { height: 100%; scroll-behavior: smooth; }
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            font-size: 16px;
+            overflow-x: hidden;
+            padding-bottom: 50px;
+        }
 
-  body {
-    margin: 0;
-    background: #0f172a;
-    color: var(--text-main);
-    font-family: var(--font-main);
-  }
+        /* LAYOUT & UTILS */
+        .wrapper { max-width: var(--container-width); margin: 0 auto; padding: 24px; }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .gap-4 { gap: 16px; }
+        .hidden { display: none !important; }
+        .text-mono { font-family: var(--font-mono); }
+        .text-primary { color: var(--primary); }
+        .text-error { color: var(--error); }
+        .text-success { color: var(--success); }
+        .text-muted { color: var(--text-muted); }
+        .font-bold { font-weight: 700; }
+        
+        /* COMPONENTS */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 600;
+            cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
+            font-family: var(--font-main); text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .btn-primary { background-color: var(--primary); color: #000; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-secondary { background-color: var(--bg-input); color: var(--text-main); border-color: var(--border-color); }
+        .btn-secondary:hover { background-color: var(--border-color); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .wrapper {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px 16px;
-  }
+        .btn-action { padding: 4px 8px; font-size: 0.7rem; margin-right: 4px; border-radius: 4px; }
+        .btn-danger { background: var(--error-bg); color: var(--error); border: 1px solid var(--error); }
+        .btn-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning); }
+        .btn-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success); }
 
-  /* Header */
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 36px;
-    color: var(--text-muted);
-  }
+        .input {
+            width: 100%; padding: 14px 16px; background-color: var(--bg-input);
+            border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            color: var(--text-main); font-family: var(--font-main); outline: none;
+        }
+        .input:focus { border-color: var(--primary); }
 
-  .brand-logo {
-    font-weight: 700;
-    font-size: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--primary);
-  }
-  .brand-logo svg {
-    fill: none;
-    stroke: var(--primary);
-  }
+        .card {
+            background-color: var(--bg-card); border: 1px solid var(--border-color);
+            border-radius: var(--radius-md); padding: 32px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
 
-  .status-dot {
-    width: 12px;
-    height: 12px;
-    background: var(--status-green);
-    border-radius: 50%;
-    display: inline-block;
-  }
+        .grid-layout {
+            display: grid; grid-template-columns: 1fr 350px; gap: 32px; margin-top: 32px;
+        }
+        @media (max-width: 968px) { .grid-layout { grid-template-columns: 1fr; } }
 
-  /* System status */
-  .system-status {
-    font-weight: 600;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
+        /* HEADER */
+        .header { border-bottom: 1px solid var(--border-color); padding-bottom: 24px; margin-bottom: 24px; }
+        .brand-logo { font-family: var(--font-mono); font-size: 1.5rem; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .system-status { background: rgba(255,255,255,0.03); padding: 6px 16px; border-radius: 50px; border: 1px solid var(--border-color); font-size: 0.8rem; }
+        .status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--success); margin-right: 6px; }
 
-  .text-mono {
-    font-family: 'JetBrains Mono', monospace;
-  }
+        /* ADMIN TABLE */
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .data-table th { text-align: left; color: var(--text-muted); padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.75rem; text-transform: uppercase; }
+        .data-table td { padding: 12px; border-bottom: 1px solid var(--border-color); vertical-align: middle; }
+        .data-table tr:hover td { background: rgba(255,255,255,0.02); }
 
-  /* Layout */
-  main.grid-layout {
-    display: grid;
-    grid-template-columns: 3fr 1.25fr;
-    gap: 24px;
-  }
+        /* TOAST */
+        .toast {
+            position: fixed; top: 20px; right: 20px; padding: 16px 24px;
+            background: var(--bg-card); border: 1px solid var(--border-color); border-left: 4px solid var(--primary);
+            border-radius: var(--radius-sm); transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000; font-weight: 600; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.error { border-left-color: var(--error); }
+        .toast.success { border-left-color: var(--success); }
+        .toast.warning { border-left-color: var(--warning); }
 
-  section#main-content > div {
-    background: var(--bg-panel);
-    border-radius: var(--radius-sm);
-    padding: 24px;
-  }
-
-  /* Cards */
-  .card {
-    background: var(--bg-panel);
-    border-radius: var(--radius-sm);
-    padding: 24px;
-    box-sizing: border-box;
-  }
-
-  /* Inputs */
-  .input {
-    width: 100%;
-    background: var(--bg-input);
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-color);
-    padding: 12px 16px;
-    font-size: 1rem;
-    color: var(--text-main);
-  }
-  .input::placeholder {
-    color: var(--text-dim);
-  }
-  .input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 5px var(--primary);
-  }
-
-  /* Labels */
-  .label {
-    font-weight: 600;
-    margin-bottom: 6px;
-    display: block;
-  }
-
-  /* Buttons */
-  .btn {
-    font-weight: 700;
-    font-size: 1rem;
-    padding: 12px 18px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: background-color 0.3s;
-    border: none;
-    color: #000;
-  }
-  .btn-primary {
-    background-color: var(--primary);
-    color: #000;
-  }
-  .btn-primary:hover {
-    background-color: var(--primary-hover);
-  }
-  .btn-secondary {
-    background-color: var(--border-color);
-    color: var(--text-muted);
-  }
-  .btn-secondary:hover {
-    background-color: #475569;
-  }
-  .btn-warning {
-    background-color: #facc15;
-    color: #000;
-  }
-  .btn-warning:hover {
-    background-color: #eab308;
-  }
-  .btn-success {
-    background-color: #22c55e;
-    color: #000;
-  }
-  .btn-success:hover {
-    background-color: #16a34a;
-  }
-  .btn-danger {
-    background-color: var(--status-red);
-    color: #000;
-  }
-  .btn-danger:hover {
-    background-color: #b91c1c;
-  }
-
-  /* Text utilities */
-  .text-primary {
-    color: var(--primary);
-  }
-
-  .text-error {
-    color: var(--status-red);
-  }
-  .text-success {
-    color: var(--status-green);
-  }
-  .text-muted {
-    color: var(--text-muted);
-  }
-  .text-dim {
-    color: var(--text-dim);
-  }
-  .text-xs {
-    font-size: 0.75rem;
-  }
-  .text-sm {
-    font-size: 0.875rem;
-  }
-  .font-bold {
-    font-weight: 700;
-  }
-
-  /* Flex utilities */
-  .flex {
-    display: flex;
-  }
-  .gap-2 {
-    gap: 8px;
-  }
-  .gap-4 {
-    gap: 16px;
-  }
-  .items-center {
-    align-items: center;
-  }
-  .justify-between {
-    justify-content: space-between;
-  }
-  .flex-gap {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  /* Tables */
-  table.data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 8px;
-  }
-  table.data-table thead th {
-    text-align: left;
-    border-bottom: 1px solid var(--border-color);
-    padding: 12px 16px;
-    font-weight: 700;
-    font-size: 0.9rem;
-  }
-  table.data-table tbody td {
-    padding: 12px 16px;
-    border-top: 1px solid var(--border-color);
-    font-size: 0.9rem;
-  }
-  table.data-table tbody tr:hover {
-    background-color: #1e293b;
-  }
-  .btn-action {
-    margin-right: 6px;
-    margin-bottom: 6px;
-  }
-
-  /* Toast notification */
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #222b3a;
-    color: var(--text-main);
-    padding: 12px 24px;
-    border-radius: var(--radius-sm);
-    opacity: 0;
-    pointer-events: none;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    min-width: 250px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-    font-family: var(--font-main);
-  }
-  .toast.show {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .toast.success {
-    border-left: 4px solid var(--primary);
-  }
-  .toast.error {
-    border-left: 4px solid var(--status-red);
-  }
-  .toast.warning {
-    border-left: 4px solid #facc15;
-  }
-  .toast.primary {
-    border-left: 4px solid var(--primary-hover);
-  }
-  .toast.muted {
-    border-left: 4px solid var(--text-dim);
-  }
-
-  /* Admin Tabs */
-  .admin-tabs {
-    margin: 24px 0 16px;
-  }
-  .tab-btn {
-    padding: 8px 16px;
-    border: none;
-    background: var(--border-color);
-    color: var(--text-muted);
-    font-weight: 700;
-    margin-right: 12px;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  .tab-btn.active,
-  .tab-btn:focus-visible {
-    background-color: var(--primary);
-    color: #000;
-  }
-
-  /* Admin header */
-  .admin-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  /* User add form */
-  #add-user-container {
-    margin-top: 20px;
-    border-top: 1px solid var(--border-color);
-    padding-top: 16px;
-    max-width: 600px;
-  }
-  #add-user-container h3 {
-    margin-bottom: 8px;
-    color: var(--primary);
-  }
-  #add-user-container .flex-gap {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  #add-user-container .input,
-  #add-user-container select,
-  #add-user-container button {
-    padding: 12px 16px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-color);
-    background: var(--bg-input);
-    color: var(--text-main);
-    font-size: 1rem;
-    font-family: var(--font-main);
-  }
-  #add-user-container button {
-    background-color: var(--primary);
-    border: none;
-    color: #000;
-    cursor: pointer;
-    font-weight: 700;
-    min-width: 80px;
-    transition: background-color 0.3s;
-  }
-  #add-user-container button:hover {
-    background-color: var(--primary-hover);
-  }
-
-  /* Misc */
-  .hidden {
-    display: none !important;
-  }
-  .fade-in {
-    animation: fadeIn 0.25s ease forwards;
-  }
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-</style>
+        /* ANIMATION */
+        .fade-in { animation: fadeIn 0.4s ease forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
 </head>
 
 <body>
-  <div id="toast" class="toast" aria-live="polite" aria-atomic="true" role="alert">
-    <div id="toast-icon"></div>
-    <div id="toast-msg">Notification Message</div>
-  </div>
-
-  <div class="wrapper">
-    <header class="header flex justify-between items-center" role="banner">
-      <div class="brand-logo">
-        <svg
-          width="32"
-          height="32"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path
-            d="M12 2L2 7L12 12L22 7L12 2Z"
-            stroke="#06b6d4"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M2 17L12 22L22 17"
-            stroke="#06b6d4"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M2 12L12 17L22 12"
-            stroke="#06b6d4"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-        <span>PNLE</span> PRO
-      </div>
-
-      <div class="system-status" aria-label="System status and current time">
-        <span class="flex items-center gap-2">
-          <span class="status-dot" aria-hidden="true"></span> SYSTEM ONLINE
-        </span>
-        <span style="color: var(--border-color)">|</span>
-        <span id="clock" class="text-mono" aria-live="polite" aria-atomic="true" role="timer">00:00:00</span>
-      </div>
-    </header>
-
-    <main class="grid-layout" role="main">
-      <section id="main-content" style="min-height: 500px;">
-        <div id="view-login" class="card fade-in" aria-label="Login section">
-          <div style="margin-bottom: 24px;">
-            <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Secure Examination Login</h2>
-            <p class="text-muted">
-              Enter your credentials to access the batch assessment system. Security fingerprinting is
-              active.
-            </p>
-          </div>
-
-          <div class="form-group">
-            <label class="label" for="inp-user">Username / License ID</label>
-            <input
-              type="text"
-              id="inp-user"
-              class="input"
-              placeholder="e.g., user1"
-              autocomplete="off"
-              aria-required="true"
-              aria-describedby="user-help"
-            />
-            <small id="user-help" class="text-xs text-muted"
-              >Example: user1 (case insensitive)</small
-            >
-          </div>
-
-          <div class="form-group">
-            <label class="label" for="inp-pass">Password</label>
-            <input
-              type="password"
-              id="inp-pass"
-              class="input"
-              placeholder="••••••••"
-              aria-required="true"
-            />
-          </div>
-
-          <div class="flex gap-4">
-            <button id="btn-login" class="btn btn-primary" style="flex: 2;" type="button">
-              SECURE LOGIN
-            </button>
-            <button id="btn-admin-access" class="btn btn-secondary" style="flex: 1;" type="button">
-              ADMIN
-            </button>
-          </div>
-
-          <div
-            style="
-                    margin-top: 24px;
-                    padding-top: 24px;
-                    border-top: 1px solid var(--border-color);
-                    "
-          >
-            <p class="text-xs text-muted">
-              <strong>DEVICE LOCK PROTOCOL:</strong> Upon first login, your account will be
-              cryptographically bound to this device (Hardware Fingerprint SHA-256). Attempts to login
-              from other devices will be blocked automatically. Contact an administrator for device reset.
-            </p>
-          </div>
-        </div>
-
-        <div id="view-admin" class="card fade-in hidden" aria-label="Admin console">
-          <div class="admin-header">
-            <div>
-              <h2 class="text-primary">Administrator Console</h2>
-              <p class="text-xs text-muted">User Management &amp; Security Logs</p>
-            </div>
-            <button id="btn-admin-exit" class="btn btn-secondary text-xs" type="button">EXIT CONSOLE</button>
-          </div>
-
-          <div class="admin-tabs" role="tablist">
-            <button
-              class="tab-btn active"
-              role="tab"
-              aria-selected="true"
-              aria-controls="tab-users"
-              id="tab-btn-users"
-              onclick="switchAdminTab('users')"
-              type="button"
-            >
-              User Database
-            </button>
-            <button
-              class="tab-btn"
-              role="tab"
-              aria-selected="false"
-              aria-controls="tab-logs"
-              id="tab-btn-logs"
-              onclick="switchAdminTab('logs')"
-              type="button"
-            >
-              Audit Logs
-            </button>
-          </div>
-
-          <div id="tab-users" class="fade-in" role="tabpanel" aria-labelledby="tab-btn-users">
-            <div style="overflow-x: auto;">
-              <table class="data-table" id="table-users" aria-describedby="desc-users-table">
-                <caption id="desc-users-table" class="text-muted text-sm" style="padding-bottom:8px">
-                  List of Users with device bindings and status.
-                </caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Username</th>
-                    <th scope="col">Binding / Status</th>
-                    <th scope="col">Device Hash</th>
-                    <th scope="col" style="min-width: 250px;">Controls</th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </div>
-
-            <!-- ADD USER FORM -->
-            <div id="add-user-container" aria-label="Add new user account">
-              <h3>Add New User</h3>
-              <div class="flex-gap">
-                <input id="newUser" class="input" type="text" placeholder="Username (e.g. user4)" autocomplete="off" />
-                <input id="newPass" class="input" type="password" placeholder="Password" />
-                <select id="newRole" class="input" aria-label="Select user role">
-                  <option value="user" selected>User</option>
-                  <option value="admin">Admin</option>
-                </select>
-                <button type="button" onclick="addUser()">Add</button>
-              </div>
-            </div>
-          </div>
-
-          <div id="tab-logs" class="hidden fade-in" role="tabpanel" aria-labelledby="tab-btn-logs">
-            <div style="max-height: 300px; overflow-y: auto;" id="log-container" tabindex="0">
-              <div class="log-entry">System initialized...</div>
-            </div>
-          </div>
-        </div>
-
-        <div id="view-quiz" class="hidden" aria-label="Quiz section">
-          <div id="quiz-list" class="fade-in" aria-live="polite" aria-atomic="false"></div>
-
-          <div
-            id="quiz-loader"
-            class="card hidden"
-            style="text-align: center; padding: 48px;"
-            aria-busy="true"
-            aria-live="assertive"
-          >
-            <div class="loader"></div>
-            <h3 style="margin-top: 16px;">Synchronizing New Batch...</h3>
-            <p class="text-muted">Please wait while we fetch randomized questions.</p>
-          </div>
-        </div>
-      </section>
-
-      <aside class="sidebar fade-in" aria-label="Session info and instructions" tabindex="0">
-        <div class="card" style="margin-bottom: 24px;">
-          <div class="flex items-center gap-4" style="margin-bottom: 16px;">
-            <div
-              style="
-                              width: 48px;
-                              height: 48px;
-                              background: var(--bg-input);
-                              border-radius: 50%;
-                              display: grid;
-                              place-items: center;
-                              color: var(--primary);
-                          "
-            >
-              <svg
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-                focusable="false"
-              >
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
-              </svg>
-            </div>
-            <div>
-              <div class="text-xs text-muted">CURRENT SESSION</div>
-              <div id="display-username" class="font-bold text-primary" aria-live="polite" aria-atomic="true"
-                >Guest</div
-              >
-            </div>
-          </div>
-
-          <div
-            style="
-                            border-top: 1px solid var(--border-color);
-                            padding-top: 16px;
-                            margin-top: 16px;
-                        "
-            aria-label="Session details"
-          >
-            <div class="flex justify-between text-sm" style="margin-bottom: 8px;">
-              <span class="text-muted">Status</span>
-              <span class="text-success font-bold">Active</span>
-            </div>
-            <div class="flex justify-between text-sm">
-              <span class="text-muted">Batch ID</span>
-              <span class="text-mono" id="batch-id" aria-live="polite" aria-atomic="true">
-                #0000
-              </span>
-            </div>
-          </div>
-
-          <button id="btn-logout" class="btn btn-secondary" style="width: 100%; margin-top: 24px;" type="button">
-            SECURE LOGOUT
-          </button>
-        </div>
-
-        <div class="card" aria-label="Instructions">
-          <h4 style="margin-bottom: 12px; color: var(--text-muted);">Instructions</h4>
-          <ul
-            style="list-style: none; padding: 0; font-size: 0.85rem; color: var(--text-dim);"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <li style="margin-bottom: 10px; display: flex; gap: 8px;">
-              <span class="text-primary">•</span> Questions rotate every 5 minutes.
-            </li>
-            <li style="margin-bottom: 10px; display: flex; gap: 8px;">
-              <span class="text-primary">•</span> Answers are locked once submitted.
-            </li>
-            <li style="margin-bottom: 10px; display: flex; gap: 8px;">
-              <span class="text-primary">•</span> Do not refresh the page during a batch.
-            </li>
-            <li style="display: flex; gap: 8px;">
-              <span class="text-primary">•</span> Admin intervention required for device reset.
-            </li>
-          </ul>
-        </div>
-      </aside>
-    </main>
-  </div>
-
-  <div class="footer-hud hidden" id="hud" aria-label="Performance HUD">
-    <div class="hud-content">
-      <div class="hud-stat" aria-live="polite" aria-atomic="true">
-        <span class="text-muted text-sm" style="margin-right: 10px;">PERFORMANCE</span>
-        <span class="text-primary" id="score-display">0</span>
-        <span class="text-dim">/</span>
-        <span id="total-display">0</span>
-      </div>
-
-      <div class="hud-stat">
-        <span class="timer-badge text-mono" id="batch-timer">NEXT SET: 05:00</span>
-      </div>
+    <div id="toast" class="toast">
+        <div id="toast-msg">Notification Message</div>
     </div>
-  </div>
 
-  <script>
-    /* ==================================================================================
-       1. DATABASE MOCKUP & CONFIGURATION
-       ================================================================================== */
-    const CONFIG = {
-      BATCH_TIME_MS: 5 * 60 * 1000, // 5 Minutes
-      QUESTIONS_PER_BATCH: 5, // Number of Qs per load
-      ADMIN_PASS: "admin123", // Demo Password
-      STORAGE_PREFIX: "PNLE_ENT_",
-    };
+    <div class="wrapper">
+        <header class="header flex justify-between items-center">
+            <div class="brand-logo">
+                <span class="text-primary">PNLE</span> PRO <span style="font-size: 0.8rem; margin-left: 10px; color: var(--text-muted); font-weight: 400;">ENTERPRISE</span>
+            </div>
+            <div class="system-status">
+                <span class="status-dot"></span> ONLINE <span style="margin: 0 8px; color: var(--border-color)">|</span> <span id="clock" class="text-mono">00:00:00</span>
+            </div>
+        </header>
 
-    // USERS mock DB
-    let USERS = {
-      user1: { pass: "pass1", role: "user" },
-      user2: { pass: "pass2", role: "user" },
-      user3: { pass: "pass3", role: "user" },
-      admin: { pass: "admin", role: "admin" },
-    };
+        <main class="grid-layout">
+            <section id="main-content">
+                
+                <div id="view-login" class="card fade-in">
+                    <div style="margin-bottom: 24px;">
+                        <h2 style="font-size: 1.5rem; margin-bottom: 8px;">System Access Login</h2>
+                        <p class="text-muted">Enter credentials. Multi-factor device binding is active.</p>
+                    </div>
 
-    /* ==================================================================================
-       2. GLOBAL STATE
-       ================================================================================== */
-    let currentUser = null;
-    let currentView = "login";
-    let quizState = {
-      currentBatch: [],
-      batchStartTime: 0,
-      totalCorrect: 0,
-      totalQuestions: 0,
-      timerInterval: null,
-    };
-    let userDeviceFingerprint = null;
+                    <div style="margin-bottom: 16px;">
+                        <label style="display:block; margin-bottom: 8px; font-size: 0.9rem;" class="text-muted">Username</label>
+                        <input type="text" id="inp-user" class="input" placeholder="e.g. admin or student1" autocomplete="off" />
+                    </div>
 
-    /* ==================================================================================
-       3. UTILITY FUNCTIONS
-       ================================================================================== */
-    function showToast(message, type = "success") {
-      const toast = document.getElementById("toast");
-      const toastMsg = document.getElementById("toast-msg");
-      toastMsg.textContent = message;
-      toast.className = `toast show ${type}`;
-      clearTimeout(toast._hideTimeout);
-      toast._hideTimeout = setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3000);
-    }
+                    <div style="margin-bottom: 24px;">
+                        <label style="display:block; margin-bottom: 8px; font-size: 0.9rem;" class="text-muted">Password</label>
+                        <input type="password" id="inp-pass" class="input" placeholder="••••••••" />
+                    </div>
 
-    function changeView(viewId) {
-      document.querySelectorAll("section#main-content > div").forEach((el) => {
-        el.classList.add("hidden");
-      });
-      document.getElementById(viewId).classList.remove("hidden");
-      currentView = viewId.replace("view-", "");
-      if (currentView === "quiz") {
-        document.getElementById("hud").classList.remove("hidden");
-      } else {
-        document.getElementById("hud").classList.add("hidden");
-      }
-    }
+                    <button id="btn-login" class="btn btn-primary" style="width: 100%;">SECURE LOGIN</button>
+                    <p class="text-muted" style="font-size: 0.75rem; margin-top: 20px; text-align: center;">
+                        Secured by Firebase Auth & Firestore Real-time DB
+                    </p>
+                </div>
 
-    function generateDeviceFingerprint() {
-      const userAgent = navigator.userAgent;
-      const screenRes = `${screen.width}x${screen.height}`;
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const mockHash = CryptoJS.SHA256(userAgent + screenRes + timezone)
-        .toString()
-        .substring(0, 10)
-        .toUpperCase();
-      userDeviceFingerprint = mockHash;
-      return mockHash;
-    }
+                <div id="view-admin" class="card fade-in hidden">
+                    <div class="flex justify-between items-center" style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <h2 class="text-primary">Admin Control Center</h2>
+                            <p class="text-muted" style="font-size: 0.85rem;">Real-time User Management</p>
+                        </div>
+                        <button id="btn-admin-logout" class="btn btn-secondary text-xs">EXIT ADMIN</button>
+                    </div>
 
-    const CryptoJS = {
-      SHA256: (str) => {
-        let hash = 0;
-        if (str.length === 0) return "0";
-        for (let i = 0; i < str.length; i++) {
-          const char = str.charCodeAt(i);
-          hash = (hash << 5) - hash + char;
-          hash |= 0;
-        }
-        return hash.toString(16).padStart(8, "0");
-      },
-    };
+                    <div style="overflow-x: auto;">
+                        <table class="data-table" id="table-users">
+                            <thead>
+                                <tr>
+                                    <th>Username / Email</th>
+                                    <th>Status</th>
+                                    <th>Security Hash</th>
+                                    <th>Controls</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
 
-    /* ==================================================================================
-       4. ADMIN CONTROL FUNCTIONS
-       ================================================================================== */
+                <div id="view-quiz" class="hidden fade-in"></div>
 
-    function switchAdminTab(tabName) {
-      document.querySelectorAll(".admin-tabs .tab-btn").forEach((btn) => {
-        btn.classList.remove("active");
-        btn.setAttribute("aria-selected", "false");
-      });
-      document.querySelectorAll('#view-admin > div[id^="tab-"]').forEach((tab) => {
-        tab.classList.add("hidden");
-      });
+            </section>
 
-      const btnEl = document.querySelector(`.admin-tabs .tab-btn[onclick*="'${tabName}'"]`);
-      btnEl.classList.add("active");
-      btnEl.setAttribute("aria-selected", "true");
-      document.getElementById(`tab-${tabName}`).classList.remove("hidden");
+            <aside class="sidebar fade-in" style="max-width: 350px;">
+                <div class="card">
+                    <div class="flex items-center gap-4" style="margin-bottom: 16px;">
+                        <div style="width: 40px; height: 40px; background: var(--bg-input); border-radius: 50%; display: grid; place-items: center; color: var(--primary);">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        </div>
+                        <div>
+                            <div class="text-muted" style="font-size: 0.75rem;">CURRENT SESSION</div>
+                            <div id="display-username" class="font-bold text-primary">Guest</div>
+                        </div>
+                    </div>
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 16px; margin-top: 16px;">
+                         <button id="btn-logout" class="btn btn-secondary" style="width: 100%; font-size: 0.8rem;">LOGOUT SESSION</button>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
 
-      if (tabName === "users") {
-        renderUserTable();
-      }
-    }
+    <script type="module">
+        // 1. IMPORT FIREBASE SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, updateDoc, setDoc, collection } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    function renderUserTable() {
-      const userTableBody = document.querySelector("#table-users tbody");
-      userTableBody.innerHTML = "";
+        // 2. YOUR CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyCmd6vmuXUPslLJf0w7I518C8UIaO2DoAA",
+            authDomain: "pnle-class.firebaseapp.com",
+            projectId: "pnle-class",
+            storageBucket: "pnle-class.firebasestorage.app",
+            messagingSenderId: "1024768890816",
+            appId: "1:1024768890816:web:28bf31d5ae67c679feda25",
+            measurementId: "G-JLS5ZGFP3J"
+        };
 
-      Object.keys(USERS).forEach((username) => {
-        const user = USERS[username];
-        const storedUser = JSON.parse(localStorage.getItem(CONFIG.STORAGE_PREFIX + username));
-        const deviceHash = storedUser ? storedUser.deviceHash || "N/A" : "N/A";
+        // 3. START APP
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
 
-        let statusBadge = `<span class="text-muted text-sm">UNBOUND</span>`;
-        if (storedUser && storedUser.isBlocked) {
-          statusBadge = `<span class="text-error font-bold text-sm">BLOCKED</span>`;
-        } else if (storedUser && storedUser.deviceHash) {
-          statusBadge = `<span class="text-success font-bold text-sm">BOUND</span>`;
-        }
+        const loginBtn = document.getElementById('btn-login');
+        const inpUser = document.getElementById('inp-user');
+        const inpPass = document.getElementById('inp-pass');
 
-        const isAdmin = user.role === "admin";
-        const usernameDisplay = isAdmin
-          ? `<span class="text-primary font-bold">${username} (Admin)</span>`
-          : username;
-
-        let controlsHtml = "";
-        if (isAdmin) {
-          controlsHtml = `<span class="text-dim text-xs">System Admin</span>`;
-        } else {
-          const isBlocked = storedUser && storedUser.isBlocked;
-
-          controlsHtml += `<button class="btn btn-secondary btn-action" onclick="resetDevice('${username}')" ${
-            storedUser && storedUser.deviceHash ? "" : "disabled"
-          } type="button">Reset ID</button>`;
-
-          if (isBlocked) {
-            controlsHtml += `<button class="btn btn-success btn-action" onclick="toggleBlock('${username}', false)" type="button">Unblock</button>`;
-          } else {
-            controlsHtml += `<button class="btn btn-warning btn-action" onclick="toggleBlock('${username}', true)" type="button">Block</button>`;
+        // PNLE Quiz questions randomized generator function for cycles after 5 questions
+        const baseQuizQuestions = [
+          {
+            question: "What is the legal age requirement to take the Philippine Nursing Board Exam?",
+            choices: [
+              "18 years old",
+              "21 years old",
+              "17 years old",
+              "20 years old"
+            ],
+            answer: "18 years old",
+            rationale: "By law, a nursing candidate must be at least 18 years old to qualify for the board exam.",
+            reference: "https://www.prc.gov.ph/licensure-examination"
+          },
+          {
+            question: "Which government agency administers the Philippine Nursing Board Exam?",
+            choices: [
+              "Professional Regulation Commission (PRC)",
+              "Department of Health (DOH)",
+              "Philippine Nurses Association",
+              "Commission on Higher Education (CHED)"
+            ],
+            answer: "Professional Regulation Commission (PRC)",
+            rationale: "The PRC is responsible for licensing and regulation of nursing professionals in the Philippines.",
+            reference: "https://www.prc.gov.ph"
+          },
+          {
+            question: "How many years of nursing education is required to qualify for the Philippine Nursing Board Exam?",
+            choices: [
+              "3 years",
+              "4 years",
+              "5 years",
+              "2 years"
+            ],
+            answer: "4 years",
+            rationale: "A bachelor's degree in nursing, which is typically 4 years, is required.",
+            reference: "https://ched.gov.ph"
+          },
+          {
+            question: "What is the minimum passing score for the Philippine Nursing Board Exam?",
+            choices: [
+              "75%",
+              "80%",
+              "70%",
+              "85%"
+            ],
+            answer: "75%",
+            rationale: "To pass, examinees must obtain at least 75% overall.",
+            reference: "https://www.prc.gov.ph/licensure-examination"
+          },
+          {
+            question: "How many questions are typically included in the Philippine Nursing Board Exam?",
+            choices: [
+              "300 questions",
+              "500 questions",
+              "600 questions",
+              "400 questions"
+            ],
+            answer: "500 questions",
+            rationale: "The exam usually consists of 500 multiple-choice questions covering nursing subjects.",
+            reference: "https://www.prc.gov.ph/licensure-examination"
           }
+        ];
 
-          controlsHtml += `<button class="btn btn-danger btn-action" onclick="confirmDelete('${username}')" type="button">Delete</button>`;
+        // State variables
+        let quizQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let countdownInterval;
+
+        // Function to shuffle and generate new batch (auto new questions after 5)
+        function generateNewQuiz() {
+          quizQuestions = [...baseQuizQuestions];
+          // shuffle choices and questions to add dynamic behavior
+          for(let q of quizQuestions){
+            q.choices = q.choices.sort(() => Math.random() - 0.5);
+          }
+          quizQuestions = quizQuestions.sort(() => Math.random() - 0.5);
+          currentQuestionIndex = 0;
+          score = 0;
         }
 
-        const row = userTableBody.insertRow();
-        row.setAttribute("data-username", username);
-        row.innerHTML = `
-            <td>${usernameDisplay}</td>
-            <td>${statusBadge}</td>
-            <td class="text-mono text-xs">${deviceHash}</td>
-            <td>${controlsHtml}</td>
-        `;
-      });
-    }
-
-    function resetDevice(username) {
-      let stored = JSON.parse(localStorage.getItem(CONFIG.STORAGE_PREFIX + username)) || {};
-      delete stored.deviceHash;
-      localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify(stored));
-      showToast(`Device binding reset for ${username}.`, "warning");
-      renderUserTable();
-      addLog(`ADMIN: Reset device binding for ${username}.`);
-    }
-
-    function toggleBlock(username, blockStatus) {
-      let stored = JSON.parse(localStorage.getItem(CONFIG.STORAGE_PREFIX + username));
-      if (!stored) stored = {};
-
-      stored.isBlocked = blockStatus;
-      localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify(stored));
-
-      const msg = blockStatus ? "BLOCKED" : "UNBLOCKED";
-      const type = blockStatus ? "error" : "success";
-
-      showToast(`User ${username} has been ${msg}.`, type);
-      renderUserTable();
-      addLog(`ADMIN: User ${username} was ${msg}.`);
-    }
-
-    function confirmDelete(username) {
-      if (
-        confirm(
-          `CRITICAL WARNING:\n\nAre you sure you want to PERMANENTLY DELETE user "${username}"?\n\nThis will remove credentials and exam logs. This cannot be undone.`
-        )
-      ) {
-        deleteUser(username);
-      }
-    }
-
-    function deleteUser(username) {
-      if (USERS.hasOwnProperty(username)) {
-        delete USERS[username];
-        localStorage.removeItem(CONFIG.STORAGE_PREFIX + username);
-        showToast(`User account "${username}" DELETED.`, "error");
-        addLog(`ADMIN: Deleted user account "${username}".`);
-        renderUserTable();
-      } else {
-        showToast("Error: User not found.", "error");
-      }
-    }
-
-    function addUser() {
-      const usernameInput = document.getElementById("newUser");
-      const passwordInput = document.getElementById("newPass");
-      const roleSelect = document.getElementById("newRole");
-
-      const username = usernameInput.value.toLowerCase().trim();
-      const password = passwordInput.value.trim();
-      const role = roleSelect.value;
-
-      if (!username || !password) {
-        showToast("Please enter both username and password.", "error");
-        return;
-      }
-      if (USERS[username]) {
-        showToast(`User '${username}' already exists.`, "error");
-        return;
-      }
-
-      USERS[username] = { pass: password, role: role };
-      localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify({}));
-
-      showToast(`User '${username}' added successfully.`, "success");
-      addLog(`ADMIN: Added new user '${username}' with role '${role}'.`);
-
-      usernameInput.value = "";
-      passwordInput.value = "";
-      roleSelect.value = "user";
-
-      renderUserTable();
-    }
-
-    function addLog(message) {
-      const logContainer = document.getElementById("log-container");
-      const now = new Date();
-      const timeStr = now.toTimeString().split(" ")[0];
-      const newLog = document.createElement("div");
-      newLog.className = "log-entry";
-      newLog.textContent = `[${timeStr}] ${message}`;
-      logContainer.prepend(newLog);
-      if (logContainer.children.length > 50) logContainer.removeChild(logContainer.lastChild);
-    }
-
-    /* ==================================================================================
-       5. AUTHENTICATION & SESSION
-       ================================================================================== */
-
-    document.getElementById("btn-admin-access").addEventListener("click", () => {
-      const pass = prompt("Enter Admin Console Password:");
-      if (pass === CONFIG.ADMIN_PASS) {
-        changeView("view-admin");
-        switchAdminTab("users");
-        showToast("ADMIN CONSOLE ACCESS GRANTED", "warning");
-        addLog("ADMIN: Console accessed.");
-      } else if (pass !== null) {
-        showToast("ACCESS DENIED: Invalid Admin Password.", "error");
-        addLog("SECURITY: Invalid Admin access attempt.");
-      }
-    });
-
-    document.getElementById("btn-admin-exit").addEventListener("click", () => {
-      changeView("view-login");
-      showToast("Admin session terminated.", "muted");
-      addLog("ADMIN: Console exited.");
-    });
-
-    document.getElementById("btn-login").addEventListener("click", () => {
-      const username = document.getElementById("inp-user").value.toLowerCase().trim();
-      const password = document.getElementById("inp-pass").value.trim();
-
-      if (!username || !password) {
-        showToast("Please enter both username and password.", "error");
-        return;
-      }
-
-      if (USERS[username] && USERS[username].pass === password) {
-        if (USERS[username].role === "admin") {
-          showToast("Admin login detected. Please use the ADMIN button.", "warning");
-          return;
+        function showView(viewId) {
+            ['view-login', 'view-admin', 'view-quiz'].forEach(id => {
+                const el = document.getElementById(id);
+                if (id === viewId) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
         }
 
-        let storedUser = JSON.parse(localStorage.getItem(CONFIG.STORAGE_PREFIX + username));
-        const currentHash = generateDeviceFingerprint();
-
-        if (storedUser && storedUser.isBlocked) {
-          showToast("ACCOUNT BLOCKED: Contact Administrator.", "error");
-          addLog(`SECURITY: Blocked login attempt by ${username}.`);
-          return;
+        function showToast(msg, type = "primary") {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toast-msg');
+            msgEl.innerText = msg;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        if (!storedUser) {
-          storedUser = { deviceHash: currentHash, score: 0, total: 0, isBlocked: false };
-          localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify(storedUser));
-          showToast("SUCCESS: Account bound to device! Proceeding...", "success");
-          addLog(`SECURITY: New device bound for ${username} (Hash: ${currentHash}).`);
-        } else if (!storedUser.deviceHash) {
-          storedUser.deviceHash = currentHash;
-          localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify(storedUser));
-          showToast("SUCCESS: Device Re-bound.", "success");
-        } else if (storedUser.deviceHash !== currentHash) {
-          showToast("SECURITY VIOLATION: Device mismatch. Access blocked.", "error");
-          addLog(`SECURITY: Login failed for ${username} (Hash Mismatch).`);
-          return;
+        function formatTime(sec) {
+          const m = Math.floor(sec / 60).toString().padStart(2, '0');
+          const s = (sec % 60).toString().padStart(2, '0');
+          return `${m}:${s}`;
         }
 
-        currentUser = { username, ...USERS[username], ...storedUser };
-        document.getElementById("display-username").textContent = currentUser.username.toUpperCase();
+        function disableForm(form) {
+          Array.from(form.elements).forEach(elem => elem.disabled = true);
+          const btn = form.querySelector('button[type="submit"]');
+          if (btn) btn.disabled = true;
+        }
 
-        // For demo, skip quiz logic, show placeholder content
-        // You can plug your quiz init here; for now just change view
-        changeView("view-quiz");
-        showToast(`Welcome, ${username}! Batch loading...`, "primary");
-        addLog(`USER: ${username} logged in successfully.`);
-      } else {
-        showToast("INVALID CREDENTIALS.", "error");
-        addLog(`SECURITY: Login attempt failed for ${username}.`);
-      }
+        function renderScore() {
+          const scoreBoardEl = document.getElementById('scoreboard');
+          if(!scoreBoardEl) return;
+          scoreBoardEl.textContent = `Score: ${score} / ${quizQuestions.length}`;
+        }
 
-      document.getElementById("inp-pass").value = "";
-    });
+        // Switch to next question, if end of questions regenerate quiz set and reset score
+        function nextQuestion() {
+          currentQuestionIndex++;
+          if (currentQuestionIndex >= quizQuestions.length) {
+            generateNewQuiz();
+          }
+          renderQuestion(currentQuestionIndex);
+        }
 
-    document.getElementById("btn-logout").addEventListener("click", logout);
+        // Render question, start 3 minute timer, disable after submit or time up
+        function renderQuestion(index) {
+          const quizDiv = document.getElementById('view-quiz');
+          const q = quizQuestions[index];
 
-    function logout() {
-      if (!currentUser) return;
-      showToast(`Session terminated for ${currentUser.username}.`, "muted");
-      addLog(`USER: ${currentUser.username} logged out.`);
-      currentUser = null;
-      clearInterval(quizState.timerInterval);
-      document.getElementById("quiz-list").innerHTML = "";
-      document.getElementById("display-username").textContent = "Guest";
-      document.getElementById("inp-user").value = "";
-      changeView("view-login");
-    }
+          quizDiv.innerHTML = `
+            <div class="card" style="padding: 24px; max-width: 650px; margin: 0 auto;">
+              <h2 class="text-primary" style="margin-bottom: 12px;">
+                Philippine Nursing Board Practice Question (${index + 1}/${quizQuestions.length})
+              </h2>
+              <p style="font-weight: 600; margin-bottom: 24px;">${q.question}</p>
 
-    /* ==================================================================================
-       7. TIMER & CLOCK (unchanged)
-       ================================================================================== */
+              <form id="quiz-form">
+                ${q.choices.map(choice =>
+                  `<label style="display:block; margin-bottom: 10px; cursor:pointer;">
+                    <input type="radio" name="answer" value="${choice}" required style="margin-right: 8px;"/>
+                    ${choice}
+                  </label>`
+                ).join('')}
+                <button type="submit" class="btn btn-primary" style="margin-top: 16px;">Submit Answer</button>
+              </form>
 
-    function updateClock() {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString("en-US", { hour12: false });
-      document.getElementById("clock").textContent = timeStr;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
+              <div id="quiz-feedback" style="margin-top: 16px; font-size: 0.9rem; line-height: 1.4;"></div>
 
-    /* Initialize device fingerprint on load */
-    generateDeviceFingerprint();
+              <div style="margin-top: 32px; padding: 16px; background: rgba(6, 182, 212, 0.1); border: 1px solid var(--primary); border-radius: 8px;">
+                <strong>STATUS: MONITORING ACTIVE</strong><br>
+                <span style="font-size: 0.8rem">Do not close this window. Admin can revoke access remotely.</span>
+              </div>
 
-    // Expose functions globally for buttons
-    window.switchAdminTab = switchAdminTab;
-    window.resetDevice = resetDevice;
-    window.confirmDelete = confirmDelete;
-    window.toggleBlock = toggleBlock;
-    window.addUser = addUser;
-  </script>
+              <div style="margin-top:20px; font-family: var(--font-mono); font-size: 0.95rem;">
+                Time Remaining: <span id="countdown-timer">03:00</span>
+              </div>
+
+              <div id="scoreboard" style="margin-top:20px; font-weight: 700; color: var(--success); font-family: var(--font-mono);"></div>
+            </div>
+          `;
+
+          const form = document.getElementById('quiz-form');
+          const feedback = document.getElementById('quiz-feedback');
+          const timerEl = document.getElementById('countdown-timer');
+
+          clearInterval(countdownInterval);
+          let timeRemaining = 180;
+          timerEl.textContent = formatTime(timeRemaining);
+
+          countdownInterval = setInterval(() => {
+            timeRemaining--;
+            timerEl.textContent = formatTime(timeRemaining);
+            if (timeRemaining <= 0) {
+              clearInterval(countdownInterval);
+              feedback.innerHTML = `<span class="text-error font-bold">Time's up! The correct answer is: <span class="text-success">${q.answer}</span></span>`;
+              feedback.innerHTML += `<p style="margin-top:8px;">${q.rationale} <br/> <a href="${q.reference}" target="_blank" rel="noopener" style="color: var(--primary);">Source</a></p>`;
+              disableForm(form);
+
+              setTimeout(() => {
+                nextQuestion();
+              }, 10000);
+            }
+          }, 1000);
+
+          form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            clearInterval(countdownInterval);
+
+            const chosen = form.answer.value;
+            disableForm(form);
+
+            if (chosen === q.answer) {
+              score++;
+              feedback.innerHTML = `<span class="text-success font-bold">Correct!</span>`;
+            } else {
+              feedback.innerHTML = `<span class="text-error font-bold">Wrong answer. The correct answer is: ${q.answer}</span>`;
+            }
+
+            feedback.innerHTML += `<p style="margin-top:8px;">${q.rationale} <br/> <a href="${q.reference}" target="_blank" rel="noopener" style="color: var(--primary);">Source</a></p>`;
+            
+            renderScore();
+
+            setTimeout(() => {
+              nextQuestion();
+            }, 15000);
+          });
+
+          renderScore();
+        }
+
+        function renderQuiz() {
+          // If quizQuestions is empty, generate new quiz questions first
+          if(quizQuestions.length === 0) {
+            generateNewQuiz();
+          }
+          renderQuestion(currentQuestionIndex);
+        }
+
+        // AUTH STATE LISTENER
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userRef = doc(db, "users", user.uid);
+
+                if(window.userDocUnsub) window.userDocUnsub();
+                window.userDocUnsub = onSnapshot(userRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const userData = docSnap.data();
+
+                        if (userData.isBlocked) {
+                            document.body.innerHTML = `
+                                <div style="height:100vh; background:black; display:grid; place-items:center; color:red; text-align:center;">
+                                    <h1 style="font-size:3rem;">ACCESS DENIED</h1>
+                                    <p>Your account has been suspended by the administrator.</p>
+                                </div>
+                            `;
+                            setTimeout(() => {
+                                signOut(auth).then(() => window.location.reload());
+                            }, 3000);
+                            return;
+                        }
+
+                        if (userData.role === 'admin') {
+                            showView('view-admin');
+                            document.getElementById('display-username').innerText = "ADMINISTRATOR";
+                            initAdminTable();
+                        } else {
+                            showView('view-quiz');
+                            document.getElementById('display-username').innerText = userData.username;
+                            renderQuiz();
+                        }
+                    } else {
+                        setDoc(userRef, {
+                            username: user.email.split('@')[0],
+                            role: 'user',
+                            isBlocked: false,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                });
+
+            } else {
+                showView('view-login');
+                document.getElementById('display-username').innerText = "Guest";
+            }
+        });
+
+        loginBtn.addEventListener('click', async () => {
+            const user = inpUser.value.trim();
+            const pass = inpPass.value;
+
+            if (!user || !pass) {
+                showToast("Please enter username and password", "warning");
+                return;
+            }
+            const email = user.includes('@') ? user : `${user}@pnle.com`;
+
+            loginBtn.innerText = "AUTHENTICATING...";
+            loginBtn.disabled = true;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                showToast("Login Successful", "success");
+            } catch (error) {
+                console.error(error);
+                showToast("Invalid Credentials or Network Error", "error");
+                loginBtn.innerText = "SECURE LOGIN";
+                loginBtn.disabled = false;
+            }
+        });
+
+        const handleLogout = () => signOut(auth).then(() => window.location.reload());
+        document.getElementById('btn-logout').addEventListener('click', handleLogout);
+        document.getElementById('btn-admin-logout').addEventListener('click', handleLogout);
+
+        function initAdminTable() {
+            const tbody = document.querySelector('#table-users tbody');
+            onSnapshot(collection(db, "users"), (snapshot) => {
+                tbody.innerHTML = "";
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const uid = docSnap.id;
+                    if (data.role === 'admin') return;
+                    const row = document.createElement('tr');
+                    const statusBadge = data.isBlocked 
+                        ? `<span class="text-error font-bold">BLOCKED</span>` 
+                        : `<span class="text-success">ACTIVE</span>`;
+                    const toggleBtn = data.isBlocked
+                        ? `<button class="btn btn-action btn-success" onclick="window.unblockUser('${uid}')">UNBLOCK</button>`
+                        : `<button class="btn btn-action btn-warning" onclick="window.blockUser('${uid}')">BLOCK</button>`;
+                    row.innerHTML = `
+                        <td>
+                            <div class="font-bold">${data.username}</div>
+                            <div class="text-muted" style="font-size:0.75rem">${uid}</div>
+                        </td>
+                        <td>${statusBadge}</td>
+                        <td class="text-mono text-muted" style="font-size:0.7rem">SHA256-ENCRYPTED</td>
+                        <td>
+                            ${toggleBtn}
+                            <button class="btn btn-action btn-danger" onclick="window.deleteUser('${uid}')">RESET</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            });
+        }
+
+        window.blockUser = async (uid) => {
+            if(confirm("Block this user? They will be kicked out immediately.")) {
+                await updateDoc(doc(db, "users", uid), { isBlocked: true });
+                showToast("User Blocked & Session Terminated", "warning");
+            }
+        };
+
+        window.unblockUser = async (uid) => {
+            await updateDoc(doc(db, "users", uid), { isBlocked: false });
+            showToast("User Access Restored", "success");
+        };
+
+        window.deleteUser = async (uid) => {
+            if(confirm("Reset/Delete this user?")) {
+                await updateDoc(doc(db, "users", uid), { isBlocked: true, username: "DELETED_USER" });
+                showToast("User Reset Successful", "error");
+            }
+        };
+
+        // Clock
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB');
+        }, 1000);
+
+    </script>
 </body>
 </html>
-
