@@ -1,1 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PNLE PRO | ENTERPRISE LICENSURE SYSTEM</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  /* Base styles and variables */
+  :root {
+    --bg-input: #1e293b;
+    --bg-panel: #0f172a;
+    --primary: #06b6d4;
+    --primary-hover: #0e94a8;
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --border-color: #334155;
+    --status-green: #22c55e;
+    --status-red: #ef4444;
+    --radius-sm: 6px;
+    --font-main: 'Inter', sans-serif;
+  }
+
+  /* Global */
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: #0f172a;
+    color: var(--text-main);
+    font-family: var(--font-main);
+  }
+
+  .wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 36px;
+    color: var(--text-muted);
+  }
+
+  .brand-logo {
+    font-weight: 700;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--primary);
+  }
+  .brand-logo svg {
+    fill: none;
+    stroke: var(--primary);
+  }
+
+  .status-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--status-green);
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* System status */
+  .system-status {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .text-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Layout */
+  main.grid-layout {
+    display: grid;
+    grid-template-columns: 3fr 1.25fr;
+    gap: 24px;
+  }
+
+  section#main-content > div {
+    background: var(--bg-panel);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--bg-panel);
+    border-radius: var(--radius-sm);
+    padding: 24px;
+    box-sizing: border-box;
+  }
+
+  /* Inputs */
+  .input {
+    width: 100%;
+    background: var(--bg-input);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    padding: 12px 16px;
+    font-size: 1rem;
+    color: var(--text-main);
+  }
+  .input::placeholder {
+    color: var(--text-dim);
+  }
+  .input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 5px var(--primary);
+  }
+
+  /* Labels */
+  .label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  /* Buttons */
+  .btn {
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 12px 18px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border: none;
+    color: #000;
+  }
+  .btn-primary {
+    background-color: var(--primary);
+    color: #000;
+  }
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+  }
+  .btn-secondary {
+    background-color: var(--border-color);
+    color: var(--text-muted);
+  }
+  .btn-secondary:hover {
+    background-color: #475569;
+  }
+  .btn-warning {
+    background-color: #facc15;
+    color: #000;
+  }
+  .btn-warning:hover {
+    background-color: #eab308;
+  }
+  .btn-success {
+    background-color: #22c55e;
+    color: #000;
+  }
+  .btn-success:hover {
+    background-color: #16a34a;
+  }
+  .btn-danger {
+    background-color: var(--status-red);
+    color: #000;
+  }
+  .btn-danger:hover {
+    background-color: #b91c1c;
+  }
+
+  /* Text utilities */
+  .text-primary {
+    color: var(--primary);
+  }
+
+  .text-error {
+    color: var(--status-red);
+  }
+  .text-success {
+    color: var(--status-green);
+  }
+  .text-muted {
+    color: var(--text-muted);
+  }
+  .text-dim {
+    color: var(--text-dim);
+  }
+  .text-xs {
+    font-size: 0.75rem;
+  }
+  .text-sm {
+    font-size: 0.875rem;
+  }
+  .font-bold {
+    font-weight: 700;
+  }
+
+  /* Flex utilities */
+  .flex {
+    display: flex;
+  }
+  .gap-2 {
+    gap: 8px;
+  }
+  .gap-4 {
+    gap: 16px;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .flex-gap {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  /* Tables */
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  table.data-table thead th {
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 16px;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  table.data-table tbody td {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+  }
+  table.data-table tbody tr:hover {
+    background-color: #1e293b;
+  }
+  .btn-action {
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+
+  /* Toast notification */
+  .toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222b3a;
+    color: var(--text-main);
+    padding: 12px 24px;
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    pointer-events: none;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    min-width: 250px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    font-family: var(--font-main);
+  }
+  .toast.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .toast.success {
+    border-left: 4px solid var(--primary);
+  }
+  .toast.error {
+    border-left: 4px solid var(--status-red);
+  }
+  .toast.warning {
+    border-left: 4px solid #facc15;
+  }
+  .toast.primary {
+    border-left: 4px solid var(--primary-hover);
+  }
+  .toast.muted {
+    border-left: 4px solid var(--text-dim);
+  }
+
+  /* Admin Tabs */
+  .admin-tabs {
+    margin: 24px 0 16px;
+  }
+  .tab-btn {
+    padding: 8px 16px;
+    border: none;
+    background: var(--border-color);
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-right: 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .tab-btn.active,
+  .tab-btn:focus-visible {
+    background-color: var(--primary);
+    color: #000;
+  }
+
+  /* Admin header */
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* User add form */
+  #add-user-container {
+    margin-top: 20px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+    max-width: 600px;
+  }
+  #add-user-container h3 {
+    margin-bottom: 8px;
+    color: var(--primary);
+  }
+  #add-user-container .flex-gap {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  #add-user-container .input,
+  #add-user-container select,
+  #add-user-container button {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    background: var(--bg-input);
+    color: var(--text-main);
+    font-size: 1rem;
+    font-family: var(--font-main);
+  }
+  #add-user-container button {
+    background-color: var(--primary);
+    border: none;
+    color: #000;
+    cursor: pointer;
+    font-weight: 700;
+    min-width: 80px;
+    transition: background-color 0.3s;
+  }
+  #add-user-container button:hover {
+    background-color: var(--primary-hover);
+  }
+
+  /* Misc */
+  .hidden {
+    display: none !important;
+  }
+  .fade-in {
+    animation: fadeIn 0.25s ease forwards;
+  }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+</style>
+</head>
+
+<body>
+  <div id="toast" class="toast" aria-live="polite" aria-atomic="true" role="alert">
+    <div id="toast-icon"></div>
+    <div id="toast-msg">Notification Message</div>
+  </div>
+
+  <div class="wrapper">
+    <header class="header flex justify-between items-center" role="banner">
+      <div class="brand-logo">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M12 2L2 7L12 12L22 7L12 2Z"
+            stroke="#06b6d4"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M2 17L12 22L22 17"
+            stroke="#06b6d4"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
+            d="M2 12L12 17L22 12"
+            stroke="#06b6d4"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+        <span>PNLE</span> PRO
+      </div>
+
+      <div class="system-status" aria-label="System status and current time">
+        <span class="flex items-center gap-2">
+          <span class="status-dot" aria-hidden="true"></span> SYSTEM ONLINE
+        </span>
+        <span style="color: var(--border-color)">|</span>
+        <span id="clock" class="text-mono" aria-live="polite" aria-atomic="true" role="timer">00:00:00</span>
+      </div>
+    </header>
+
+    <main class="grid-layout" role="main">
+      <section id="main-content" style="min-height: 500px;">
+        <div id="view-login" class="card fade-in" aria-label="Login section">
+          <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 8px;">Secure Examination Login</h2>
+            <p class="text-muted">
+              Enter your credentials to access the batch assessment system. Security fingerprinting is
+              active.
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="inp-user">Username / License ID</label>
+            <input
+              type="text"
+              id="inp-user"
+              class="input"
+              placeholder="e.g., user1"
+              autocomplete="off"
+              aria-required="true"
+              aria-describedby="user-help"
+            />
+            <small id="user-help" class="text-xs text-muted"
+              >Example: user1 (case insensitive)</small
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="label" for="inp-pass">Password</label>
+            <input
+              type="password"
+              id="inp-pass"
+              class="input"
+              placeholder="••••••••"
+              aria-required="true"
+            />
+          </div>
+
+          <div class="flex gap-4">
+            <button id="btn-login" class="btn btn-primary" style="flex: 2;" type="button">
+              SECURE LOGIN
+            </button>
+            <button id="btn-admin-access" class="btn btn-secondary" style="flex: 1;" type="button">
+              ADMIN
+            </button>
+          </div>
+
+          <div
+            style="
+                    margin-top: 24px;
+                    padding-top: 24px;
+                    border-top: 1px solid var(--border-color);
+                    "
+          >
+            <p class="text-xs text-muted">
+              <strong>DEVICE LOCK PROTOCOL:</strong> Upon first login, your account will be
+              cryptographically bound to this device (Hardware Fingerprint SHA-256). Attempts to login
+              from other devices will be blocked automatically. Contact an administrator for device reset.
+            </p>
+          </div>
+        </div>
+
+        <div id="view-admin" class="card fade-in hidden" aria-label="Admin console">
+          <div class="admin-header">
+            <div>
+              <h2 class="text-primary">Administrator Console</h2>
+              <p class="text-xs text-muted">User Management &amp; Security Logs</p>
+            </div>
+            <button id="btn-admin-exit" class="btn btn-secondary text-xs" type="button">EXIT CONSOLE</button>
+          </div>
+
+          <div class="admin-tabs" role="tablist">
+            <button
+              class="tab-btn active"
+              role="tab"
+              aria-selected="true"
+              aria-controls="tab-users"
+              id="tab-btn-users"
+              onclick="switchAdminTab('users')"
+              type="button"
+            >
+              User Database
+            </button>
+            <button
+              class="tab-btn"
+              role="tab"
+              aria-selected="false"
+              aria-controls="tab-logs"
+              id="tab-btn-logs"
+              onclick="switchAdminTab('logs')"
+              type="button"
+            >
+              Audit Logs
+            </button>
+          </div>
+
+          <div id="tab-users" class="fade-in" role="tabpanel" aria-labelledby="tab-btn-users">
+            <div style="overflow-x: auto;">
+              <table class="data-table" id="table-users" aria-describedby="desc-users-table">
+                <caption id="desc-users-table" class="text-muted text-sm" style="padding-bottom:8px">
+                  List of Users with device bindings and status.
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Binding / Status</th>
+                    <th scope="col">Device Hash</th>
+                    <th scope="col" style="min-width: 250px;">Controls</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+
+            <!-- ADD USER FORM -->
+            <div id="add-user-container" aria-label="Add new user account">
+              <h3>Add New User</h3>
+              <div class="flex-gap">
+                <input id="newUser" class="input" type="text" placeholder="Username (e.g. user4)" autocomplete="off" />
+                <input id="newPass" class="input" type="password" placeholder="Password" />
+                <select id="newRole" class="input" aria-label="Select user role">
+                  <option value="user" selected>User</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <button type="button" onclick="addUser()">Add</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="tab-logs" class="hidden fade-in" role="tabpanel" aria-labelledby="tab-btn-logs">
+            <div style="max-height: 300px; overflow-y: auto;" id="log-container" tabindex="0">
+              <div class="log-entry">System initialized...</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-quiz" class="hidden" aria-label="Quiz section">
+          <div id="quiz-list" class="fade-in" aria-live="polite" aria-atomic="false"></div>
+
+          <div
+            id="quiz-loader"
+            class="card hidden"
+            style="text-align: center; padding: 48px;"
+            aria-busy="true"
+            aria-live="assertive"
+          >
+            <div class="loader"></div>
+            <h3 style="margin-top: 16px;">Synchronizing New Batch...</h3>
+            <p class="text-muted">Please wait while we fetch randomized questions.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="sidebar fade-in" aria-label="Session info and instructions" tabindex="0">
+        <div class="card" style="margin-bottom: 24px;">
+          <div class="flex items-center gap-4" style="margin-bottom: 16px;">
+            <div
+              style="
+                              width: 48px;
+                              height: 48px;
+                              background: var(--bg-input);
+                              border-radius: 50%;
+                              display: grid;
+                              place-items: center;
+                              color: var(--primary);
+                          "
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div>
+              <div class="text-xs text-muted">CURRENT SESSION</div>
+              <div id="display-username" class="font-bold text-primary" aria-live="polite" aria-atomic="true"
+                >Guest</div
+              >
+            </div>
+          </div>
+
+          <div
+            style="
+                            border-top: 1px solid var(--border-color);
+                            padding-top: 16px;
+                            margin-top: 16px;
+                        "
+            aria-label="Session details"
+          >
+            <div class="flex justify-between text-sm" style="margin-bottom: 8px;">
+              <span class="text-muted">Status</span>
+              <span class="text-success font-bold">Active</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-muted">Batch ID</span>
+              <span class="text-mono" id="batch-id" aria-live="polite" aria-atomic="true">
+                #0000
+              </span>
+            </div>
+          </div>
+
+          <button id="btn-logout" class="btn btn-secondary" style="width: 100%; margin-top: 24px;" type="button">
+            SECURE LOGOUT
+          </button>
+        </div>
+
+        <div class="card" aria-label="Instructions">
+          <h4 style="margin-bottom: 12px; color: var(--text-muted);">Instructions</h4>
+          <ul
+            style="list-style: none; padding: 0; font-size: 0.85rem; color: var(--text-dim);"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <li style="margin-bottom: 10px; display: flex; gap: 8px;">
+              <span class="text-primary">•</span> Questions rotate every 5 minutes.
+            </li>
+            <li style="margin-bottom: 10px; display: flex; gap: 8px;">
+              <span class="text-primary">•</span> Answers are locked once submitted.
+            </li>
+            <li style="margin-bottom: 10px; display: flex; gap: 8px;">
+              <span class="text-primary">•</span> Do not refresh the page during a batch.
+            </li>
+            <li style="display: flex; gap: 8px;">
+              <span class="text-primary">•</span> Admin intervention required for device reset.
+            </li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <div class="footer-hud hidden" id="hud" aria-label="Performance HUD">
+    <div class="hud-content">
+      <div class="hud-stat" aria-live="polite" aria-atomic="true">
+        <span class="text-muted text-sm" style="margin-right: 10px;">PERFORMANCE</span>
+        <span class="text-primary" id="score-display">0</span>
+        <span class="text-dim">/</span>
+        <span id="total-display">0</span>
+      </div>
+
+      <div class="hud-stat">
+        <span class="timer-badge text-mono" id="batch-timer">NEXT SET: 05:00</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ==================================================================================
+       1. DATABASE MOCKUP & CONFIGURATION
+       ================================================================================== */
+    const CONFIG = {
+      BATCH_TIME_MS: 5 * 60 * 1000, // 5 Minutes
+      QUESTIONS_PER_BATCH: 5, // Number of Qs per load
+      ADMIN_PASS: "admin123", // Demo Password
+      STORAGE_PREFIX: "PNLE_ENT_",
+    };
+
+    // USERS mock DB
+    let USERS = {
+      user1: { pass: "pass1", role: "user" },
+      user2: { pass: "pass2", role: "user" },
+      user3: { pass: "pass3", role: "user" },
+      admin: { pass: "admin", role: "admin" },
+    };
+
+    /* ==================================================================================
+       2. GLOBAL STATE
+       ================================================================================== */
+    let currentUser = null;
+    let currentView = "login";
+    let quizState = {
+      currentBatch: [],
+      batchStartTime: 0,
+      totalCorrect: 0,
+      totalQuestions: 0,
+      timerInterval: null,
+    };
+    let userDeviceFingerprint = null;
+
+    /* ==================================================================================
+       3. UTILITY FUNCTIONS
+       ================================================================================== */
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toast-msg");
+      toastMsg.textContent = message;
+      toast.className = `toast show ${type}`;
+      clearTimeout(toast._hideTimeout);
+      toast._hideTimeout = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3000);
+    }
+
+    function changeView(viewId) {
+      document.querySelectorAll("section#main-content > div").forEach((el) => {
+        el.classList.add("hidden");
+      });
+      document.getElementById(viewId).classList.remove("hidden");
+      currentView = viewId.replace("view-", "");
+      if (currentView === "quiz") {
+        document.getElementById("hud").classList.remove("hidden");
+      } else {
+        document.getElementById("hud").classList.add("hidden");
+      }
+    }
+
+    function generateDeviceFingerprint() {
+      const userAgent = navigator.userAgent;
+      const screenRes = `${screen.width}x${screen.height}`;
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const mockHash = CryptoJS.SHA256(userAgent + screenRes + timezone)
+        .toString()
+        .substring(0, 10)
+        .toUpperCase();
+      userDeviceFingerprint = mockHash;
+      return mockHash;
+    }
+
+    const CryptoJS = {
+      SHA256: (str) => {
+        let hash = 0;
+        if (str.length === 0) return "0";
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i);
+          hash = (hash << 5) - hash + char;
+          hash |= 0;
+        }
+        return hash.toString(16).padStart(8, "0");
+      },
+    };
+
+    /* ==================================================================================
+       4. ADMIN CONTROL FUNCTIONS
+       ================================================================================== */
+
+    function switchAdminTab(tabName) {
+      document.querySelectorAll(".admin-tabs .tab-btn").forEach((btn) => {
+        btn.classList.remove("active");
+        btn.setAttribute("aria-selected", "false");
+      });
+      document.querySelectorAll('#view-admin > div[id^="tab-"]').forEach((tab) => {
+        tab.classList.add("hidden");
+      });
+
+      const btnEl = document.querySelector(`.admin-tabs .tab-btn[onclick*="'${tabName}'"]`);
+      btnEl.classList.add("active");
+      btnEl.setAttribute("aria-selected", "true");
+      document.getElementById(`tab-${tabName}`).classList.remove("hidden");
+
+      if (tabName === "users") {
+        renderUserTable();
+      }
+    }
+
+    function renderUserTable() {
+      const userTableBody = document.querySelector("#table-users tbody");
+      userTableBody.innerHTML = "";
+
+      Object.keys(USERS).forEach((username) => {
+        const user = USERS[username];
+        const storedUser = JSON.parse(localStorage.getItem(CONFIG.STORAGE_PREFIX + username));
+        const deviceHash = storedUser ? storedUser.deviceHash || "N/A" : "N/A";
+
+        let statusBadge = `<span class="text-muted text-sm">UNBOUND</span>`;
+        if (storedUser && storedUser.isBlocked) {
+          statusBadge = `<span class="text-error font-bold text-sm">BLOCKED</span>`;
+        } else if (storedUser && storedUser.deviceHash) {
+          statusBadge = `<span class="text-success font-bold text-sm">BOUND</span>`;
+        }
+
+        const isAdmin = user.role === "admin";
+        const usernameDisplay = isAdmin
+          ? `<span class="text-primary font-bold">${username} (Admin)</span>`
+          : username;
+
+        let controlsHtml = "";
+        if (isAdmin) {
+          controlsHtml = `<span class="text-dim text-xs">System Admin</span>`;
+        } else {
+          const isBlocked = storedUser && storedUser.isBlocked;
+
+          controlsHtml += `<button class="btn btn-secondary btn-action" onclick="resetDevice('${username}')" ${
+            storedUser && storedUser.deviceHash ? "" : "disabled"
+          } type="button">Reset ID</button>`;
+
+          if (isBlocked) {
+            controlsHtml += `<button class="btn btn-success btn-action" onclick="toggleBlock('${username}', false)" type="button">Unblock</button>`;
+          } else {
+            controlsHtml += `<button class="btn btn-warning btn-action" onclick="toggleBlock('${username}', true)" type="button">Block</button>`;
+          }
+
+          controlsHtml += `<button class="btn btn-danger btn-action" onclick="confirmDelete('${username}')" type="button">Delete</button>`;
+        }
+
+        const row = userTableBody.insertRow();
+        row.setAttribute("data-username", username);
+        row.innerHTML = `
+            <td>${usernameDisplay}</td>
+            <td>${statusBadge}</td>
+            <td class="text-mono text-xs">${deviceHash}</td>
+            <td>${controlsHtml}</td>
+        `;
+      });
+    }
+
+    function resetDevice(username) {
+      let stored = JSON.parse(localStorage.getItem(CONFIG.STORAGE_PREFIX + username)) || {};
+      delete stored.deviceHash;
+      localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify(stored));
+      showToast(`Device binding reset for ${username}.`, "warning");
+      renderUserTable();
+      addLog(`ADMIN: Reset device binding for ${username}.`);
+    }
+
+    function toggleBlock(username, blockStatus) {
+      let stored = JSON.parse(localStorage.getItem(CONFIG.STORAGE_PREFIX + username));
+      if (!stored) stored = {};
+
+      stored.isBlocked = blockStatus;
+      localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify(stored));
+
+      const msg = blockStatus ? "BLOCKED" : "UNBLOCKED";
+      const type = blockStatus ? "error" : "success";
+
+      showToast(`User ${username} has been ${msg}.`, type);
+      renderUserTable();
+      addLog(`ADMIN: User ${username} was ${msg}.`);
+    }
+
+    function confirmDelete(username) {
+      if (
+        confirm(
+          `CRITICAL WARNING:\n\nAre you sure you want to PERMANENTLY DELETE user "${username}"?\n\nThis will remove credentials and exam logs. This cannot be undone.`
+        )
+      ) {
+        deleteUser(username);
+      }
+    }
+
+    function deleteUser(username) {
+      if (USERS.hasOwnProperty(username)) {
+        delete USERS[username];
+        localStorage.removeItem(CONFIG.STORAGE_PREFIX + username);
+        showToast(`User account "${username}" DELETED.`, "error");
+        addLog(`ADMIN: Deleted user account "${username}".`);
+        renderUserTable();
+      } else {
+        showToast("Error: User not found.", "error");
+      }
+    }
+
+    function addUser() {
+      const usernameInput = document.getElementById("newUser");
+      const passwordInput = document.getElementById("newPass");
+      const roleSelect = document.getElementById("newRole");
+
+      const username = usernameInput.value.toLowerCase().trim();
+      const password = passwordInput.value.trim();
+      const role = roleSelect.value;
+
+      if (!username || !password) {
+        showToast("Please enter both username and password.", "error");
+        return;
+      }
+      if (USERS[username]) {
+        showToast(`User '${username}' already exists.`, "error");
+        return;
+      }
+
+      USERS[username] = { pass: password, role: role };
+      localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify({}));
+
+      showToast(`User '${username}' added successfully.`, "success");
+      addLog(`ADMIN: Added new user '${username}' with role '${role}'.`);
+
+      usernameInput.value = "";
+      passwordInput.value = "";
+      roleSelect.value = "user";
+
+      renderUserTable();
+    }
+
+    function addLog(message) {
+      const logContainer = document.getElementById("log-container");
+      const now = new Date();
+      const timeStr = now.toTimeString().split(" ")[0];
+      const newLog = document.createElement("div");
+      newLog.className = "log-entry";
+      newLog.textContent = `[${timeStr}] ${message}`;
+      logContainer.prepend(newLog);
+      if (logContainer.children.length > 50) logContainer.removeChild(logContainer.lastChild);
+    }
+
+    /* ==================================================================================
+       5. AUTHENTICATION & SESSION
+       ================================================================================== */
+
+    document.getElementById("btn-admin-access").addEventListener("click", () => {
+      const pass = prompt("Enter Admin Console Password:");
+      if (pass === CONFIG.ADMIN_PASS) {
+        changeView("view-admin");
+        switchAdminTab("users");
+        showToast("ADMIN CONSOLE ACCESS GRANTED", "warning");
+        addLog("ADMIN: Console accessed.");
+      } else if (pass !== null) {
+        showToast("ACCESS DENIED: Invalid Admin Password.", "error");
+        addLog("SECURITY: Invalid Admin access attempt.");
+      }
+    });
+
+    document.getElementById("btn-admin-exit").addEventListener("click", () => {
+      changeView("view-login");
+      showToast("Admin session terminated.", "muted");
+      addLog("ADMIN: Console exited.");
+    });
+
+    document.getElementById("btn-login").addEventListener("click", () => {
+      const username = document.getElementById("inp-user").value.toLowerCase().trim();
+      const password = document.getElementById("inp-pass").value.trim();
+
+      if (!username || !password) {
+        showToast("Please enter both username and password.", "error");
+        return;
+      }
+
+      if (USERS[username] && USERS[username].pass === password) {
+        if (USERS[username].role === "admin") {
+          showToast("Admin login detected. Please use the ADMIN button.", "warning");
+          return;
+        }
+
+        let storedUser = JSON.parse(localStorage.getItem(CONFIG.STORAGE_PREFIX + username));
+        const currentHash = generateDeviceFingerprint();
+
+        if (storedUser && storedUser.isBlocked) {
+          showToast("ACCOUNT BLOCKED: Contact Administrator.", "error");
+          addLog(`SECURITY: Blocked login attempt by ${username}.`);
+          return;
+        }
+
+        if (!storedUser) {
+          storedUser = { deviceHash: currentHash, score: 0, total: 0, isBlocked: false };
+          localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify(storedUser));
+          showToast("SUCCESS: Account bound to device! Proceeding...", "success");
+          addLog(`SECURITY: New device bound for ${username} (Hash: ${currentHash}).`);
+        } else if (!storedUser.deviceHash) {
+          storedUser.deviceHash = currentHash;
+          localStorage.setItem(CONFIG.STORAGE_PREFIX + username, JSON.stringify(storedUser));
+          showToast("SUCCESS: Device Re-bound.", "success");
+        } else if (storedUser.deviceHash !== currentHash) {
+          showToast("SECURITY VIOLATION: Device mismatch. Access blocked.", "error");
+          addLog(`SECURITY: Login failed for ${username} (Hash Mismatch).`);
+          return;
+        }
+
+        currentUser = { username, ...USERS[username], ...storedUser };
+        document.getElementById("display-username").textContent = currentUser.username.toUpperCase();
+
+        // For demo, skip quiz logic, show placeholder content
+        // You can plug your quiz init here; for now just change view
+        changeView("view-quiz");
+        showToast(`Welcome, ${username}! Batch loading...`, "primary");
+        addLog(`USER: ${username} logged in successfully.`);
+      } else {
+        showToast("INVALID CREDENTIALS.", "error");
+        addLog(`SECURITY: Login attempt failed for ${username}.`);
+      }
+
+      document.getElementById("inp-pass").value = "";
+    });
+
+    document.getElementById("btn-logout").addEventListener("click", logout);
+
+    function logout() {
+      if (!currentUser) return;
+      showToast(`Session terminated for ${currentUser.username}.`, "muted");
+      addLog(`USER: ${currentUser.username} logged out.`);
+      currentUser = null;
+      clearInterval(quizState.timerInterval);
+      document.getElementById("quiz-list").innerHTML = "";
+      document.getElementById("display-username").textContent = "Guest";
+      document.getElementById("inp-user").value = "";
+      changeView("view-login");
+    }
+
+    /* ==================================================================================
+       7. TIMER & CLOCK (unchanged)
+       ================================================================================== */
+
+    function updateClock() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString("en-US", { hour12: false });
+      document.getElementById("clock").textContent = timeStr;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    /* Initialize device fingerprint on load */
+    generateDeviceFingerprint();
+
+    // Expose functions globally for buttons
+    window.switchAdminTab = switchAdminTab;
+    window.resetDevice = resetDevice;
+    window.confirmDelete = confirmDelete;
+    window.toggleBlock = toggleBlock;
+    window.addUser = addUser;
+  </script>
+</body>
+</html>
 
