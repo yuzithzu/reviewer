@@ -26,7 +26,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--bg-body); color: var(--text-main); font-family: var(--font-main); height: 100vh; overflow: hidden; }
         
-        .wrapper { display: flex; height: 100vh; width: 100%; }
+        .wrapper { display: flex; height: 100vh; width: 100%; position: relative; }
         .hidden { display: none !important; }
         
         /* --- UTILITIES --- */
@@ -37,17 +37,18 @@
         .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-dim); }
         .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--error); border: 1px solid transparent; }
         .btn-danger:hover { background: rgba(239, 68, 68, 0.2); border-color: var(--error); }
+        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
         
         .input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border-color); color: white; border-radius: var(--radius-sm); margin-bottom: 15px; font-family: inherit; }
         .input:focus { outline: 2px solid var(--primary); border-color: transparent; }
 
-        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; overflow: hidden;}
         
         .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- SIDEBAR --- */
-        .sidebar { width: 280px; background: var(--bg-card); border-right: 1px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; z-index: 20; }
+        .sidebar { width: 280px; background: var(--bg-card); border-right: 1px solid var(--border-color); padding: 25px; display: flex; flex-direction: column; z-index: 20; transition: transform 0.3s ease; }
         .brand { font-family: var(--font-mono); font-weight: 800; font-size: 1.5rem; margin-bottom: 40px; color: white; display: flex; align-items: center; gap: 10px;}
         
         .nav-item { padding: 14px 15px; border-radius: var(--radius-sm); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; transition: 0.2s; font-weight: 500; }
@@ -58,56 +59,147 @@
         /* --- MAIN CONTENT & HEADER --- */
         .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
         
-        .top-bar { height: 70px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 30px; background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(10px); z-index: 10; flex-shrink: 0; }
+        .top-bar { height: 70px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: rgba(9, 9, 11, 0.95); z-index: 10; flex-shrink: 0; }
         .user-profile { display: flex; align-items: center; gap: 10px; }
         .avatar { width: 35px; height: 35px; background: var(--primary); border-radius: 50%; color: black; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
 
-        .content-area { flex: 1; padding: 30px; overflow-y: auto; overflow-x: hidden; }
+        .menu-btn { display: none; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; margin-right: 15px; }
+
+        .content-area { flex: 1; padding: 20px; overflow-y: auto; overflow-x: hidden; position: relative; z-index: 1; }
 
         /* --- DASHBOARD STATS --- */
-        .dash-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .stat-card { display: flex; flex-direction: column; justify-content: space-between; height: 140px; position: relative; overflow: hidden; padding: 20px; }
-        .stat-val { font-size: 2.5rem; font-weight: 800; margin-top: 5px; font-family: var(--font-mono); }
-        .stat-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .stat-icon { position: absolute; right: -10px; bottom: -10px; font-size: 6rem; opacity: 0.05; transform: rotate(-10deg); }
+        .stats-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; flex-wrap: wrap; gap: 10px;}
+        .stat-grid-detailed { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-bottom: 30px; }
+        .mini-stat-card { background: var(--bg-input); padding: 15px; border-radius: var(--radius-sm); border: 1px solid transparent; }
+        .mini-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 5px; }
+        .mini-val { font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); }
+        .mini-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; }
 
-        /* --- TOPIC SELECTION CARDS --- */
-        .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-        .topic-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 25px; cursor: pointer; transition: 0.3s; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 180px; }
-        .topic-card:hover { border-color: var(--primary); background: var(--primary-dim); transform: translateY(-5px); }
-        .topic-card i { font-size: 3rem; margin-bottom: 15px; color: var(--text-muted); transition: 0.3s; }
+        /* --- TOPIC SELECTION --- */
+        .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
+        .topic-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 25px; cursor: pointer; transition: 0.3s; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px; }
+        .topic-card:hover { border-color: var(--primary); background: var(--primary-dim); transform: translateY(-3px); }
+        .topic-card i { font-size: 2.5rem; margin-bottom: 10px; color: var(--text-muted); transition: 0.3s; }
         .topic-card:hover i { color: var(--primary); }
-        .topic-title { font-weight: 700; font-size: 1.1rem; }
-        .topic-sub { font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; }
 
-        /* --- QUIZ STYLES --- */
-        .choice-label { display:flex; align-items: center; padding:18px; background:var(--bg-input); margin-bottom:12px; border-radius:8px; cursor:pointer; border:1px solid transparent; transition:0.2s; font-size: 0.95rem; line-height: 1.5; }
+        /* --- QUIZ & TIMER STYLES (NEW DESIGN) --- */
+        .timer-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-input);
+            padding: 8px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .timer-badge.warning { border-color: var(--error); color: var(--error); }
+
+        .progress-line-container {
+            width: 100%;
+            height: 4px;
+            background: var(--bg-input);
+            border-radius: 2px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        .progress-line-bar {
+            height: 100%;
+            background: var(--primary);
+            transition: width 1s linear;
+        }
+
+        .choice-label { 
+            display:flex; 
+            align-items: flex-start; 
+            padding:15px; 
+            background:var(--bg-input); 
+            margin-bottom:10px; 
+            border-radius:8px; 
+            cursor:pointer; 
+            border:1px solid transparent; 
+            transition:0.2s; 
+            font-size: 0.95rem; 
+            line-height: 1.5; 
+        }
         .choice-label:hover { border-color: var(--primary); background: rgba(255,255,255,0.05); }
+        .choice-letter {
+             min-width:25px; height:25px; 
+             border:2px solid var(--border-color); 
+             border-radius:50%; 
+             margin-right:15px; 
+             display:flex; 
+             align-items:center; 
+             justify-content:center; 
+             font-size:0.7rem; 
+             color:var(--text-muted); 
+             font-weight:bold;
+        }
         .choice-correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
+        .choice-correct .choice-letter { background: var(--success); color: var(--bg-card); border-color: var(--success); }
         .choice-wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
+        .choice-wrong .choice-letter { background: var(--error); color: var(--bg-card); border-color: var(--error); }
         
-        .source-link { color: var(--primary); text-decoration: none; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; padding: 5px 10px; border: 1px solid var(--border-color); border-radius: 4px; transition: 0.2s; }
-        .source-link:hover { background: var(--primary-dim); border-color: var(--primary); }
+        /* RATIONALE & NEXT ACTION AREA */
+        .rationale-area {
+            margin-top:20px; 
+            padding:20px; 
+            background:rgba(6, 182, 212, 0.08); 
+            border-radius: var(--radius-sm);
+            border-left: 4px solid var(--primary);
+            animation: fadeIn 0.5s ease;
+        }
+        .source-link a {
+            color: var(--primary);
+            text-decoration: underline;
+            word-break: break-all; /* Ensures long links don't break layout */
+        }
+        
+        .next-action-bar {
+            margin-top: 20px;
+            padding: 15px;
+            background: var(--bg-input);
+            border-radius: var(--radius-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .next-timer-bar {
+            height: 6px;
+            width: 100%;
+            background: #3f3f46;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .next-timer-fill {
+            height: 100%;
+            width: 100%;
+            background: var(--success);
+            transition: width 1s linear;
+        }
 
-        /* --- OVERLAY --- */
-        .next-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(9, 9, 11, 0.95); backdrop-filter: blur(8px); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 50; border-radius: var(--radius-md); }
-        .countdown-circle { width: 80px; height: 80px; border-radius: 50%; border: 4px solid var(--primary); display: flex; justify-content: center; align-items: center; font-size: 2.5rem; font-weight: 800; color: var(--primary); margin: 20px 0; font-family: var(--font-mono); }
+        /* --- MOBILE SIDEBAR LOGIC --- */
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 15; }
 
         @media (max-width: 900px) { 
-            .sidebar { display: none; } 
-            .dash-grid { grid-template-columns: 1fr; }
-            .top-bar { padding: 0 15px; }
+            .sidebar { position: fixed; left: -280px; height: 100%; box-shadow: 4px 0 20px rgba(0,0,0,0.5); }
+            .sidebar.active { transform: translateX(280px); left: 0; }
+            .menu-btn { display: block; }
+            .sidebar-overlay.active { display: block; }
             .content-area { padding: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="view-auth" class="wrapper fade-in" style="justify-content: center; align-items: center; position: fixed; z-index: 100;">
-        <div class="card" style="width: 100%; max-width: 420px; text-align: center;">
+    <div id="view-auth" class="wrapper fade-in" style="justify-content: center; align-items: center; position: fixed; z-index: 100; background: var(--bg-body);">
+        <div class="card" style="width: 100%; max-width: 400px; text-align: center;">
             <div style="margin-bottom: 30px;">
                 <h1 style="color: var(--primary); font-family: var(--font-mono); font-size: 2.5rem;">PNLE PRO</h1>
-                <p style="color: var(--text-muted); letter-spacing: 1px;">NURSING LICENSURE REVIEWER</p>
+                <p style="color: var(--text-muted);">REVIEWER SYSTEM</p>
             </div>
             <div style="text-align: left;">
                 <label style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; display: block;">Email</label>
@@ -122,31 +214,36 @@
 
     <div id="app-layout" class="wrapper hidden">
         
-        <aside class="sidebar">
+        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+        <aside class="sidebar" id="main-sidebar">
             <div class="brand"><i class='bx bxs-capsule' style='color:var(--primary)'></i> PNLE PRO</div>
             <nav>
-                <div class="nav-item active" onclick="window.navTo('dashboard')">
+                <div class="nav-item active" onclick="window.navTo('dashboard'); toggleSidebar()">
                     <i class='bx bxs-dashboard'></i> Dashboard
                 </div>
-                <div class="nav-item" onclick="window.navTo('topics')">
+                <div class="nav-item" onclick="window.navTo('topics'); toggleSidebar()">
                     <i class='bx bxs-brain'></i> Start Review
                 </div>
             </nav>
             <div style="flex:1"></div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); text-align: center;">v2.0.1 Stable</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-align: center;">v4.0 Fixed Stats & Timer</div>
         </aside>
 
         <main class="main-content">
             
             <header class="top-bar">
-                <div style="font-weight: 700; font-size: 1.1rem;" id="page-title">Dashboard</div>
+                <div style="display: flex; align-items: center;">
+                    <button class="menu-btn" onclick="toggleSidebar()"><i class='bx bx-menu'></i></button>
+                    <div style="font-weight: 700; font-size: 1.1rem;" id="page-title">Dashboard</div>
+                </div>
+                
                 <div class="user-profile">
                     <div style="text-align: right; margin-right: 10px; display: none; @media(min-width:600px){display:block;}">
                         <div style="font-size: 0.85rem; font-weight: 600;" id="user-name">Nurse</div>
-                        <div style="font-size: 0.7rem; color: var(--success);">● Online</div>
                     </div>
                     <div class="avatar">RN</div>
-                    <button class="btn btn-danger" id="btn-logout" style="padding: 8px 12px; margin-left: 10px;" title="Logout">
+                    <button class="btn btn-danger" id="btn-logout" style="padding: 8px 12px; margin-left: 10px;">
                         <i class='bx bx-power-off'></i>
                     </button>
                 </div>
@@ -154,87 +251,81 @@
 
             <div class="content-area">
                 
+                <div id="view-loading" class="hidden" style="text-align:center; padding-top:100px;">
+                    <div class="loading-spinner" style="border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                    <p style="color:var(--text-muted); margin-top: 20px;">Fetching data...</p>
+                </div>
+
                 <div id="view-dashboard" class="fade-in">
-                    <h2 style="margin-bottom: 20px;">Performance Overview</h2>
-                    <div class="dash-grid">
-                        <div class="card stat-card">
-                            <div class="stat-label">Total Answered</div>
-                            <div class="stat-val" id="stat-total">0</div>
-                            <i class='bx bx-file stat-icon'></i>
+                    <div class="stats-header">
+                        <div>
+                            <h2 style="margin-bottom: 5px;">Performance</h2>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Questions Available: <strong id="stat-db-count" style="color:white">--</strong></p>
                         </div>
-                        <div class="card stat-card">
-                            <div class="stat-label">Accuracy Rate</div>
-                            <div class="stat-val" style="color:var(--primary)"><span id="stat-acc">0</span>%</div>
-                            <i class='bx bx-target-lock stat-icon'></i>
+                        <button class="btn btn-outline btn-sm" onclick="window.resetStats()" style="color:var(--error); border-color:var(--border-color)">
+                            <i class='bx bx-reset'></i> Reset
+                        </button>
+                    </div>
+
+                    <div class="stat-grid-detailed">
+                        <div class="mini-stat-card" style="border-left: 2px solid var(--primary);">
+                            <div class="mini-title">OVERALL</div>
+                            <div class="mini-val" id="stat-ALL-score">0%</div>
+                            <div class="mini-sub"><span id="stat-ALL-ans">0</span> Answered</div>
                         </div>
-                        <div class="card stat-card">
-                            <div class="stat-label">Strongest Area</div>
-                            <div class="stat-val" style="font-size: 1.8rem; color:var(--success)" id="stat-strong">--</div>
-                            <i class='bx bx-trophy stat-icon'></i>
+                        <div class="mini-stat-card">
+                            <div class="mini-title">NP1 (Community)</div>
+                            <div class="mini-val" id="stat-NP1-score">0%</div>
+                        </div>
+                        <div class="mini-stat-card">
+                            <div class="mini-title">NP2 (MCN)</div>
+                            <div class="mini-val" id="stat-NP2-score">0%</div>
+                        </div>
+                        <div class="mini-stat-card">
+                            <div class="mini-title">NP3 (MedSurg 1)</div>
+                            <div class="mini-val" id="stat-NP3-score">0%</div>
+                        </div>
+                        <div class="mini-stat-card">
+                            <div class="mini-title">NP4 (MedSurg 2)</div>
+                            <div class="mini-val" id="stat-NP4-score">0%</div>
+                        </div>
+                        <div class="mini-stat-card">
+                            <div class="mini-title">NP5 (Psych)</div>
+                            <div class="mini-val" id="stat-NP5-score">0%</div>
                         </div>
                     </div>
 
-                    <div class="card" style="border-left: 4px solid var(--primary);">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div>
-                                <h3>Ready to review?</h3>
-                                <p style="color:var(--text-muted); margin-top:5px;">Continue your progress in Nursing Practice areas.</p>
-                            </div>
-                            <button class="btn btn-primary" onclick="window.navTo('topics')">START QUIZ <i class='bx bx-right-arrow-alt'></i></button>
+                    <div class="card" style="border-left: 4px solid var(--primary); display: flex; flex-direction: column; align-items: flex-start; gap: 15px;">
+                        <div>
+                            <h3>Ready to review?</h3>
+                            <p style="color:var(--text-muted); margin-top:5px;">Fetch random questions from all NP categories.</p>
                         </div>
+                        <button class="btn btn-primary" onclick="window.navTo('topics')">START QUIZ <i class='bx bx-right-arrow-alt'></i></button>
                     </div>
                 </div>
 
                 <div id="view-topics" class="hidden fade-in">
                     <h2 style="margin-bottom: 10px;">Select Topic</h2>
-                    <p style="color:var(--text-muted); margin-bottom: 30px;">Choose a specific Nursing Practice area.</p>
-
                     <div class="topic-grid">
-                        <div class="topic-card" onclick="window.selectTopic('NP1')">
-                            <i class='bx bxs-buildings'></i>
-                            <div class="topic-title">NP1</div>
-                            <div class="topic-sub">Community & Foundation</div>
-                        </div>
-                        <div class="topic-card" onclick="window.selectTopic('NP2')">
-                            <i class='bx bxs-baby-carriage'></i>
-                            <div class="topic-title">NP2</div>
-                            <div class="topic-sub">Maternal & Child</div>
-                        </div>
-                        <div class="topic-card" onclick="window.selectTopic('NP3')">
-                            <i class='bx bxs-heart'></i>
-                            <div class="topic-title">NP3</div>
-                            <div class="topic-sub">MedSurg I</div>
-                        </div>
-                        <div class="topic-card" onclick="window.selectTopic('NP4')">
-                            <i class='bx bxs-ambulance'></i>
-                            <div class="topic-title">NP4</div>
-                            <div class="topic-sub">MedSurg II & Emergency</div>
-                        </div>
-                        <div class="topic-card" onclick="window.selectTopic('NP5')">
-                            <i class='bx bxs-brain'></i>
-                            <div class="topic-title">NP5</div>
-                            <div class="topic-sub">Psych & Mental Health</div>
-                        </div>
-                        <div class="topic-card" onclick="window.selectTopic('ALL')" style="border-color: var(--primary);">
-                            <i class='bx bxs-layer' style="color:var(--primary)"></i>
-                            <div class="topic-title">ALL TOPICS</div>
-                            <div class="topic-sub">Comprehensive Review</div>
-                        </div>
+                        <div class="topic-card" onclick="window.selectTopic('NP1')"><i class='bx bxs-buildings'></i><div class="topic-title">NP1</div></div>
+                        <div class="topic-card" onclick="window.selectTopic('NP2')"><i class='bx bxs-baby-carriage'></i><div class="topic-title">NP2</div></div>
+                        <div class="topic-card" onclick="window.selectTopic('NP3')"><i class='bx bxs-heart'></i><div class="topic-title">NP3</div></div>
+                        <div class="topic-card" onclick="window.selectTopic('NP4')"><i class='bx bxs-ambulance'></i><div class="topic-title">NP4</div></div>
+                        <div class="topic-card" onclick="window.selectTopic('NP5')"><i class='bx bxs-brain'></i><div class="topic-title">NP5</div></div>
+                        <div class="topic-card" onclick="window.selectTopic('ALL')" style="border-color: var(--primary);"><i class='bx bxs-layer' style="color:var(--primary)"></i><div class="topic-title">ALL</div></div>
                     </div>
                 </div>
 
                 <div id="view-count" class="hidden fade-in">
                     <button class="btn btn-outline" onclick="window.navTo('topics')" style="margin-bottom: 20px;"><i class='bx bx-arrow-back'></i> Back</button>
-                    
                     <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
-                        <h2 style="margin-bottom: 10px;">Number of Questions</h2>
-                        <p style="color:var(--text-muted); margin-bottom: 30px;">Selected Topic: <span id="lbl-topic" style="color:var(--primary); font-weight:bold">--</span></p>
-                        
+                        <h2 style="margin-bottom: 10px;">How many questions?</h2>
+                        <p style="color:var(--text-muted); margin-bottom: 30px;">Topic: <span id="lbl-topic" style="color:var(--primary); font-weight:bold">--</span></p>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <button class="btn btn-outline" onclick="window.startQuiz(10)">10 Questions</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(30)">30 Questions</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(50)">50 Questions</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(100)">100 Questions</button>
+                            <button class="btn btn-outline" onclick="window.startQuiz(10)">10 Qs</button>
+                            <button class="btn btn-outline" onclick="window.startQuiz(30)">30 Qs</button>
+                            <button class="btn btn-outline" onclick="window.startQuiz(50)">50 Qs</button>
+                            <button class="btn btn-outline" onclick="window.startQuiz(100)">100 Qs</button>
                         </div>
                     </div>
                 </div>
@@ -247,56 +338,54 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // CONFIG (Replace with your actual keys)
         const firebaseConfig = {
             apiKey: "AIzaSyCmd6vmuXUPslLJf0w7I518C8UIaO2DoAA",
             authDomain: "pnle-class.firebaseapp.com",
             projectId: "pnle-class",
             storageBucket: "pnle-class.firebasestorage.app",
             messagingSenderId: "1024768890816",
-            appId: "1:1024768890816:web:28bf31d5ae67c679feda25"
+            appId: "1:1024768890816:web:28bf31d5ae67c679feda25",
+            measurementId: "G-JLS5ZGFP3J"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- ENHANCED DATA WITH LINKS & CATEGORIES ---
-        const seedData = [
-            { category: "NP1", question: "In the Philippine Nursing Act of 2002 (RA 9173), what is the minimum age for PNLE applicants?", choices: ["18 years old", "21 years old", "20 years old", "25 years old"], answer: "18 years old", rationale: "According to RA 9173 Section 13(b), applicants must be at least 18 years of age.", link: "https://www.prc.gov.ph/sites/default/files/Nursing%20Law%20RA%209173.pdf" },
-            { category: "NP1", question: "Who is the current regulatory body for Nurses in the Philippines?", choices: ["PRC-BON", "DOH", "PNA", "ANSAP"], answer: "PRC-BON", rationale: "The Board of Nursing under the Professional Regulation Commission regulates the practice.", link: "https://www.prc.gov.ph/nursing" },
-            
-            { category: "NP2", question: "Which maneuver is used to determine fetal position?", choices: ["Leopold's Maneuver", "Heimlich Maneuver", "Valsalva Maneuver", "Credé's Maneuver"], answer: "Leopold's Maneuver", rationale: "Leopold's maneuvers are a common and systematic way to determine the position of a fetus inside the woman's uterus.", link: "https://www.ncbi.nlm.nih.gov/books/NBK560817/" },
-            { category: "NP2", question: "What is the expected normal Fetal Heart Rate (FHR)?", choices: ["110-160 bpm", "80-100 bpm", "160-200 bpm", "60-90 bpm"], answer: "110-160 bpm", rationale: "The baseline FHR is normally set between 110 and 160 beats per minute.", link: "https://emedicine.medscape.com/article/262624-overview" },
-
-            { category: "NP3", question: "A patient with COPD has a stimulus for respiration based on?", choices: ["Low Oxygen Levels (Hypoxic Drive)", "High Carbon Dioxide", "Low pH", "High Oxygen"], answer: "Low Oxygen Levels (Hypoxic Drive)", rationale: "In chronic hypercapnia (COPD), the central chemoreceptors reset, making low O2 the primary drive.", link: "https://www.ncbi.nlm.nih.gov/books/NBK482437/" },
-            { category: "NP3", question: "Which electrolyte imbalance causes peaked T-waves on ECG?", choices: ["Hyperkalemia", "Hypokalemia", "Hypernatremia", "Hypocalcemia"], answer: "Hyperkalemia", rationale: "Tall, peaked T waves are an early sign of hyperkalemia.", link: "https://litfl.com/hyperkalaemia-ecg-library/" },
-
-            { category: "NP4", question: "In a burn patient, what is the primary indicator of adequate fluid resuscitation?", choices: ["Urine Output", "Blood Pressure", "Heart Rate", "Skin Turgor"], answer: "Urine Output", rationale: "Urine output (0.5-1ml/kg/hr) is the most reliable indicator of fluid resuscitation.", link: "https://www.ncbi.nlm.nih.gov/books/NBK539773/" },
-            
-            { category: "NP5", question: "Which is a positive symptom of Schizophrenia?", choices: ["Hallucinations", "Apathy", "Anhedonia", "Social Withdrawal"], answer: "Hallucinations", rationale: "Positive symptoms add to reality (hallucinations, delusions). Negative symptoms take away (apathy).", link: "https://www.psychiatry.org/patients-families/schizophrenia/what-is-schizophrenia" }
-        ];
-
-        // --- STATE ---
-        let questions = [];
-        let filteredSet = [];
+        let questions = []; 
         let currentSet = [];
         let currentIndex = 0;
         let score = 0;
         let selectedTopic = "ALL";
-        let timer, nextTimer;
-        let stats = { total: 0, correct: 0, strongest: "NP1" };
+        
+        // Timers
+        let questionTimerInterval;
+        let autoNextTimeout;
+        const TIME_LIMIT = 20; // Time to answer
+        const AUTO_NEXT_TIME = 8; // Faster transition
+        let timeLeft = TIME_LIMIT;
 
-        // --- AUTH & NAV ---
+        window.toggleSidebar = () => {
+            document.getElementById('main-sidebar').classList.toggle('active');
+            document.querySelector('.sidebar-overlay').classList.toggle('active');
+        }
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('view-auth').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
                 document.getElementById('user-name').innerText = user.email.split('@')[0];
-                await initData();
+                
+                document.getElementById('view-dashboard').classList.add('hidden');
+                document.getElementById('view-loading').classList.remove('hidden');
+                
+                await fetchQuestionsFromDB();
+                await fetchUserStats(user.uid);
+
+                document.getElementById('view-loading').classList.add('hidden');
                 window.navTo('dashboard');
             } else {
                 document.getElementById('view-auth').classList.remove('hidden');
@@ -304,231 +393,325 @@
             }
         });
 
-        document.getElementById('btn-login').addEventListener('click', async () => {
-            const e = document.getElementById('inp-email').value;
-            const p = document.getElementById('inp-pass').value;
+        async function fetchQuestionsFromDB() {
+            const collections = ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'];
+            questions = [];
+            
             try {
-                await setPersistence(auth, browserSessionPersistence);
-                await signInWithEmailAndPassword(auth, e, p);
-            } catch(err) {
-                document.getElementById('login-msg').innerText = "Access Denied. Check credentials.";
+                const promises = collections.map(async (colName) => {
+                    const snap = await getDocs(collection(db, colName));
+                    snap.forEach(doc => {
+                        const data = doc.data();
+                        
+                        let formattedChoices = [];
+                        if (data.choices) {
+                            if (Array.isArray(data.choices)) {
+                                formattedChoices = data.choices.map((txt, idx) => ({ 
+                                    id: String.fromCharCode(65 + idx), text: txt 
+                                }));
+                            } else if (typeof data.choices === 'object') {
+                                Object.keys(data.choices).sort().forEach(key => {
+                                    formattedChoices.push({ id: key, text: data.choices[key] });
+                                });
+                            }
+                        }
+
+                        // FIXED: Robust check for source link using common field names
+                        const link = data.sourceLink || data.source || data.Source || data.link || "";
+
+                        if (formattedChoices.length > 0 && data.question) {
+                            questions.push({ 
+                                id: doc.id, 
+                                category: colName, 
+                                question: data.question,
+                                answer: data.answer,
+                                choices: formattedChoices,
+                                rationale: data.rationale || "No rationale provided.",
+                                sourceLink: link
+                            });
+                        }
+                    });
+                });
+
+                await Promise.all(promises);
+                document.getElementById('stat-db-count').innerText = questions.length;
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
             }
-        });
-        
-        // LOGOUT FUNCTION
-        document.getElementById('btn-logout').addEventListener('click', () => {
-            if(confirm("Are you sure you want to logout?")) signOut(auth);
-        });
+        }
+
+        async function fetchUserStats(uid) {
+            try {
+                const docRef = doc(db, "users", uid);
+                const docSnap = await getDoc(docRef);
+                // FIXED: Handle cases where stats might be undefined
+                const stats = docSnap.exists() && docSnap.data().stats ? docSnap.data().stats : {};
+                
+                const allStats = stats['ALL'] || { correct: 0, total: 0 };
+                document.getElementById('stat-ALL-ans').innerText = allStats.total;
+                // Update Overall Score Label
+                const allPct = allStats.total === 0 ? 0 : Math.round((allStats.correct / allStats.total) * 100);
+                document.getElementById('stat-ALL-score').innerText = allPct + "%";
+                document.getElementById('stat-ALL-score').style.color = allPct >= 60 ? "var(--success)" : "var(--text-main)";
+
+                ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'].forEach(k => {
+                    const s = stats[k] || { correct:0, total:0 };
+                    const pct = s.total === 0 ? 0 : Math.round((s.correct / s.total) * 100);
+                    const elScore = document.getElementById(`stat-${k}-score`);
+                    if(elScore) {
+                        elScore.innerText = pct + "%";
+                        elScore.style.color = pct >= 60 ? "var(--success)" : "var(--text-main)";
+                    }
+                });
+            } catch (e) { console.error("Stats Error:", e); }
+        }
+
+        async function saveProgress() {
+            if(!auth.currentUser) return;
+            const uid = auth.currentUser.uid;
+            const userRef = doc(db, "users", uid);
+            
+            // FIXED: Ensure stats are updated using dot notation for specific fields
+            const updateData = {};
+            updateData[`stats.ALL.correct`] = increment(score);
+            updateData[`stats.ALL.total`] = increment(currentSet.length);
+
+            if(selectedTopic !== "ALL") {
+                updateData[`stats.${selectedTopic}.correct`] = increment(score);
+                updateData[`stats.${selectedTopic}.total`] = increment(currentSet.length);
+            }
+
+            await setDoc(userRef, updateData, { merge: true });
+        }
 
         window.navTo = (page) => {
-            // Hide all content views
+            clearInterval(questionTimerInterval);
+            clearInterval(autoNextTimeout);
+
             ['view-dashboard', 'view-topics', 'view-count', 'view-quiz'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
-            
-            // Remove active nav
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-            const title = document.getElementById('page-title');
 
             if(page === 'dashboard') {
                 document.getElementById('view-dashboard').classList.remove('hidden');
                 document.querySelectorAll('.nav-item')[0].classList.add('active');
-                title.innerText = "Dashboard";
-                updateStatsUI();
-            } 
-            else if (page === 'topics') {
+                document.getElementById('page-title').innerText = "Dashboard";
+                
+                // FIXED: Always refresh stats when entering dashboard
+                if(auth.currentUser) fetchUserStats(auth.currentUser.uid);
+
+            } else if (page === 'topics') {
                 document.getElementById('view-topics').classList.remove('hidden');
                 document.querySelectorAll('.nav-item')[1].classList.add('active');
-                title.innerText = "Topic Selection";
+                document.getElementById('page-title').innerText = "Select Topic";
             }
         };
 
-        // --- DATA & LOGIC ---
-        async function initData() {
-            // Simulate Data Fetch. In real app, fetch from Firestore
-            // Multiply seed data to have enough for "100 questions" demo
-            let temp = [];
-            for(let i=0; i<15; i++) temp = temp.concat(seedData);
-            questions = temp;
-        }
-
-        window.selectTopic = (topic) => {
-            selectedTopic = topic;
-            document.getElementById('lbl-topic').innerText = topic === 'ALL' ? "Comprehensive Review" : topic;
-            
-            // Show Count Selection
+        window.selectTopic = (t) => {
+            selectedTopic = t;
+            document.getElementById('lbl-topic').innerText = t;
             document.getElementById('view-topics').classList.add('hidden');
             document.getElementById('view-count').classList.remove('hidden');
-            document.getElementById('page-title').innerText = "Quiz Settings";
         };
 
         window.startQuiz = (n) => {
-            // Filter
-            if (selectedTopic === "ALL") {
-                filteredSet = [...questions];
-            } else {
-                filteredSet = questions.filter(q => q.category === selectedTopic);
-            }
-
-            if(filteredSet.length === 0) return alert("No questions found for this topic yet.");
-
-            // Shuffle & Slice
-            currentSet = filteredSet.sort(() => 0.5 - Math.random()).slice(0, n);
+            let filtered = selectedTopic === "ALL" ? questions : questions.filter(q => q.category === selectedTopic);
+            if(filtered.length === 0) return alert("No questions found for this topic.");
             
+            currentSet = filtered.sort(() => 0.5 - Math.random()).slice(0, n);
             currentIndex = 0;
             score = 0;
-
+            
             document.getElementById('view-count').classList.add('hidden');
             document.getElementById('view-quiz').classList.remove('hidden');
-            document.getElementById('page-title').innerText = "Review in Progress";
-            
             renderQuestion();
         };
 
         function renderQuestion() {
-            clearInterval(nextTimer);
-            if (currentIndex >= currentSet.length) return endQuiz();
+            clearInterval(questionTimerInterval);
+            clearInterval(autoNextTimeout);
+            
+            if (currentIndex >= currentSet.length) {
+                finishQuiz();
+                return;
+            }
 
             const q = currentSet[currentIndex];
-            if(!q.shuffledChoices) q.shuffledChoices = [...q.choices].sort(()=>0.5-Math.random());
+            if (!q.choices || q.choices.length === 0) { window.nextQ(); return; }
 
-            const view = document.getElementById('view-quiz');
-            view.innerHTML = `
-                <div class="card fade-in" style="max-width:800px; margin:0 auto; position:relative; min-height:450px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:20px; color:var(--text-muted); font-size:0.85rem; border-bottom:1px solid var(--border-color); padding-bottom:15px;">
-                        <span style="font-family:var(--font-mono)">Q ${currentIndex+1} / ${currentSet.length} <span style="background:var(--bg-input); padding:2px 6px; border-radius:4px; margin-left:8px; font-size:0.7rem;">${q.category}</span></span>
-                        <span>SCORE: <span style="color:var(--primary); font-weight:bold">${score}</span></span>
+            const choicesHTML = q.choices.map(c => `
+                <div class="choice-label" id="choice-${c.id}" onclick="window.checkAns('${c.id}', this)">
+                    <div class="choice-letter">${c.id}</div>
+                    <div>${c.text}</div>
+                </div>
+            `).join('');
+
+            // FIXED: New UI Layout (Timer Badge top right, Clean Next Timer)
+            document.getElementById('view-quiz').innerHTML = `
+                <div class="card fade-in" style="max-width:800px; margin:0 auto; padding-bottom: 50px;">
+                    
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                        <span style="color:var(--text-muted); font-size:0.9rem;">
+                            Question <span style="color:white; font-weight:bold;">${currentIndex+1}</span> / ${currentSet.length}
+                        </span>
+                        
+                        <div class="timer-badge" id="timer-badge">
+                            <i class='bx bx-time-five'></i>
+                            <span id="timer-text">${TIME_LIMIT}s</span>
+                        </div>
                     </div>
 
-                    <h2 style="margin-bottom:25px; font-size: 1.25rem; line-height: 1.6;">${q.question}</h2>
+                    <div style="margin-bottom:15px;">
+                        <span style="font-size: 0.75rem; background: var(--bg-input); padding: 4px 8px; border-radius: 4px; color: var(--primary); font-weight:bold;">${q.category}</span>
+                    </div>
 
-                    <div id="choices-box">
-                        ${q.shuffledChoices.map(c => `
-                            <div class="choice-label" onclick="window.submitAnswer('${c}', this)">
-                                <div style="width:20px; height:20px; border:2px solid var(--border-color); border-radius:50%; margin-right:15px; display:flex; align-items:center; justify-content:center;" class="radio-ui"></div>
-                                ${c}
+                    <h3 style="margin-bottom:25px; font-size:1.1rem; line-height:1.6">${q.question}</h3>
+                    
+                    <div id="choices-box">${choicesHTML}</div>
+
+                    <div id="result-area" class="hidden"> 
+                        <div class="rationale-area">
+                            <h4 style="color:var(--primary); margin-bottom:8px; display:flex; align-items:center; gap:8px;"><i class='bx bxs-bulb'></i> Rationale</h4>
+                            <p style="font-size:0.95rem; line-height:1.6; color:#e4e4e7;">${q.rationale}</p>
+                            
+                            <div class="source-link" style="margin-top:15px; font-size:0.85rem; color:var(--text-muted);">
+                                ${q.sourceLink ? 
+                                    `Reference: <a href="${q.sourceLink}" target="_blank">${q.sourceLink}</a>` : 
+                                    `Reference: Not provided.`
+                                }
                             </div>
-                        `).join('')}
+                        </div>
+                        
+                        <div class="next-action-bar">
+                            <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted);">
+                                <span>Next question in...</span>
+                                <span style="font-weight:bold; color:var(--success);"><span id="next-countdown">${AUTO_NEXT_TIME}</span>s</span>
+                            </div>
+                            <div class="next-timer-bar"><div class="next-timer-fill" id="next-timer-fill"></div></div>
+                            <button class="btn btn-primary" style="width:100%; margin-top:5px;" onclick="window.nextQ()">
+                                NEXT QUESTION <i class='bx bx-right-arrow-alt'></i>
+                            </button>
+                        </div>
                     </div>
-
-                    <div id="rationale-area" class="hidden fade-in" style="margin-top:25px; padding:20px; background:rgba(6, 182, 212, 0.05); border-left:3px solid var(--primary); border-radius:0 8px 8px 0;">
-                        <h4 style="color:var(--primary); margin-bottom:8px;">Rationale</h4>
-                        <p style="font-size:0.9rem; color:var(--text-main); margin-bottom:10px;">${q.rationale}</p>
-                        <a href="${q.link}" target="_blank" class="source-link"><i class='bx bx-link-external'></i> Source Reference</a>
-                    </div>
-
-                    <div style="margin-top:20px; text-align:right;">
-                        <span style="font-size:0.8rem; color:var(--text-muted); margin-right:10px;">TIME LEFT</span>
-                        <span id="q-timer" style="font-family:var(--font-mono); font-weight:bold; font-size:1.2rem;">60</span>
-                    </div>
-
-                    <div id="overlay-area"></div>
                 </div>
             `;
 
-            runTimer();
+            startQuestionTimer();
         }
 
-        window.submitAnswer = (ans, el) => {
-            if(document.getElementById('overlay-area').innerHTML !== "") return;
-            clearInterval(timer);
-
-            const q = currentSet[currentIndex];
-            const isCorrect = (ans === q.answer);
+        function startQuestionTimer() {
+            timeLeft = TIME_LIMIT;
+            const badge = document.getElementById('timer-badge');
+            const txt = document.getElementById('timer-text');
             
-            // UI Feedback
-            const all = document.querySelectorAll('.choice-label');
-            all.forEach(div => {
-                div.style.cursor = 'default';
-                div.onclick = null;
-                const txt = div.innerText.trim();
-                
-                if(txt === q.answer) {
-                    div.classList.add('choice-correct');
-                    div.querySelector('.radio-ui').style.background = 'var(--success)';
-                    div.querySelector('.radio-ui').style.borderColor = 'var(--success)';
-                } else if(txt === ans) {
-                    div.classList.add('choice-wrong');
-                    div.querySelector('.radio-ui').style.background = 'var(--error)';
-                    div.querySelector('.radio-ui').style.borderColor = 'var(--error)';
-                } else {
-                    div.style.opacity = '0.5';
+            badge.classList.remove('warning');
+            txt.innerText = TIME_LIMIT + "s";
+            
+            questionTimerInterval = setInterval(() => {
+                timeLeft--;
+                txt.innerText = timeLeft + "s";
+
+                if (timeLeft <= 5) badge.classList.add('warning');
+
+                if (timeLeft <= 0) {
+                    clearInterval(questionTimerInterval);
+                    window.checkAns(null, null);
                 }
-            });
+            }, 1000);
+        }
 
-            if(isCorrect) score++;
+        window.checkAns = (selectedId, el) => {
+            clearInterval(questionTimerInterval);
+            const q = currentSet[currentIndex];
+            const container = document.getElementById('choices-box');
+            
+            if(container.style.pointerEvents === 'none') return;
+            container.style.pointerEvents = 'none'; 
+            
+            document.getElementById('timer-text').innerText = "DONE";
+            const correctId = q.answer;
 
-            // Show Rationale
-            document.getElementById('rationale-area').classList.remove('hidden');
+            if(document.getElementById(`choice-${correctId}`)) {
+                document.getElementById(`choice-${correctId}`).classList.add('choice-correct');
+            }
 
-            // Countdown Overlay
-            setTimeout(() => {
-                document.getElementById('overlay-area').innerHTML = `
-                    <div class="next-overlay fade-in">
-                        <div style="font-size:0.8rem; letter-spacing:2px; color:var(--text-muted); text-transform:uppercase;">Next Question In</div>
-                        <div class="countdown-circle" id="cd-num">5</div>
-                        <button class="btn btn-primary" onclick="window.nextQ()">SKIP TIMER</button>
-                    </div>
-                `;
+            if (selectedId === correctId) {
+                score++;
+            } else if (selectedId && el) {
+                el.classList.add('choice-wrong');
+            }
+
+            // FIXED: Reveal Result Area
+            document.getElementById('result-area').classList.remove('hidden');
+
+            // FIXED: Start Sleek Next Timer
+            let nextTime = AUTO_NEXT_TIME;
+            const fill = document.getElementById('next-timer-fill');
+            const count = document.getElementById('next-countdown');
+            
+            autoNextTimeout = setInterval(() => {
+                nextTime--;
+                count.innerText = nextTime;
+                fill.style.width = (nextTime / AUTO_NEXT_TIME * 100) + "%";
                 
-                let w = 5;
-                const cEl = document.getElementById('cd-num');
-                nextTimer = setInterval(() => {
-                    w--;
-                    if(cEl) cEl.innerText = w;
-                    if(w <= 0) window.nextQ();
-                }, 1000);
-            }, 3000); // Give 3 seconds to read rationale
+                if(nextTime <= 0) {
+                    clearInterval(autoNextTimeout);
+                    window.nextQ();
+                }
+            }, 1000);
         };
 
         window.nextQ = () => {
-            clearInterval(nextTimer);
+            clearInterval(autoNextTimeout); 
             currentIndex++;
             renderQuestion();
         };
 
-        function endQuiz() {
-            // Update Mock Stats
-            stats.total += currentSet.length;
-            stats.correct += score;
+        async function finishQuiz() {
+            document.getElementById('view-quiz').innerHTML = `
+                <div class="card" style="text-align:center; max-width:500px; margin:40px auto; padding: 50px;">
+                    <div class="loading-spinner" style="border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 20px auto;"></div>
+                    <p>Saving results...</p>
+                </div>
+            `;
+            
+            await saveProgress(); 
             
             const pct = Math.round((score/currentSet.length)*100);
-            let msg = pct >= 60 ? "PASSED! 🎉" : "Keep Reviewing 📚";
-            let col = pct >= 60 ? "var(--success)" : "var(--error)";
+            let msg = "Keep studying!";
+            let color = "var(--error)";
+            if(pct >= 60) { msg = "Good job!"; color = "var(--warning)"; }
+            if(pct >= 80) { msg = "Excellent!"; color = "var(--success)"; }
 
             document.getElementById('view-quiz').innerHTML = `
                 <div class="card fade-in" style="text-align:center; max-width:500px; margin:40px auto;">
-                    <h3 style="color:var(--text-muted); margin-bottom:10px;">RESULT</h3>
-                    <h1 style="color:${col}; margin-bottom:5px;">${msg}</h1>
-                    <h1 style="font-size:4rem; margin:10px 0;">${score}<span style="font-size:2rem; color:var(--text-muted)">/${currentSet.length}</span></h1>
-                    
-                    <div style="display:flex; gap:10px; justify-content:center; margin-top:30px;">
-                        <button class="btn btn-outline" onclick="window.navTo('topics')">NEW TOPIC</button>
-                        <button class="btn btn-primary" onclick="window.navTo('dashboard')">DASHBOARD</button>
-                    </div>
+                    <h1 style="color:${color}; font-size: 4rem; font-family: var(--font-mono); margin-bottom: 10px;">${pct}%</h1>
+                    <h2 style="margin-bottom: 10px;">${msg}</h2>
+                    <p style="margin-bottom:30px; color: var(--text-muted);">You got ${score} out of ${currentSet.length} correct.</p>
+                    <button class="btn btn-primary" style="width:100%" onclick="window.navTo('dashboard')">Back to Dashboard</button>
                 </div>
             `;
         }
 
-        function runTimer() {
-            let t = 60;
-            const el = document.getElementById('q-timer');
-            timer = setInterval(() => {
-                t--;
-                if(el) {
-                    el.innerText = t;
-                    if(t < 10) el.style.color = "var(--error)";
-                }
-                if(t <= 0) window.submitAnswer(null, null);
-            }, 1000);
+        document.getElementById('btn-login').addEventListener('click', () => {
+            signInWithEmailAndPassword(auth, document.getElementById('inp-email').value, document.getElementById('inp-pass').value)
+            .catch(e => { document.getElementById('login-msg').innerText = "Login failed: " + e.message; });
+        });
+        
+        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+        
+        window.resetStats = async () => {
+            if(confirm("Are you sure you want to reset all performance stats?")) {
+                await setDoc(doc(db, "users", auth.currentUser.uid), { stats: {} }, { merge: true });
+                window.location.reload();
+            }
         }
 
-        function updateStatsUI() {
-            document.getElementById('stat-total').innerText = stats.total;
-            const acc = stats.total === 0 ? 0 : Math.round((stats.correct/stats.total)*100);
-            document.getElementById('stat-acc').innerText = acc;
-        }
+        const style = document.createElement('style');
+        style.innerHTML = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+        document.head.appendChild(style);
 
     </script>
 </body>
