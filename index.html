@@ -13,15 +13,23 @@
 
     <style>
         :root {
-            --bg-body: #09090b; --bg-card: #18181b; --bg-input: #27272a; --bg-hover: #27272a;
+            --bg-body: #09090b; 
+            --bg-card: #18181b; 
+            --bg-input: #27272a; 
+            --bg-overlay: rgba(9, 9, 11, 0.95);
             --border-color: #3f3f46; 
-            --text-main: #f4f4f5; --text-muted: #a1a1aa;
-            --primary: #06b6d4; --primary-hover: #0891b2; --primary-dim: rgba(6, 182, 212, 0.1);
-            --success: #22c55e; --success-bg: rgba(34, 197, 94, 0.1);
-            --error: #ef4444; --error-bg: rgba(239, 68, 68, 0.15);
+            --text-main: #f4f4f5; 
+            --text-muted: #a1a1aa;
+            --primary: #06b6d4; 
+            --primary-hover: #0891b2; 
+            --primary-dim: rgba(6, 182, 212, 0.15);
+            --success: #22c55e; 
+            --error: #ef4444; 
             --warning: #f59e0b;
-            --radius-sm: 8px; --radius-md: 16px;
-            --font-main: "Inter", sans-serif; --font-mono: "JetBrains Mono", monospace;
+            --radius-sm: 8px; 
+            --radius-md: 16px;
+            --font-main: "Inter", sans-serif; 
+            --font-mono: "JetBrains Mono", monospace;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background-color: var(--bg-body); color: var(--text-main); font-family: var(--font-main); height: 100vh; overflow: hidden; }
@@ -30,19 +38,20 @@
         .hidden { display: none !important; }
         
         /* --- UTILITIES --- */
-        .btn { padding: 12px 20px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; border: none; font-family: inherit; margin: 5px 0; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem;}
+        .btn { padding: 12px 24px; border-radius: var(--radius-sm); font-weight: 600; cursor: pointer; border: none; font-family: inherit; margin: 5px 0; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem;}
         .btn-primary { background: var(--primary); color: #000; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
         .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4); }
         .btn-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-muted); }
         .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-dim); }
         .btn-danger { background: rgba(239, 68, 68, 0.1); color: var(--error); border: 1px solid transparent; }
         .btn-danger:hover { background: rgba(239, 68, 68, 0.2); border-color: var(--error); }
-        .btn-sm { padding: 6px 12px; font-size: 0.8rem; }
-        
+        .btn-ghost { background: transparent; color: var(--text-muted); border: none; }
+        .btn-ghost:hover { color: white; background: var(--bg-input); }
+
         .input { width: 100%; padding: 14px; background: var(--bg-input); border: 1px solid var(--border-color); color: white; border-radius: var(--radius-sm); margin-bottom: 15px; font-family: inherit; }
         .input:focus { outline: 2px solid var(--primary); border-color: transparent; }
 
-        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; overflow: hidden;}
+        .card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); position: relative; overflow: hidden;}
         
         .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -52,138 +61,122 @@
         .brand { font-family: var(--font-mono); font-weight: 800; font-size: 1.5rem; margin-bottom: 40px; color: white; display: flex; align-items: center; gap: 10px;}
         
         .nav-item { padding: 14px 15px; border-radius: var(--radius-sm); color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 12px; margin-bottom: 8px; transition: 0.2s; font-weight: 500; }
-        .nav-item:hover { background: var(--bg-hover); color: white; }
+        .nav-item:hover { background: var(--bg-input); color: white; }
         .nav-item.active { background: var(--primary-dim); color: var(--primary); font-weight: 700; border-left: 3px solid var(--primary); }
         .nav-item i { font-size: 1.3rem; }
 
         /* --- MAIN CONTENT & HEADER --- */
         .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
-        
         .top-bar { height: 70px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; padding: 0 20px; background: rgba(9, 9, 11, 0.95); z-index: 10; flex-shrink: 0; }
         .user-profile { display: flex; align-items: center; gap: 10px; }
         .avatar { width: 35px; height: 35px; background: var(--primary); border-radius: 50%; color: black; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
-
         .menu-btn { display: none; background: none; border: none; color: white; font-size: 1.8rem; cursor: pointer; margin-right: 15px; }
-
-        .content-area { flex: 1; padding: 20px; overflow-y: auto; overflow-x: hidden; position: relative; z-index: 1; }
+        /* Adjusted content area for scrolling */
+        .content-area { flex: 1; padding: 20px; overflow-y: auto; overflow-x: hidden; position: relative; z-index: 1; scroll-behavior: smooth; }
 
         /* --- DASHBOARD STATS --- */
         .stats-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; flex-wrap: wrap; gap: 10px;}
-        .stat-grid-detailed { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; margin-bottom: 30px; }
-        .mini-stat-card { background: var(--bg-input); padding: 15px; border-radius: var(--radius-sm); border: 1px solid transparent; }
-        .mini-title { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; margin-bottom: 5px; }
-        .mini-val { font-size: 1.5rem; font-weight: 800; font-family: var(--font-mono); }
-        .mini-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 5px; }
-
-        /* --- TOPIC SELECTION --- */
-        .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; }
-        .topic-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm); padding: 25px; cursor: pointer; transition: 0.3s; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 160px; }
-        .topic-card:hover { border-color: var(--primary); background: var(--primary-dim); transform: translateY(-3px); }
-        .topic-card i { font-size: 2.5rem; margin-bottom: 10px; color: var(--text-muted); transition: 0.3s; }
-        .topic-card:hover i { color: var(--primary); }
-
-        /* --- QUIZ & TIMER STYLES (NEW DESIGN) --- */
-        .timer-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--bg-input);
-            padding: 8px 12px;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            font-family: var(--font-mono);
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: var(--text-muted);
+        .stat-grid-enhanced { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        
+        .stat-card-visual {
+            background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+            padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            position: relative; overflow: hidden;
         }
-        .timer-badge.warning { border-color: var(--error); color: var(--error); }
+        .stat-card-visual:hover { border-color: var(--primary); background: var(--bg-input); }
 
-        .progress-line-container {
-            width: 100%;
-            height: 4px;
-            background: var(--bg-input);
-            border-radius: 2px;
-            margin-top: 5px;
-            overflow: hidden;
+        .progress-circle {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: conic-gradient(var(--color) calc(var(--percent) * 1%), var(--bg-input) 0);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 15px; position: relative;
         }
-        .progress-line-bar {
-            height: 100%;
-            background: var(--primary);
-            transition: width 1s linear;
+        .progress-circle::before {
+            content: ""; position: absolute; width: 85px; height: 85px; background: var(--bg-card); border-radius: 50%;
         }
+        .progress-circle span { position: relative; z-index: 2; font-weight: 800; font-size: 1.4rem; font-family: var(--font-mono); }
+        .stat-label { font-weight: 700; color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2px;}
+        .stat-sub { font-size: 0.75rem; color: var(--text-muted); opacity: 0.7; }
 
+        /* --- QUIZ UI --- */
         .choice-label { 
-            display:flex; 
-            align-items: flex-start; 
-            padding:15px; 
-            background:var(--bg-input); 
-            margin-bottom:10px; 
-            border-radius:8px; 
-            cursor:pointer; 
-            border:1px solid transparent; 
-            transition:0.2s; 
-            font-size: 0.95rem; 
-            line-height: 1.5; 
+            display:flex; align-items: flex-start; padding:18px; background:var(--bg-input); 
+            margin-bottom:12px; border-radius:8px; cursor:pointer; border:1px solid transparent; 
+            transition:0.2s; font-size: 1rem; line-height: 1.5; 
         }
         .choice-label:hover { border-color: var(--primary); background: rgba(255,255,255,0.05); }
         .choice-letter {
-             min-width:25px; height:25px; 
-             border:2px solid var(--border-color); 
-             border-radius:50%; 
-             margin-right:15px; 
-             display:flex; 
-             align-items:center; 
-             justify-content:center; 
-             font-size:0.7rem; 
-             color:var(--text-muted); 
-             font-weight:bold;
+             min-width:28px; height:28px; border:2px solid var(--border-color); border-radius:50%; margin-right:15px; 
+             display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:var(--text-muted); font-weight:bold; flex-shrink: 0;
         }
-        .choice-correct { border-color: var(--success); background: var(--success-bg); color: var(--success); }
-        .choice-correct .choice-letter { background: var(--success); color: var(--bg-card); border-color: var(--success); }
-        .choice-wrong { border-color: var(--error); background: var(--error-bg); color: var(--error); }
-        .choice-wrong .choice-letter { background: var(--error); color: var(--bg-card); border-color: var(--error); }
+        .choice-correct { border-color: var(--success) !important; background: rgba(34, 197, 94, 0.1) !important; color: var(--success); }
+        .choice-correct .choice-letter { background: var(--success); color: black; border-color: var(--success); }
+        .choice-wrong { border-color: var(--error) !important; background: rgba(239, 68, 68, 0.15) !important; color: var(--error); }
+        .choice-wrong .choice-letter { background: var(--error); color: white; border-color: var(--error); }
+
+        /* --- TIMER OVERLAY (FIXED POSITIONING & IMPROVED) --- */
+        #next-overlay {
+            position: fixed; /* FIXED so it floats above content */
+            bottom: 20px; /* Stick to bottom of screen */
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 90%; 
+            max-width: 400px;
+            background: rgba(24, 24, 27, 0.98); 
+            border: 1px solid var(--primary); 
+            border-radius: var(--radius-md);
+            padding: 15px 20px;
+            box-shadow: 0 -5px 30px rgba(0,0,0,0.9);
+            z-index: 1000; /* Super high Z-index */
+            display: flex; flex-direction: row; /* Horizontal layout for compact view */
+            align-items: center; justify-content: space-between;
+            gap: 20px;
+            animation: slideUp 0.3s ease-out;
+        }
+        @media(max-width: 600px) {
+            #next-overlay { width: 95%; bottom: 10px; padding: 10px 15px;}
+        }
+
+        @keyframes slideUp { from { transform: translate(-50%, 50px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
         
-        /* RATIONALE & NEXT ACTION AREA */
-        .rationale-area {
-            margin-top:20px; 
-            padding:20px; 
-            background:rgba(6, 182, 212, 0.08); 
-            border-radius: var(--radius-sm);
+        .timer-circle-container { position: relative; width: 50px; height: 50px; } /* Smaller timer */
+        .timer-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .timer-circle-bg { fill: none; stroke: var(--bg-input); stroke-width: 5; }
+        .timer-circle-fg { fill: none; stroke: var(--primary); stroke-width: 5; stroke-dasharray: 226; stroke-dashoffset: 0; transition: stroke-dashoffset 1s linear; stroke-linecap: round;}
+        .timer-count-text {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-size: 1.2rem; font-weight: 800; color: white; font-family: var(--font-mono);
+        }
+
+        /* --- RATIONALE STYLING IMPROVED --- */
+        .rationale-text {
+            margin-top: 25px; 
+            padding: 20px; 
             border-left: 4px solid var(--primary);
-            animation: fadeIn 0.5s ease;
+            background: rgba(6, 182, 212, 0.08);
+            border-radius: 4px;
+            color: #e4e4e7;
+            font-size: 0.95rem; 
+            line-height: 1.6;
+            border: 1px solid rgba(6, 182, 212, 0.2);
         }
-        .source-link a {
+        .source-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 5px 0;
+            font-size: 0.85rem;
             color: var(--primary);
-            text-decoration: underline;
-            word-break: break-all; /* Ensures long links don't break layout */
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px dashed var(--primary);
         }
+        .source-link:hover { opacity: 0.8; }
         
-        .next-action-bar {
-            margin-top: 20px;
-            padding: 15px;
-            background: var(--bg-input);
-            border-radius: var(--radius-sm);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .next-timer-bar {
-            height: 6px;
-            width: 100%;
-            background: #3f3f46;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .next-timer-fill {
-            height: 100%;
-            width: 100%;
-            background: var(--success);
-            transition: width 1s linear;
-        }
+        /* Spacer to allow scrolling above the fixed timer */
+        .quiz-bottom-spacer { height: 120px; width: 100%; clear: both;}
 
-        /* --- MOBILE SIDEBAR LOGIC --- */
+        /* --- MOBILE SIDEBAR --- */
         .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 15; }
-
         @media (max-width: 900px) { 
             .sidebar { position: fixed; left: -280px; height: 100%; box-shadow: 4px 0 20px rgba(0,0,0,0.5); }
             .sidebar.active { transform: translateX(280px); left: 0; }
@@ -227,7 +220,7 @@
                 </div>
             </nav>
             <div style="flex:1"></div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); text-align: center;">v4.0 Fixed Stats & Timer</div>
+            <div style="font-size: 0.7rem; color: var(--text-muted); text-align: center;">v5.2 Fixed Stats</div>
         </aside>
 
         <main class="main-content">
@@ -249,88 +242,89 @@
                 </div>
             </header>
 
-            <div class="content-area">
+            <div class="content-area" id="main-scroll-area">
                 
                 <div id="view-loading" class="hidden" style="text-align:center; padding-top:100px;">
-                    <div class="loading-spinner" style="border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-                    <p style="color:var(--text-muted); margin-top: 20px;">Fetching data...</p>
+                    <div style="border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+                    <p style="color:var(--text-muted); margin-top: 20px;">Syncing data...</p>
                 </div>
 
                 <div id="view-dashboard" class="fade-in">
                     <div class="stats-header">
                         <div>
-                            <h2 style="margin-bottom: 5px;">Performance</h2>
-                            <p style="font-size: 0.9rem; color: var(--text-muted);">Questions Available: <strong id="stat-db-count" style="color:white">--</strong></p>
+                            <h2 style="margin-bottom: 5px;">Your Performance</h2>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Database: <strong id="stat-db-count" style="color:white">--</strong> items</p>
                         </div>
-                        <button class="btn btn-outline btn-sm" onclick="window.resetStats()" style="color:var(--error); border-color:var(--border-color)">
-                            <i class='bx bx-reset'></i> Reset
+                        <button class="btn btn-outline btn-sm" onclick="window.resetStats()">
+                            <i class='bx bx-reset'></i> Reset Stats
                         </button>
                     </div>
 
-                    <div class="stat-grid-detailed">
-                        <div class="mini-stat-card" style="border-left: 2px solid var(--primary);">
-                            <div class="mini-title">OVERALL</div>
-                            <div class="mini-val" id="stat-ALL-score">0%</div>
-                            <div class="mini-sub"><span id="stat-ALL-ans">0</span> Answered</div>
+                    <div class="stat-grid-enhanced">
+                        <div class="stat-card-visual" style="grid-column: 1 / -1; background: linear-gradient(145deg, var(--bg-card), rgba(6,182,212,0.05)); border-color: var(--primary-dim);">
+                            <div class="progress-circle" id="circle-ALL" style="--percent: 0; --color: var(--primary); width: 120px; height: 120px;">
+                                <span id="txt-ALL">0%</span>
+                            </div>
+                            <div class="stat-label" style="font-size: 1.1rem; color: var(--primary);">OVERALL MASTERY</div>
+                            <div class="stat-sub"><span id="ans-ALL">0</span> Questions Answered</div>
                         </div>
-                        <div class="mini-stat-card">
-                            <div class="mini-title">NP1 (Community)</div>
-                            <div class="mini-val" id="stat-NP1-score">0%</div>
+
+                        <div class="stat-card-visual">
+                            <div class="progress-circle" id="circle-NP1" style="--percent: 0; --color: var(--success);"><span id="txt-NP1">0%</span></div>
+                            <div class="stat-label">NP1 (Community)</div>
                         </div>
-                        <div class="mini-stat-card">
-                            <div class="mini-title">NP2 (MCN)</div>
-                            <div class="mini-val" id="stat-NP2-score">0%</div>
+                        <div class="stat-card-visual">
+                            <div class="progress-circle" id="circle-NP2" style="--percent: 0; --color: var(--warning);"><span id="txt-NP2">0%</span></div>
+                            <div class="stat-label">NP2 (MCN)</div>
                         </div>
-                        <div class="mini-stat-card">
-                            <div class="mini-title">NP3 (MedSurg 1)</div>
-                            <div class="mini-val" id="stat-NP3-score">0%</div>
+                        <div class="stat-card-visual">
+                            <div class="progress-circle" id="circle-NP3" style="--percent: 0; --color: #a855f7;"><span id="txt-NP3">0%</span></div>
+                            <div class="stat-label">NP3 (MedSurg I)</div>
                         </div>
-                        <div class="mini-stat-card">
-                            <div class="mini-title">NP4 (MedSurg 2)</div>
-                            <div class="mini-val" id="stat-NP4-score">0%</div>
+                        <div class="stat-card-visual">
+                            <div class="progress-circle" id="circle-NP4" style="--percent: 0; --color: #ec4899;"><span id="txt-NP4">0%</span></div>
+                            <div class="stat-label">NP4 (MedSurg II)</div>
                         </div>
-                        <div class="mini-stat-card">
-                            <div class="mini-title">NP5 (Psych)</div>
-                            <div class="mini-val" id="stat-NP5-score">0%</div>
+                        <div class="stat-card-visual">
+                            <div class="progress-circle" id="circle-NP5" style="--percent: 0; --color: #f43f5e;"><span id="txt-NP5">0%</span></div>
+                            <div class="stat-label">NP5 (Psych)</div>
                         </div>
                     </div>
 
-                    <div class="card" style="border-left: 4px solid var(--primary); display: flex; flex-direction: column; align-items: flex-start; gap: 15px;">
-                        <div>
-                            <h3>Ready to review?</h3>
-                            <p style="color:var(--text-muted); margin-top:5px;">Fetch random questions from all NP categories.</p>
-                        </div>
-                        <button class="btn btn-primary" onclick="window.navTo('topics')">START QUIZ <i class='bx bx-right-arrow-alt'></i></button>
+                    <div style="text-align: center; margin-top: 40px;">
+                        <button class="btn btn-primary" onclick="window.navTo('topics')" style="padding: 15px 40px; font-size: 1.1rem;">
+                            START NEW QUIZ <i class='bx bx-play-circle'></i>
+                        </button>
                     </div>
                 </div>
 
                 <div id="view-topics" class="hidden fade-in">
-                    <h2 style="margin-bottom: 10px;">Select Topic</h2>
-                    <div class="topic-grid">
-                        <div class="topic-card" onclick="window.selectTopic('NP1')"><i class='bx bxs-buildings'></i><div class="topic-title">NP1</div></div>
-                        <div class="topic-card" onclick="window.selectTopic('NP2')"><i class='bx bxs-baby-carriage'></i><div class="topic-title">NP2</div></div>
-                        <div class="topic-card" onclick="window.selectTopic('NP3')"><i class='bx bxs-heart'></i><div class="topic-title">NP3</div></div>
-                        <div class="topic-card" onclick="window.selectTopic('NP4')"><i class='bx bxs-ambulance'></i><div class="topic-title">NP4</div></div>
-                        <div class="topic-card" onclick="window.selectTopic('NP5')"><i class='bx bxs-brain'></i><div class="topic-title">NP5</div></div>
-                        <div class="topic-card" onclick="window.selectTopic('ALL')" style="border-color: var(--primary);"><i class='bx bxs-layer' style="color:var(--primary)"></i><div class="topic-title">ALL</div></div>
+                    <h2 style="margin-bottom: 20px;">Select Topic</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px;">
+                        <div class="card" onclick="window.selectTopic('NP1')" style="cursor:pointer; text-align:center;"><i class='bx bxs-buildings' style="font-size:3rem; color:var(--success); margin-bottom:10px;"></i><h3>NP1</h3></div>
+                        <div class="card" onclick="window.selectTopic('NP2')" style="cursor:pointer; text-align:center;"><i class='bx bxs-baby-carriage' style="font-size:3rem; color:var(--warning); margin-bottom:10px;"></i><h3>NP2</h3></div>
+                        <div class="card" onclick="window.selectTopic('NP3')" style="cursor:pointer; text-align:center;"><i class='bx bxs-heart' style="font-size:3rem; color:#a855f7; margin-bottom:10px;"></i><h3>NP3</h3></div>
+                        <div class="card" onclick="window.selectTopic('NP4')" style="cursor:pointer; text-align:center;"><i class='bx bxs-ambulance' style="font-size:3rem; color:#ec4899; margin-bottom:10px;"></i><h3>NP4</h3></div>
+                        <div class="card" onclick="window.selectTopic('NP5')" style="cursor:pointer; text-align:center;"><i class='bx bxs-brain' style="font-size:3rem; color:#f43f5e; margin-bottom:10px;"></i><h3>NP5</h3></div>
+                        <div class="card" onclick="window.selectTopic('ALL')" style="cursor:pointer; text-align:center; border: 2px solid var(--primary);"><i class='bx bxs-layer' style="font-size:3rem; color:var(--primary); margin-bottom:10px;"></i><h3>ALL</h3></div>
                     </div>
                 </div>
 
                 <div id="view-count" class="hidden fade-in">
-                    <button class="btn btn-outline" onclick="window.navTo('topics')" style="margin-bottom: 20px;"><i class='bx bx-arrow-back'></i> Back</button>
-                    <div class="card" style="max-width: 500px; margin: 0 auto; text-align: center;">
-                        <h2 style="margin-bottom: 10px;">How many questions?</h2>
-                        <p style="color:var(--text-muted); margin-bottom: 30px;">Topic: <span id="lbl-topic" style="color:var(--primary); font-weight:bold">--</span></p>
+                    <button class="btn btn-ghost" onclick="window.navTo('topics')"><i class='bx bx-arrow-back'></i> Back</button>
+                    <div class="card" style="max-width: 500px; margin: 20px auto; text-align: center;">
+                        <h2 style="margin-bottom: 20px;">Number of Questions</h2>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <button class="btn btn-outline" onclick="window.startQuiz(10)">10 Qs</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(30)">30 Qs</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(50)">50 Qs</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(100)">100 Qs</button>
+                            <button class="btn btn-outline" onclick="window.startQuiz(10)">10 Questions</button>
+                            <button class="btn btn-outline" onclick="window.startQuiz(30)">30 Questions</button>
+                            <button class="btn btn-outline" onclick="window.startQuiz(50)">50 Questions</button>
+                            <button class="btn btn-outline" onclick="window.startQuiz(100)">100 Questions</button>
                         </div>
                     </div>
                 </div>
 
-                <div id="view-quiz" class="hidden fade-in"></div>
+                <div id="view-quiz" class="hidden fade-in" style="position: relative; min-height: 100%;">
+                </div>
 
             </div>
         </main>
@@ -357,16 +351,14 @@
 
         let questions = []; 
         let currentSet = [];
+        let sessionResults = []; // Stores {category: 'NP1', isCorrect: true/false}
         let currentIndex = 0;
-        let score = 0;
         let selectedTopic = "ALL";
         
-        // Timers
         let questionTimerInterval;
-        let autoNextTimeout;
-        const TIME_LIMIT = 20; // Time to answer
-        const AUTO_NEXT_TIME = 8; // Faster transition
-        let timeLeft = TIME_LIMIT;
+        let nextTimerInterval;
+        const TIME_LIMIT = 60; 
+        const NEXT_DELAY = 10; 
 
         window.toggleSidebar = () => {
             document.getElementById('main-sidebar').classList.toggle('active');
@@ -378,7 +370,6 @@
                 document.getElementById('view-auth').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
                 document.getElementById('user-name').innerText = user.email.split('@')[0];
-                
                 document.getElementById('view-dashboard').classList.add('hidden');
                 document.getElementById('view-loading').classList.remove('hidden');
                 
@@ -396,134 +387,83 @@
         async function fetchQuestionsFromDB() {
             const collections = ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'];
             questions = [];
-            
             try {
                 const promises = collections.map(async (colName) => {
                     const snap = await getDocs(collection(db, colName));
                     snap.forEach(doc => {
                         const data = doc.data();
-                        
                         let formattedChoices = [];
                         if (data.choices) {
                             if (Array.isArray(data.choices)) {
-                                formattedChoices = data.choices.map((txt, idx) => ({ 
-                                    id: String.fromCharCode(65 + idx), text: txt 
-                                }));
+                                formattedChoices = data.choices.map((txt, idx) => ({ id: String.fromCharCode(65 + idx), text: txt }));
                             } else if (typeof data.choices === 'object') {
-                                Object.keys(data.choices).sort().forEach(key => {
-                                    formattedChoices.push({ id: key, text: data.choices[key] });
-                                });
+                                Object.keys(data.choices).sort().forEach(key => formattedChoices.push({ id: key, text: data.choices[key] }));
                             }
                         }
-
-                        // FIXED: Robust check for source link using common field names
-                        const link = data.sourceLink || data.source || data.Source || data.link || "";
-
                         if (formattedChoices.length > 0 && data.question) {
                             questions.push({ 
-                                id: doc.id, 
-                                category: colName, 
-                                question: data.question,
-                                answer: data.answer,
-                                choices: formattedChoices,
+                                id: doc.id, category: colName, question: data.question,
+                                answer: data.answer, choices: formattedChoices,
                                 rationale: data.rationale || "No rationale provided.",
-                                sourceLink: link
+                                sourceLink: data.sourceLink || data.source || "" // Added fallback for source field name
                             });
                         }
                     });
                 });
-
                 await Promise.all(promises);
                 document.getElementById('stat-db-count').innerText = questions.length;
-
-            } catch (error) {
-                console.error("Fetch Error:", error);
-            }
+            } catch (error) { console.error("Fetch Error:", error); }
         }
 
         async function fetchUserStats(uid) {
             try {
                 const docRef = doc(db, "users", uid);
                 const docSnap = await getDoc(docRef);
-                // FIXED: Handle cases where stats might be undefined
                 const stats = docSnap.exists() && docSnap.data().stats ? docSnap.data().stats : {};
                 
-                const allStats = stats['ALL'] || { correct: 0, total: 0 };
-                document.getElementById('stat-ALL-ans').innerText = allStats.total;
-                // Update Overall Score Label
-                const allPct = allStats.total === 0 ? 0 : Math.round((allStats.correct / allStats.total) * 100);
-                document.getElementById('stat-ALL-score').innerText = allPct + "%";
-                document.getElementById('stat-ALL-score').style.color = allPct >= 60 ? "var(--success)" : "var(--text-main)";
-
-                ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'].forEach(k => {
-                    const s = stats[k] || { correct:0, total:0 };
+                const updateCircle = (key, elementId) => {
+                    const s = stats[key] || { correct:0, total:0 };
                     const pct = s.total === 0 ? 0 : Math.round((s.correct / s.total) * 100);
-                    const elScore = document.getElementById(`stat-${k}-score`);
-                    if(elScore) {
-                        elScore.innerText = pct + "%";
-                        elScore.style.color = pct >= 60 ? "var(--success)" : "var(--text-main)";
-                    }
-                });
+                    const el = document.getElementById(elementId);
+                    const txt = document.getElementById(elementId.replace('circle','txt'));
+                    if(el) el.style.setProperty('--percent', pct);
+                    if(txt) txt.innerText = pct + "%";
+                    if(key === 'ALL') document.getElementById('ans-ALL').innerText = s.total;
+                };
+
+                updateCircle('ALL', 'circle-ALL');
+                ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'].forEach(k => updateCircle(k, `circle-${k}`));
+
             } catch (e) { console.error("Stats Error:", e); }
-        }
-
-        async function saveProgress() {
-            if(!auth.currentUser) return;
-            const uid = auth.currentUser.uid;
-            const userRef = doc(db, "users", uid);
-            
-            // FIXED: Ensure stats are updated using dot notation for specific fields
-            const updateData = {};
-            updateData[`stats.ALL.correct`] = increment(score);
-            updateData[`stats.ALL.total`] = increment(currentSet.length);
-
-            if(selectedTopic !== "ALL") {
-                updateData[`stats.${selectedTopic}.correct`] = increment(score);
-                updateData[`stats.${selectedTopic}.total`] = increment(currentSet.length);
-            }
-
-            await setDoc(userRef, updateData, { merge: true });
         }
 
         window.navTo = (page) => {
             clearInterval(questionTimerInterval);
-            clearInterval(autoNextTimeout);
-
-            ['view-dashboard', 'view-topics', 'view-count', 'view-quiz'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
+            clearInterval(nextTimerInterval);
+            ['view-dashboard', 'view-topics', 'view-count', 'view-quiz'].forEach(id => document.getElementById(id).classList.add('hidden'));
+            
             if(page === 'dashboard') {
                 document.getElementById('view-dashboard').classList.remove('hidden');
-                document.querySelectorAll('.nav-item')[0].classList.add('active');
                 document.getElementById('page-title').innerText = "Dashboard";
-                
-                // FIXED: Always refresh stats when entering dashboard
                 if(auth.currentUser) fetchUserStats(auth.currentUser.uid);
-
             } else if (page === 'topics') {
                 document.getElementById('view-topics').classList.remove('hidden');
-                document.querySelectorAll('.nav-item')[1].classList.add('active');
-                document.getElementById('page-title').innerText = "Select Topic";
+                document.getElementById('page-title').innerText = "Start Review";
             }
         };
 
         window.selectTopic = (t) => {
             selectedTopic = t;
-            document.getElementById('lbl-topic').innerText = t;
             document.getElementById('view-topics').classList.add('hidden');
             document.getElementById('view-count').classList.remove('hidden');
         };
 
         window.startQuiz = (n) => {
             let filtered = selectedTopic === "ALL" ? questions : questions.filter(q => q.category === selectedTopic);
-            if(filtered.length === 0) return alert("No questions found for this topic.");
-            
+            if(filtered.length === 0) return alert("No questions available.");
             currentSet = filtered.sort(() => 0.5 - Math.random()).slice(0, n);
+            sessionResults = []; // Reset tracker
             currentIndex = 0;
-            score = 0;
-            
             document.getElementById('view-count').classList.add('hidden');
             document.getElementById('view-quiz').classList.remove('hidden');
             renderQuestion();
@@ -531,166 +471,175 @@
 
         function renderQuestion() {
             clearInterval(questionTimerInterval);
-            clearInterval(autoNextTimeout);
+            clearInterval(nextTimerInterval);
             
+            const oldOverlay = document.getElementById('next-overlay');
+            if(oldOverlay) oldOverlay.remove();
+            
+            document.getElementById('main-scroll-area').scrollTop = 0;
+
             if (currentIndex >= currentSet.length) {
                 finishQuiz();
                 return;
             }
 
             const q = currentSet[currentIndex];
-            if (!q.choices || q.choices.length === 0) { window.nextQ(); return; }
-
             const choicesHTML = q.choices.map(c => `
                 <div class="choice-label" id="choice-${c.id}" onclick="window.checkAns('${c.id}', this)">
                     <div class="choice-letter">${c.id}</div>
-                    <div>${c.text}</div>
+                    <div style="flex:1">${c.text}</div>
                 </div>
             `).join('');
 
-            // FIXED: New UI Layout (Timer Badge top right, Clean Next Timer)
+            // FORCE RENDER LINK: Added explicit styling check and icon
+            const linkHTML = q.sourceLink ? `<a href="${q.sourceLink}" target="_blank" class="source-link"><i class='bx bx-link-external'></i> View Source / Reference</a>` : '';
+
             document.getElementById('view-quiz').innerHTML = `
-                <div class="card fade-in" style="max-width:800px; margin:0 auto; padding-bottom: 50px;">
+                <div class="card fade-in" style="max-width:800px; margin:0 auto;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; color:var(--text-muted); font-size:0.9rem;">
+                        <span>Question ${currentIndex+1} / ${currentSet.length}</span>
+                        <span id="q-timer" style="font-family:var(--font-mono);">${TIME_LIMIT}s</span>
+                    </div>
                     
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                        <span style="color:var(--text-muted); font-size:0.9rem;">
-                            Question <span style="color:white; font-weight:bold;">${currentIndex+1}</span> / ${currentSet.length}
-                        </span>
-                        
-                        <div class="timer-badge" id="timer-badge">
-                            <i class='bx bx-time-five'></i>
-                            <span id="timer-text">${TIME_LIMIT}s</span>
-                        </div>
-                    </div>
-
-                    <div style="margin-bottom:15px;">
-                        <span style="font-size: 0.75rem; background: var(--bg-input); padding: 4px 8px; border-radius: 4px; color: var(--primary); font-weight:bold;">${q.category}</span>
-                    </div>
-
-                    <h3 style="margin-bottom:25px; font-size:1.1rem; line-height:1.6">${q.question}</h3>
+                    <span style="font-size:0.7rem; background:var(--bg-input); padding:4px 8px; border-radius:4px; color:var(--primary); font-weight:700;">${q.category}</span>
+                    <h3 style="margin:15px 0 25px 0; font-size:1.15rem; line-height:1.6;">${q.question}</h3>
                     
                     <div id="choices-box">${choicesHTML}</div>
-
-                    <div id="result-area" class="hidden"> 
-                        <div class="rationale-area">
-                            <h4 style="color:var(--primary); margin-bottom:8px; display:flex; align-items:center; gap:8px;"><i class='bx bxs-bulb'></i> Rationale</h4>
-                            <p style="font-size:0.95rem; line-height:1.6; color:#e4e4e7;">${q.rationale}</p>
-                            
-                            <div class="source-link" style="margin-top:15px; font-size:0.85rem; color:var(--text-muted);">
-                                ${q.sourceLink ? 
-                                    `Reference: <a href="${q.sourceLink}" target="_blank">${q.sourceLink}</a>` : 
-                                    `Reference: Not provided.`
-                                }
-                            </div>
+                    
+                    <div id="rationale-container" class="hidden">
+                        <div class="rationale-text">
+                            <strong style="color:var(--success); display:block; margin-bottom:10px; font-size:1.1rem;">Correct Answer: ${q.answer}</strong>
+                            <strong style="color:var(--primary); display:block; margin-bottom:5px;">Rationale:</strong>
+                            ${q.rationale}
+                            <br/>
+                            ${linkHTML}
                         </div>
-                        
-                        <div class="next-action-bar">
-                            <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted);">
-                                <span>Next question in...</span>
-                                <span style="font-weight:bold; color:var(--success);"><span id="next-countdown">${AUTO_NEXT_TIME}</span>s</span>
-                            </div>
-                            <div class="next-timer-bar"><div class="next-timer-fill" id="next-timer-fill"></div></div>
-                            <button class="btn btn-primary" style="width:100%; margin-top:5px;" onclick="window.nextQ()">
-                                NEXT QUESTION <i class='bx bx-right-arrow-alt'></i>
-                            </button>
-                        </div>
+                        <div class="quiz-bottom-spacer"></div>
                     </div>
                 </div>
             `;
-
-            startQuestionTimer();
-        }
-
-        function startQuestionTimer() {
-            timeLeft = TIME_LIMIT;
-            const badge = document.getElementById('timer-badge');
-            const txt = document.getElementById('timer-text');
             
-            badge.classList.remove('warning');
-            txt.innerText = TIME_LIMIT + "s";
-            
+            let t = TIME_LIMIT;
             questionTimerInterval = setInterval(() => {
-                timeLeft--;
-                txt.innerText = timeLeft + "s";
-
-                if (timeLeft <= 5) badge.classList.add('warning');
-
-                if (timeLeft <= 0) {
-                    clearInterval(questionTimerInterval);
-                    window.checkAns(null, null);
-                }
+                t--;
+                document.getElementById('q-timer').innerText = t + "s";
+                if(t <= 0) window.checkAns(null, null);
             }, 1000);
         }
 
         window.checkAns = (selectedId, el) => {
             clearInterval(questionTimerInterval);
             const q = currentSet[currentIndex];
-            const container = document.getElementById('choices-box');
-            
-            if(container.style.pointerEvents === 'none') return;
-            container.style.pointerEvents = 'none'; 
-            
-            document.getElementById('timer-text').innerText = "DONE";
+            const box = document.getElementById('choices-box');
+            if(box.style.pointerEvents === 'none') return;
+            box.style.pointerEvents = 'none';
+
             const correctId = q.answer;
+            if(document.getElementById(`choice-${correctId}`)) document.getElementById(`choice-${correctId}`).classList.add('choice-correct');
+            
+            const isCorrect = (selectedId === correctId);
+            
+            // TRACK RESULT FOR STATS
+            sessionResults.push({
+                category: q.category,
+                isCorrect: isCorrect
+            });
 
-            if(document.getElementById(`choice-${correctId}`)) {
-                document.getElementById(`choice-${correctId}`).classList.add('choice-correct');
-            }
-
-            if (selectedId === correctId) {
-                score++;
-            } else if (selectedId && el) {
+            if (selectedId && !isCorrect && el) {
                 el.classList.add('choice-wrong');
             }
 
-            // FIXED: Reveal Result Area
-            document.getElementById('result-area').classList.remove('hidden');
-
-            // FIXED: Start Sleek Next Timer
-            let nextTime = AUTO_NEXT_TIME;
-            const fill = document.getElementById('next-timer-fill');
-            const count = document.getElementById('next-countdown');
+            document.getElementById('rationale-container').classList.remove('hidden');
             
-            autoNextTimeout = setInterval(() => {
-                nextTime--;
-                count.innerText = nextTime;
-                fill.style.width = (nextTime / AUTO_NEXT_TIME * 100) + "%";
-                
-                if(nextTime <= 0) {
-                    clearInterval(autoNextTimeout);
-                    window.nextQ();
-                }
-            }, 1000);
+            // Scroll rationale into view smoothly
+            setTimeout(() => {
+               const rationale = document.querySelector('.rationale-text');
+               if(rationale) rationale.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+
+            showNextOverlay();
         };
 
+        function showNextOverlay() {
+            const overlay = document.createElement('div');
+            overlay.id = "next-overlay";
+            overlay.innerHTML = `
+                <div style="display:flex; align-items:center; gap:15px; flex:1;">
+                    <div class="timer-circle-container">
+                        <svg class="timer-svg" viewBox="0 0 80 80">
+                            <circle class="timer-circle-bg" cx="40" cy="40" r="36"></circle>
+                            <circle class="timer-circle-fg" id="timer-progress" cx="40" cy="40" r="36"></circle>
+                        </svg>
+                        <div class="timer-count-text" id="next-count-text">${NEXT_DELAY}</div>
+                    </div>
+                    <div style="font-size:0.9rem; color:white; font-weight:600;">Next Question</div>
+                </div>
+
+                <button class="btn btn-primary btn-sm" onclick="window.nextQ()">SKIP <i class='bx bx-skip-next'></i></button>
+            `;
+            
+            document.getElementById('view-quiz').appendChild(overlay);
+
+            let t = NEXT_DELAY;
+            const dashArray = 226; 
+            const progressCircle = document.getElementById('timer-progress');
+            const text = document.getElementById('next-count-text');
+
+            nextTimerInterval = setInterval(() => {
+                t--;
+                text.innerText = t;
+                const offset = dashArray - (t / NEXT_DELAY) * dashArray;
+                progressCircle.style.strokeDashoffset = -offset;
+
+                if(t <= 0) window.nextQ();
+            }, 1000);
+        }
+
         window.nextQ = () => {
-            clearInterval(autoNextTimeout); 
             currentIndex++;
             renderQuestion();
         };
 
         async function finishQuiz() {
-            document.getElementById('view-quiz').innerHTML = `
-                <div class="card" style="text-align:center; max-width:500px; margin:40px auto; padding: 50px;">
-                    <div class="loading-spinner" style="border: 4px solid var(--border-color); border-top-color: var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 0 auto 20px auto;"></div>
-                    <p>Saving results...</p>
-                </div>
-            `;
+            document.getElementById('view-quiz').innerHTML = `<div class="card" style="text-align:center; padding:50px;"><h2 class="fade-in">Saving Results...</h2></div>`;
             
-            await saveProgress(); 
+            const correctCount = sessionResults.filter(r => r.isCorrect).length;
             
-            const pct = Math.round((score/currentSet.length)*100);
-            let msg = "Keep studying!";
-            let color = "var(--error)";
-            if(pct >= 60) { msg = "Good job!"; color = "var(--warning)"; }
-            if(pct >= 80) { msg = "Excellent!"; color = "var(--success)"; }
+            if(auth.currentUser) {
+                const uid = auth.currentUser.uid;
+                const updateData = {};
+                
+                // 1. UPDATE OVERALL STATS
+                updateData[`stats.ALL.correct`] = increment(correctCount);
+                updateData[`stats.ALL.total`] = increment(currentSet.length);
 
+                // 2. UPDATE CATEGORY SPECIFIC STATS
+                // We iterate through sessionResults to see exactly which categories were answered
+                const catStats = {};
+                sessionResults.forEach(r => {
+                    if(!catStats[r.category]) catStats[r.category] = { c: 0, t: 0 };
+                    catStats[r.category].t++;
+                    if(r.isCorrect) catStats[r.category].c++;
+                });
+
+                Object.keys(catStats).forEach(cat => {
+                    updateData[`stats.${cat}.correct`] = increment(catStats[cat].c);
+                    updateData[`stats.${cat}.total`] = increment(catStats[cat].t);
+                });
+                
+                console.log("Saving stats...", updateData);
+                await setDoc(doc(db, "users", uid), updateData, { merge: true });
+            }
+            
+            const pct = currentSet.length > 0 ? Math.round((correctCount/currentSet.length)*100) : 0;
+            let color = pct >= 60 ? "var(--success)" : "var(--error)";
+            
             document.getElementById('view-quiz').innerHTML = `
-                <div class="card fade-in" style="text-align:center; max-width:500px; margin:40px auto;">
-                    <h1 style="color:${color}; font-size: 4rem; font-family: var(--font-mono); margin-bottom: 10px;">${pct}%</h1>
-                    <h2 style="margin-bottom: 10px;">${msg}</h2>
-                    <p style="margin-bottom:30px; color: var(--text-muted);">You got ${score} out of ${currentSet.length} correct.</p>
-                    <button class="btn btn-primary" style="width:100%" onclick="window.navTo('dashboard')">Back to Dashboard</button>
+                <div class="card fade-in" style="text-align:center; max-width:500px; margin:40px auto; padding:40px;">
+                    <div style="font-size:4rem; font-weight:800; color:${color}; margin-bottom:10px;">${pct}%</div>
+                    <h3>Quiz Complete</h3>
+                    <p style="color:var(--text-muted); margin-bottom:30px;">You scored ${correctCount} out of ${currentSet.length}</p>
+                    <button class="btn btn-primary" style="width:100%" onclick="window.navTo('dashboard')">RETURN TO DASHBOARD</button>
                 </div>
             `;
         }
@@ -703,12 +652,12 @@
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
         
         window.resetStats = async () => {
-            if(confirm("Are you sure you want to reset all performance stats?")) {
+            if(confirm("Reset all statistics? This cannot be undone.")) {
                 await setDoc(doc(db, "users", auth.currentUser.uid), { stats: {} }, { merge: true });
                 window.location.reload();
             }
         }
-
+        
         const style = document.createElement('style');
         style.innerHTML = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
         document.head.appendChild(style);
