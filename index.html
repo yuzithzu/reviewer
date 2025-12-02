@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PNLE PRO | ELITE</title>
+    <title>PNLE PRO | ELITE REVIEWER</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -46,7 +46,6 @@
             position: relative;
         }
 
-        /* Moving Gradient Background */
         .bg-animate {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: radial-gradient(circle at 10% 20%, rgba(34, 211, 238, 0.15) 0%, transparent 20%),
@@ -58,7 +57,6 @@
             100% { transform: scale(1.1); opacity: 1; }
         }
 
-        /* Floating Orbs */
         .orb {
             position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.4; z-index: -1;
             animation: float 20s infinite linear;
@@ -88,7 +86,7 @@
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
         }
         
-        /* --- BUTTONS WITH GLOW --- */
+        /* --- BUTTONS --- */
         .btn { 
             padding: 14px 28px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; 
             transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; letter-spacing: 0.5px;
@@ -117,9 +115,12 @@
         /* INPUTS */
         .input { 
             width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); 
-            color: white; border-radius: 12px; margin-bottom: 20px; font-family: inherit; transition: 0.3s;
+            color: white; border-radius: 12px; margin-bottom: 15px; font-family: inherit; transition: 0.3s;
         }
         .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); background: rgba(0,0,0,0.5); }
+
+        .auth-toggle { color: var(--primary); cursor: pointer; text-decoration: underline; font-size: 0.9rem; margin-top: 15px; display: inline-block;}
+        .auth-toggle:hover { color: white; }
 
         /* --- SIDEBAR --- */
         .sidebar { 
@@ -153,10 +154,14 @@
             border-radius: 50%; color: black; display: flex; align-items: center; justify-content: center; font-weight: bold; 
             box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
         }
+        .validity-badge {
+            font-size: 0.7rem; padding: 4px 8px; border-radius: 20px; background: rgba(34, 211, 238, 0.1); 
+            border: 1px solid var(--primary); color: var(--primary);
+        }
 
         .content-area { flex: 1; padding: 30px; overflow-y: auto; scroll-behavior: smooth; }
 
-        /* --- DASHBOARD REDESIGN --- */
+        /* DASHBOARD */
         .stats-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border); }
         
         .dashboard-grid { display: grid; gap: 25px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
@@ -169,14 +174,7 @@
             display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap;
             position: relative; overflow: hidden;
         }
-        /* Shine effect */
-        .stat-card-main::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(to bottom right, transparent, rgba(255,255,255,0.05), transparent);
-            transform: rotate(45deg); animation: shine 6s infinite; pointer-events: none;
-        }
-        @keyframes shine { 0% {transform: translateX(-100%) rotate(45deg);} 100% {transform: translateX(100%) rotate(45deg);} }
-
+        
         .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 20px;}
         
         .topic-card {
@@ -200,7 +198,7 @@
             font-family: var(--font-mono); font-weight: 700; font-size: 1.2rem;
         }
 
-        /* --- QUIZ UI --- */
+        /* QUIZ UI */
         .choice-label { 
             display:flex; align-items: center; padding:20px; background:rgba(255,255,255,0.03); 
             margin-bottom:15px; border-radius:12px; cursor:pointer; border:1px solid var(--glass-border); 
@@ -221,7 +219,7 @@
 
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-        /* --- TIMER & OVERLAY --- */
+        /* OVERLAY */
         #next-overlay {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); opacity: 0;
             width: 90%; max-width: 450px;
@@ -241,9 +239,7 @@
             border-radius: 0 12px 12px 0;
             color: #e2e8f0; line-height: 1.7; position: relative;
         }
-        .rationale-text::before { content: 'RATIONALE'; position: absolute; top: -12px; left: 10px; background: var(--bg-deep); padding: 0 10px; font-size: 0.7rem; color: var(--primary); letter-spacing: 2px; font-weight: bold; }
 
-        /* Fade Utils */
         .fade-in { animation: fadeIn 0.5s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -268,19 +264,45 @@
     <div class="orb orb-2"></div>
 
     <div id="view-auth" class="wrapper fade-in" style="justify-content: center; align-items: center; position: fixed; z-index: 100; backdrop-filter: blur(20px); background: rgba(2,6,23,0.8);">
-        <div class="card" style="width: 100%; max-width: 420px; text-align: center; border-top: 4px solid var(--primary);">
-            <div style="margin-bottom: 40px;">
-                <i class='bx bxs-capsule' style='font-size: 4rem; color: var(--primary); filter: drop-shadow(0 0 10px var(--primary)); animation: float 6s ease-in-out infinite;'></i>
-                <h1 style="color: white; font-family: var(--font-mono); font-size: 2.2rem; margin-top: 10px;">PNLE ELITE</h1>
-                <p style="color: var(--text-muted); letter-spacing: 2px; font-size: 0.8rem; text-transform: uppercase;">Reviewer System v7.0</p>
+        
+        <div id="form-login" class="card" style="width: 100%; max-width: 420px; text-align: center; border-top: 4px solid var(--primary);">
+            <div style="margin-bottom: 30px;">
+                <i class='bx bxs-capsule' style='font-size: 3.5rem; color: var(--primary); filter: drop-shadow(0 0 10px var(--primary));'></i>
+                <h1 style="color: white; font-family: var(--font-mono); font-size: 2rem; margin-top: 10px;">PNLE ELITE</h1>
+                <p style="color: var(--text-muted); letter-spacing: 2px; font-size: 0.8rem;">MEMBER LOGIN</p>
             </div>
             <div style="text-align: left;">
-                <input type="text" id="inp-email" class="input" placeholder="Email Address">
+                <input type="email" id="inp-email" class="input" placeholder="Email Address">
                 <input type="password" id="inp-pass" class="input" placeholder="Password">
             </div>
-            <button id="btn-login" class="btn btn-primary" style="width:100%; margin-top: 10px; height: 50px;">ENTER SYSTEM</button>
+            <button id="btn-login" class="btn btn-primary" style="width:100%; height: 50px;">ENTER SYSTEM</button>
+            <div class="auth-toggle" onclick="toggleAuthMode()">No account? Register Payment Here</div>
             <div id="login-msg" style="margin-top:20px; color:var(--danger); font-size:0.85rem; min-height: 20px;"></div>
         </div>
+
+        <div id="form-register" class="card hidden" style="width: 100%; max-width: 450px; text-align: center; border-top: 4px solid var(--success);">
+            <div style="margin-bottom: 20px;">
+                <i class='bx bxs-wallet' style='font-size: 3.5rem; color: var(--success); filter: drop-shadow(0 0 10px var(--success));'></i>
+                <h1 style="color: white; font-family: var(--font-mono); font-size: 1.8rem; margin-top: 10px;">REGISTER</h1>
+                <p style="color: var(--text-muted); font-size: 0.8rem;">Create account & submit GCash Ref</p>
+            </div>
+            
+            <div style="background: rgba(34, 211, 238, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed var(--primary); text-align: left;">
+                <p style="font-size: 0.8rem; color: var(--primary); font-weight: bold; margin-bottom: 5px;">SEND GCASH PAYMENT TO:</p>
+                <div style="font-family: var(--font-mono); font-size: 1.1rem; color: white;">0912 345 6789</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Name: Juan Dela Cruz</div>
+            </div>
+
+            <div style="text-align: left;">
+                <input type="email" id="reg-email" class="input" placeholder="Email Address">
+                <input type="password" id="reg-pass" class="input" placeholder="Password (Min 6 chars)">
+                <input type="text" id="reg-ref" class="input" placeholder="GCash Reference No. (Required)" style="border-color: var(--success);">
+            </div>
+            <button id="btn-register" class="btn btn-primary" style="width:100%; height: 50px; background: var(--success); color: black;">SUBMIT REGISTRATION</button>
+            <div class="auth-toggle" onclick="toggleAuthMode()">Already have an account? Login</div>
+            <div id="reg-msg" style="margin-top:20px; color:var(--warning); font-size:0.85rem; min-height: 20px;"></div>
+        </div>
+
     </div>
 
     <div id="app-layout" class="wrapper hidden">
@@ -299,16 +321,15 @@
             </nav>
             <div style="flex:1"></div>
             <div class="card" style="padding: 15px; background: rgba(0,0,0,0.3); border:none;">
-                <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px;">SYSTEM STATUS</p>
+                <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px;">ACCOUNT STATUS</p>
                 <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--success);">
                     <div style="width:8px; height:8px; background:var(--success); border-radius:50%; box-shadow: 0 0 8px var(--success);"></div>
-                    Online & Synced
+                    Active Member
                 </div>
             </div>
         </aside>
 
         <main class="main-content">
-            
             <header class="top-bar">
                 <div style="display: flex; align-items: center;">
                     <button class="menu-btn" onclick="toggleSidebar()"><i class='bx bx-menu-alt-left'></i></button>
@@ -318,7 +339,7 @@
                 <div class="user-profile">
                     <div style="text-align: right; display: none; @media(min-width:600px){display:block;}">
                         <div style="font-size: 0.9rem; font-weight: 700; color: white;" id="user-name">User</div>
-                        <div style="font-size: 0.75rem; color: var(--primary);">Licensed User</div>
+                        <div class="validity-badge" id="days-remaining">Checking...</div>
                     </div>
                     <div class="avatar">RN</div>
                     <button class="btn btn-danger" id="btn-logout" style="padding: 8px 12px; border-radius: 8px;">
@@ -331,7 +352,7 @@
                 
                 <div id="view-loading" class="hidden" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:80%;">
                     <div style="width: 60px; height: 60px; border: 4px solid rgba(34, 211, 238, 0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; box-shadow: 0 0 20px var(--primary-glow);"></div>
-                    <p style="color:var(--text-muted); margin-top: 25px; font-family: var(--font-mono); letter-spacing: 2px;">INITIALIZING DATABASE...</p>
+                    <p style="color:var(--text-muted); margin-top: 25px; font-family: var(--font-mono); letter-spacing: 2px;">VERIFYING ACCOUNT...</p>
                 </div>
 
                 <div id="view-dashboard" class="fade-in">
@@ -364,7 +385,7 @@
 
                     <h3 style="margin: 30px 0 15px; color: var(--text-muted); font-size: 0.9rem; letter-spacing: 2px;">TOPIC BREAKDOWN</h3>
                     <div class="topic-grid">
-                        <div class="topic-card" onclick="window.navTo('topics')">
+                        <div class="topic-card">
                             <div class="progress-ring">
                                 <svg width="100" height="100">
                                     <circle class="ring-bg" cx="50" cy="50" r="40" />
@@ -375,8 +396,7 @@
                             <div style="font-weight:700; color:var(--success);">NP1</div>
                             <div style="font-size:0.75rem; color:var(--text-muted);">Community Health</div>
                         </div>
-
-                        <div class="topic-card" onclick="window.navTo('topics')">
+                        <div class="topic-card">
                             <div class="progress-ring">
                                 <svg width="100" height="100">
                                     <circle class="ring-bg" cx="50" cy="50" r="40" />
@@ -387,8 +407,7 @@
                             <div style="font-weight:700; color:var(--warning);">NP2</div>
                             <div style="font-size:0.75rem; color:var(--text-muted);">Maternal & Child</div>
                         </div>
-
-                        <div class="topic-card" onclick="window.navTo('topics')">
+                        <div class="topic-card">
                             <div class="progress-ring">
                                 <svg width="100" height="100">
                                     <circle class="ring-bg" cx="50" cy="50" r="40" />
@@ -399,8 +418,7 @@
                             <div style="font-weight:700; color:#a855f7;">NP3</div>
                             <div style="font-size:0.75rem; color:var(--text-muted);">MedSurg I</div>
                         </div>
-
-                        <div class="topic-card" onclick="window.navTo('topics')">
+                        <div class="topic-card">
                             <div class="progress-ring">
                                 <svg width="100" height="100">
                                     <circle class="ring-bg" cx="50" cy="50" r="40" />
@@ -411,8 +429,7 @@
                             <div style="font-weight:700; color:#ec4899;">NP4</div>
                             <div style="font-size:0.75rem; color:var(--text-muted);">MedSurg II</div>
                         </div>
-
-                        <div class="topic-card" onclick="window.navTo('topics')">
+                        <div class="topic-card">
                             <div class="progress-ring">
                                 <svg width="100" height="100">
                                     <circle class="ring-bg" cx="50" cy="50" r="40" />
@@ -436,32 +453,32 @@
                     <h2 style="margin-bottom: 25px; text-align: center;">SELECT SUBJECT</h2>
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
                         <div class="card" onclick="window.selectTopic('NP1')" style="cursor:pointer; text-align:center; border-top: 4px solid var(--success);">
-                            <i class='bx bxs-buildings' style="font-size:4rem; color:var(--success); margin-bottom:15px; filter: drop-shadow(0 0 10px var(--success));"></i>
+                            <i class='bx bxs-buildings' style="font-size:4rem; color:var(--success); margin-bottom:15px;"></i>
                             <h3>NP1</h3>
                             <p style="font-size:0.8rem; color:var(--text-muted);">Community Health Nursing</p>
                         </div>
                         <div class="card" onclick="window.selectTopic('NP2')" style="cursor:pointer; text-align:center; border-top: 4px solid var(--warning);">
-                            <i class='bx bxs-baby-carriage' style="font-size:4rem; color:var(--warning); margin-bottom:15px; filter: drop-shadow(0 0 10px var(--warning));"></i>
+                            <i class='bx bxs-baby-carriage' style="font-size:4rem; color:var(--warning); margin-bottom:15px;"></i>
                             <h3>NP2</h3>
                             <p style="font-size:0.8rem; color:var(--text-muted);">Maternal & Child</p>
                         </div>
                         <div class="card" onclick="window.selectTopic('NP3')" style="cursor:pointer; text-align:center; border-top: 4px solid #a855f7;">
-                            <i class='bx bxs-heart' style="font-size:4rem; color:#a855f7; margin-bottom:15px; filter: drop-shadow(0 0 10px #a855f7);"></i>
+                            <i class='bx bxs-heart' style="font-size:4rem; color:#a855f7; margin-bottom:15px;"></i>
                             <h3>NP3</h3>
                             <p style="font-size:0.8rem; color:var(--text-muted);">Medical Surgical I</p>
                         </div>
                         <div class="card" onclick="window.selectTopic('NP4')" style="cursor:pointer; text-align:center; border-top: 4px solid #ec4899;">
-                            <i class='bx bxs-ambulance' style="font-size:4rem; color:#ec4899; margin-bottom:15px; filter: drop-shadow(0 0 10px #ec4899);"></i>
+                            <i class='bx bxs-ambulance' style="font-size:4rem; color:#ec4899; margin-bottom:15px;"></i>
                             <h3>NP4</h3>
                             <p style="font-size:0.8rem; color:var(--text-muted);">Medical Surgical II</p>
                         </div>
                         <div class="card" onclick="window.selectTopic('NP5')" style="cursor:pointer; text-align:center; border-top: 4px solid #f43f5e;">
-                            <i class='bx bxs-brain' style="font-size:4rem; color:#f43f5e; margin-bottom:15px; filter: drop-shadow(0 0 10px #f43f5e);"></i>
+                            <i class='bx bxs-brain' style="font-size:4rem; color:#f43f5e; margin-bottom:15px;"></i>
                             <h3>NP5</h3>
                             <p style="font-size:0.8rem; color:var(--text-muted);">Psychiatric Nursing</p>
                         </div>
                         <div class="card" onclick="window.selectTopic('ALL')" style="cursor:pointer; text-align:center; border: 2px solid var(--primary); background: rgba(34, 211, 238, 0.05);">
-                            <i class='bx bxs-layer' style="font-size:4rem; color:var(--primary); margin-bottom:15px; filter: drop-shadow(0 0 15px var(--primary));"></i>
+                            <i class='bx bxs-layer' style="font-size:4rem; color:var(--primary); margin-bottom:15px;"></i>
                             <h3>MIXED</h3>
                             <p style="font-size:0.8rem; color:var(--text-muted);">Comprehensive Exam</p>
                         </div>
@@ -481,8 +498,7 @@
                     </div>
                 </div>
 
-                <div id="view-quiz" class="hidden fade-in" style="position: relative; min-height: 100%; padding-bottom: 100px;">
-                </div>
+                <div id="view-quiz" class="hidden fade-in" style="position: relative; min-height: 100%; padding-bottom: 100px;"></div>
 
             </div>
         </main>
@@ -490,9 +506,10 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
+        // CONFIG (Replace with your actual keys if different)
         const firebaseConfig = {
             apiKey: "AIzaSyCmd6vmuXUPslLJf0w7I518C8UIaO2DoAA",
             authDomain: "pnle-class.firebaseapp.com",
@@ -507,45 +524,183 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
+        // --- GLOBAL VARS ---
         let questions = []; 
         let currentSet = [];
         let sessionResults = []; 
         let currentIndex = 0;
         let selectedTopic = "ALL";
-        
         let questionTimerInterval;
         let nextTimerInterval;
         const TIME_LIMIT = 60; 
         const NEXT_DELAY = 10; 
 
+        // --- UI FUNCTIONS ---
         window.toggleSidebar = () => {
             document.getElementById('main-sidebar').classList.toggle('active');
             document.querySelector('.sidebar-overlay').classList.toggle('active');
         }
 
+        window.toggleAuthMode = () => {
+            document.getElementById('form-login').classList.toggle('hidden');
+            document.getElementById('form-register').classList.toggle('hidden');
+            // Clear messages
+            document.getElementById('login-msg').innerText = "";
+            document.getElementById('reg-msg').innerText = "";
+        }
+
+        // --- AUTH & VALIDATION LOGIC ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // Show loading
                 document.getElementById('view-auth').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
-                document.getElementById('user-name').innerText = user.email.split('@')[0];
                 document.getElementById('view-dashboard').classList.add('hidden');
                 document.getElementById('view-loading').classList.remove('hidden');
-                
-                await fetchQuestionsFromDB();
-                await fetchUserStats(user.uid);
 
-                document.getElementById('view-loading').classList.add('hidden');
-                window.navTo('dashboard');
+                // CHECK USER STATUS IN FIRESTORE
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    const status = data.status || "pending";
+                    
+                    // 1. Check if Pending
+                    if(status === 'pending') {
+                        alert("Your account is currently PENDING approval.\nPlease wait for the Admin to verify your GCash payment.");
+                        await signOut(auth);
+                        window.location.reload();
+                        return;
+                    }
+
+                    // 2. Check if Blocked/Expired Manually
+                    if(status === 'expired') {
+                        alert("Your account has EXPIRED. Please renew your subscription.");
+                        await signOut(auth);
+                        window.location.reload();
+                        return;
+                    }
+
+                    // 3. Activation & 90 Days Logic
+                    if(status === 'active') {
+                        const now = new Date();
+                        let expiryDate;
+
+                        // First login after admin set to 'active'? Set the dates.
+                        if(!data.activationDate) {
+                            expiryDate = new Date();
+                            expiryDate.setDate(expiryDate.getDate() + 90); // Add 90 days
+
+                            await updateDoc(userRef, {
+                                activationDate: Timestamp.fromDate(now),
+                                expiryDate: Timestamp.fromDate(expiryDate)
+                            });
+                        } else {
+                            expiryDate = data.expiryDate.toDate();
+                        }
+
+                        // Check if current date is past expiry
+                        if(now > expiryDate) {
+                            await updateDoc(userRef, { status: 'expired' }); // Lock the account
+                            alert("Your 90-day access period has ended. Account expired.");
+                            await signOut(auth);
+                            window.location.reload();
+                            return;
+                        }
+
+                        // Display Days Remaining
+                        const diffTime = Math.abs(expiryDate - now);
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        document.getElementById('days-remaining').innerText = `${diffDays} Days Left`;
+                    }
+
+                    // Proceed to App
+                    document.getElementById('user-name').innerText = user.email.split('@')[0];
+                    await fetchQuestionsFromDB();
+                    await fetchUserStats(user.uid);
+                    document.getElementById('view-loading').classList.add('hidden');
+                    window.navTo('dashboard');
+
+                } else {
+                    // Fallback for old users without docs (Optional safety)
+                    console.log("No user doc found, creating default...");
+                    await setDoc(userRef, { email: user.email, status: 'active', stats: {} });
+                    window.location.reload();
+                }
+
             } else {
+                // No user
                 document.getElementById('view-auth').classList.remove('hidden');
                 document.getElementById('app-layout').classList.add('hidden');
             }
         });
 
+        // --- REGISTRATION FUNCTION ---
+        document.getElementById('btn-register').addEventListener('click', async () => {
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
+            const ref = document.getElementById('reg-ref').value;
+            const msg = document.getElementById('reg-msg');
+
+            if(!email || !pass || !ref) {
+                msg.innerText = "Please fill in all fields including GCash Ref.";
+                return;
+            }
+
+            msg.innerText = "Processing registration...";
+            msg.style.color = "var(--primary)";
+
+            try {
+                // 1. Create Auth User
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // 2. Save details to Firestore with PENDING status
+                await setDoc(doc(db, "users", user.uid), {
+                    email: email,
+                    gcashReference: ref,
+                    status: 'pending', // IMPORTANT
+                    createdAt: Timestamp.fromDate(new Date()),
+                    stats: {
+                        ALL: { correct: 0, total: 0 },
+                        NP1: { correct: 0, total: 0 }, NP2: { correct: 0, total: 0 },
+                        NP3: { correct: 0, total: 0 }, NP4: { correct: 0, total: 0 }, NP5: { correct: 0, total: 0 }
+                    }
+                });
+
+                // 3. Sign out immediately so they can't enter yet
+                await signOut(auth);
+
+                alert("Registration Successful!\n\nYour account is now PENDING.\nPlease wait for the Admin to verify your GCash Reference: " + ref + ".\nYou will be able to login once verified.");
+                window.location.reload();
+
+            } catch (error) {
+                console.error(error);
+                msg.style.color = "var(--danger)";
+                msg.innerText = "Error: " + error.message;
+            }
+        });
+
+        // --- EXISTING LOGIN FUNCTION ---
+        document.getElementById('btn-login').addEventListener('click', () => {
+            const e = document.getElementById('inp-email').value;
+            const p = document.getElementById('inp-pass').value;
+            document.getElementById('login-msg').innerText = "Authenticating...";
+            
+            signInWithEmailAndPassword(auth, e, p)
+            .catch(err => { 
+                document.getElementById('login-msg').innerText = "Login failed: " + err.message; 
+            });
+        });
+
+        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+
+
+        // --- DATA FETCHING (Unchanged from your previous version) ---
         async function fetchQuestionsFromDB() {
             const collections = ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'];
             questions = [];
-            
             try {
                 const promises = collections.map(async (colName) => {
                     const snap = await getDocs(collection(db, colName));
@@ -559,14 +714,10 @@
                                 Object.keys(data.choices).sort().forEach(key => formattedChoices.push({ id: key, text: data.choices[key] }));
                             }
                         }
-
                         if (formattedChoices.length > 0 && data.question) {
                             questions.push({ 
-                                id: doc.id, 
-                                category: colName, 
-                                question: data.question,
-                                answer: data.answer, 
-                                choices: formattedChoices,
+                                id: doc.id, category: colName, question: data.question,
+                                answer: data.answer, choices: formattedChoices,
                                 rationale: data.rationale || "No rationale provided.",
                                 sourceLink: data.sourceLink || data.source || ""
                             });
@@ -574,7 +725,6 @@
                     });
                 });
                 await Promise.all(promises);
-                console.log("Loaded:", questions.length);
             } catch (error) { console.error("Fetch Error:", error); }
         }
 
@@ -590,15 +740,12 @@
                     return Math.round((s.correct / s.total) * 100);
                 };
 
-                // Update UI with Stroke Animation
                 const updateRing = (key, elementId) => {
                     const pct = getPercent(key);
                     const txt = document.getElementById(elementId.replace('ring','txt'));
                     const ring = document.getElementById(elementId);
-                    
                     if(txt) txt.innerText = pct + "%";
                     if(ring) {
-                        // 251 is circumference for r=40
                         const circumference = key === 'ALL' ? 440 : 251; 
                         const offset = circumference - (pct / 100) * circumference;
                         ring.style.strokeDashoffset = offset;
@@ -607,18 +754,16 @@
 
                 updateRing('ALL', 'ring-ALL');
                 if(stats.ALL) document.getElementById('ans-ALL').innerText = stats.ALL.total || 0;
-                else document.getElementById('ans-ALL').innerText = 0;
-
                 ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'].forEach(k => updateRing(k, `ring-${k}`));
 
             } catch (e) { console.error("Stats Error:", e); }
         }
 
+        // --- NAVIGATION & QUIZ ENGINE (Standard Logic) ---
         window.navTo = (page) => {
             clearInterval(questionTimerInterval);
             clearInterval(nextTimerInterval);
             ['view-dashboard', 'view-topics', 'view-count', 'view-quiz'].forEach(id => document.getElementById(id).classList.add('hidden'));
-            
             if(page === 'dashboard') {
                 document.getElementById('view-dashboard').classList.remove('hidden');
                 document.getElementById('page-title').innerText = "DASHBOARD";
@@ -637,12 +782,7 @@
 
         window.startQuiz = (n) => {
             let filtered = selectedTopic === "ALL" ? questions : questions.filter(q => q.category === selectedTopic);
-            
-            if(filtered.length === 0) {
-                alert("No questions found.");
-                return;
-            }
-
+            if(filtered.length === 0) { alert("No questions found."); return; }
             currentSet = filtered.sort(() => 0.5 - Math.random()).slice(0, n);
             sessionResults = [];
             currentIndex = 0;
@@ -654,16 +794,11 @@
         function renderQuestion() {
             clearInterval(questionTimerInterval);
             clearInterval(nextTimerInterval);
-            
             const oldOverlay = document.getElementById('next-overlay');
             if(oldOverlay) oldOverlay.remove();
-            
             document.getElementById('main-scroll-area').scrollTop = 0;
 
-            if (currentIndex >= currentSet.length) {
-                finishQuiz();
-                return;
-            }
+            if (currentIndex >= currentSet.length) { finishQuiz(); return; }
 
             const q = currentSet[currentIndex];
             const choicesHTML = q.choices.map(c => `
@@ -672,7 +807,6 @@
                     <div style="flex:1">${c.text}</div>
                 </div>
             `).join('');
-
             const linkHTML = q.sourceLink ? `<a href="${q.sourceLink}" target="_blank" class="source-link"><i class='bx bx-link-external'></i> Source Ref</a>` : '';
 
             document.getElementById('view-quiz').innerHTML = `
@@ -684,18 +818,13 @@
                             <span id="q-timer" style="font-family:var(--font-mono); font-weight:bold;">${TIME_LIMIT}s</span>
                         </div>
                     </div>
-                    
                     <span style="font-size:0.75rem; background:rgba(34, 211, 238, 0.1); padding:4px 10px; border-radius:4px; color:var(--primary); font-weight:700; border:1px solid rgba(34, 211, 238, 0.2);">${q.category}</span>
                     <h3 style="margin:20px 0 30px 0; font-size:1.3rem; line-height:1.6; font-weight:600;">${q.question}</h3>
-                    
                     <div id="choices-box">${choicesHTML}</div>
-                    
                     <div id="rationale-container" class="hidden fade-in">
                         <div class="rationale-text">
                             <strong style="color:var(--success); display:block; margin-bottom:10px; font-size:1.1rem;">Correct Answer: ${q.answer}</strong>
-                            ${q.rationale}
-                            <br/>
-                            ${linkHTML}
+                            ${q.rationale}<br/>${linkHTML}
                         </div>
                     </div>
                 </div>
@@ -703,8 +832,7 @@
             
             let t = TIME_LIMIT;
             questionTimerInterval = setInterval(() => {
-                t--;
-                document.getElementById('q-timer').innerText = t + "s";
+                t--; document.getElementById('q-timer').innerText = t + "s";
                 if(t <= 0) window.checkAns(null, null);
             }, 1000);
         }
@@ -722,9 +850,7 @@
             const isCorrect = (selectedId === correctId);
             sessionResults.push({ category: q.category, isCorrect: isCorrect });
 
-            if (selectedId && !isCorrect && el) {
-                el.classList.add('choice-wrong');
-            }
+            if (selectedId && !isCorrect && el) el.classList.add('choice-wrong');
 
             document.getElementById('rationale-container').classList.remove('hidden');
             setTimeout(() => {
@@ -749,24 +875,16 @@
                 <button class="btn btn-primary" onclick="window.nextQ()">NEXT <i class='bx bx-right-arrow-alt'></i></button>
             `;
             document.getElementById('view-quiz').appendChild(overlay);
-            
-            // Trigger animation
             setTimeout(() => overlay.classList.add('show'), 50);
 
             let t = NEXT_DELAY;
-            const text = document.getElementById('next-count-text');
-
             nextTimerInterval = setInterval(() => {
-                t--;
-                text.innerText = t;
+                t--; document.getElementById('next-count-text').innerText = t;
                 if(t <= 0) window.nextQ();
             }, 1000);
         }
 
-        window.nextQ = () => {
-            currentIndex++;
-            renderQuestion();
-        };
+        window.nextQ = () => { currentIndex++; renderQuestion(); };
 
         async function finishQuiz() {
             document.getElementById('view-quiz').innerHTML = `
@@ -780,7 +898,6 @@
             if(auth.currentUser) {
                 const uid = auth.currentUser.uid;
                 const userRef = doc(db, "users", uid);
-                
                 const catStats = {};
                 sessionResults.forEach(r => {
                     const catName = r.category || "Uncategorized";
@@ -792,26 +909,17 @@
                 const updatePayload = {};
                 updatePayload[`stats.ALL.correct`] = increment(correctCount);
                 updatePayload[`stats.ALL.total`] = increment(currentSet.length);
-
                 Object.keys(catStats).forEach(cat => {
                     updatePayload[`stats.${cat}.correct`] = increment(catStats[cat].c);
                     updatePayload[`stats.${cat}.total`] = increment(catStats[cat].t);
                 });
-
-                const userSnap = await getDoc(userRef);
-                if (!userSnap.exists()) {
-                     await setDoc(userRef, { email: auth.currentUser.email, stats: {} });
-                }
                 await updateDoc(userRef, updatePayload);
             }
             
             const pct = currentSet.length > 0 ? Math.round((correctCount/currentSet.length)*100) : 0;
             let color = pct >= 60 ? "var(--success)" : "var(--danger)";
             
-            // CONFETTI EFFECT IF PASSED
-            if(pct >= 60) {
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#22d3ee', '#34d399', '#ffffff'] });
-            }
+            if(pct >= 60) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#22d3ee', '#34d399', '#ffffff'] });
 
             document.getElementById('view-quiz').innerHTML = `
                 <div class="card fade-in" style="text-align:center; max-width:500px; margin:40px auto; padding:50px; border-top: 5px solid ${color};">
@@ -823,21 +931,14 @@
             `;
         }
 
-        document.getElementById('btn-login').addEventListener('click', () => {
-            signInWithEmailAndPassword(auth, document.getElementById('inp-email').value, document.getElementById('inp-pass').value)
-            .catch(e => { document.getElementById('login-msg').innerText = "Login failed: " + e.message; });
-        });
-        
-        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
-        
         window.resetStats = async () => {
-            if(confirm("Are you sure? This will wipe your performance data to zero.")) {
+            if(confirm("Are you sure? This will wipe your performance data.")) {
                 const emptyStats = {
                     ALL: { correct: 0, total: 0 },
                     NP1: { correct: 0, total: 0 }, NP2: { correct: 0, total: 0 },
                     NP3: { correct: 0, total: 0 }, NP4: { correct: 0, total: 0 }, NP5: { correct: 0, total: 0 }
                 };
-                await setDoc(doc(db, "users", auth.currentUser.uid), { stats: emptyStats }, { merge: true });
+                await updateDoc(doc(db, "users", auth.currentUser.uid), { stats: emptyStats });
                 window.location.reload();
             }
         }
