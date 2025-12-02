@@ -2,41 +2,49 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PNLE PRO | ELITE REVIEWER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>PNLE ELITE | Ultimate Reviewer</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+    
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
-            /* Palette: Dark Blue/Purple Tech Theme */
-            --bg-deep: #020617;
-            --primary: #22d3ee;        /* Cyan Neon */
-            --primary-glow: rgba(34, 211, 238, 0.6);
-            --secondary: #818cf8;      /* Soft Indigo */
-            --success: #34d399;        /* Mint Green */
-            --warning: #fbbf24;        /* Amber */
-            --danger: #f87171;         /* Soft Red */
+            /* MODERN TECH PALETTE */
+            --bg-deep: #030712;       /* Almost Black */
+            --bg-surface: #0f172a;    /* Dark Slate */
             
-            --glass-bg: rgba(15, 23, 42, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --text-main: #f8fafc;
+            --primary: #06b6d4;       /* Cyan */
+            --primary-dim: rgba(6, 182, 212, 0.1);
+            --primary-glow: rgba(6, 182, 212, 0.5);
+            
+            --secondary: #6366f1;     /* Indigo */
+            --accent: #f472b6;        /* Pink */
+            
+            --success: #10b981;       /* Emerald */
+            --warning: #f59e0b;       /* Amber */
+            --danger: #ef4444;        /* Red */
+            
+            --text-main: #f1f5f9;
             --text-muted: #94a3b8;
             
-            --font-main: "Outfit", sans-serif;
-            --font-mono: "Space Mono", monospace;
+            --glass-bg: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.15);
             
-            --radius: 16px;
+            --font-main: "Inter", sans-serif;
+            --font-mono: "JetBrains Mono", monospace;
+            
+            --radius-md: 16px;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* RESET & BASE */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
         
-        /* ANIMATED BACKGROUND */
         body { 
             background-color: var(--bg-deep);
             color: var(--text-main); 
@@ -44,543 +52,377 @@
             height: 100vh; 
             overflow: hidden; 
             position: relative;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.08), transparent 25%);
         }
 
-        .bg-animate {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 10% 20%, rgba(34, 211, 238, 0.15) 0%, transparent 20%),
-                        radial-gradient(circle at 90% 80%, rgba(129, 140, 248, 0.15) 0%, transparent 20%);
-            animation: pulseBg 10s ease-in-out infinite alternate;
-        }
-        @keyframes pulseBg {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.1); opacity: 1; }
-        }
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
-        .orb {
-            position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.4; z-index: -1;
-            animation: float 20s infinite linear;
-        }
-        .orb-1 { width: 300px; height: 300px; background: var(--primary); top: -50px; left: -50px; animation-duration: 25s; }
-        .orb-2 { width: 400px; height: 400px; background: var(--secondary); bottom: -100px; right: -100px; animation-duration: 30s; }
-        
-        @keyframes float {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(30px, 50px) rotate(120deg); }
-            66% { transform: translate(-20px, 20px) rotate(240deg); }
-            100% { transform: translate(0, 0) rotate(360deg); }
-        }
-
-        .wrapper { display: flex; height: 100vh; width: 100%; backdrop-filter: blur(0px); }
+        /* UTILS */
         .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- GLASSMORPHISM CARD --- */
+        /* GLASS CARD SYSTEM */
         .card { 
             background: var(--glass-bg); 
-            backdrop-filter: blur(12px); 
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--glass-border); 
-            border-radius: var(--radius); 
-            padding: 30px; 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s;
+            border-top: 1px solid var(--glass-highlight);
+            border-radius: var(--radius-md); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
         }
-        
-        /* --- BUTTONS --- */
+
+        /* BUTTONS */
         .btn { 
-            padding: 14px 28px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; 
-            transition: all 0.3s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; letter-spacing: 0.5px;
-            position: relative; overflow: hidden;
+            padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; border: none; font-family: inherit; 
+            transition: all 0.2s ease; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem;
+            position: relative; overflow: hidden; user-select: none;
         }
+        .btn:active { transform: scale(0.96); }
         
         .btn-primary { 
-            background: var(--primary); color: #000; 
-            box-shadow: 0 0 15px rgba(34, 211, 238, 0.4);
+            background: linear-gradient(135deg, var(--primary), #0891b2); 
+            color: #fff; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .btn-primary:hover { 
-            background: #67e8f9; 
-            box-shadow: 0 0 25px var(--primary-glow); 
-            transform: translateY(-3px);
-        }
+        .btn-primary:hover { filter: brightness(1.1); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5); }
         
-        .btn-outline { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: var(--text-muted); }
-        .btn-outline:hover { border-color: var(--primary); color: var(--primary); background: rgba(34, 211, 238, 0.1); box-shadow: 0 0 10px rgba(34,211,238,0.2); }
+        .btn-outline { background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: var(--text-muted); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--text-main); background: var(--primary-dim); }
         
-        .btn-danger { background: rgba(248, 113, 113, 0.1); color: var(--danger); }
-        .btn-danger:hover { background: rgba(248, 113, 113, 0.2); box-shadow: 0 0 15px rgba(248, 113, 113, 0.3); }
-
         .btn-ghost { background: transparent; color: var(--text-muted); }
-        .btn-ghost:hover { color: white; background: rgba(255,255,255,0.05); }
+        .btn-ghost:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
 
         /* INPUTS */
+        .input-group { margin-bottom: 16px; position: relative; }
         .input { 
-            width: 100%; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); 
-            color: white; border-radius: 12px; margin-bottom: 15px; font-family: inherit; transition: 0.3s;
+            width: 100%; padding: 16px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); 
+            color: white; border-radius: 12px; font-family: inherit; transition: 0.3s; font-size: 0.95rem;
         }
-        .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); background: rgba(0,0,0,0.5); }
+        .input::placeholder { color: rgba(255,255,255,0.3); }
+        .input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-dim); background: rgba(0,0,0,0.6); }
 
-        .auth-toggle { color: var(--primary); cursor: pointer; text-decoration: underline; font-size: 0.9rem; margin-top: 15px; display: inline-block;}
-        .auth-toggle:hover { color: white; }
+        /* AUTH SCREEN */
+        .auth-wrapper { 
+            display: flex; height: 100vh; width: 100%; justify-content: center; align-items: center; 
+            background: radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, var(--bg-deep) 70%);
+            z-index: 100; position: fixed;
+        }
+        .auth-card { width: 100%; max-width: 400px; padding: 40px 30px; }
+        .brand-logo { 
+            width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            border-radius: 20px; display: flex; align-items: center; justify-content: center; 
+            font-size: 2.5rem; color: white; margin: 0 auto 20px; box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+            transform: rotate(-5deg);
+        }
 
-        /* --- SIDEBAR --- */
+        /* APP LAYOUT */
+        .layout { display: flex; height: 100vh; overflow: hidden; }
+        
+        /* SIDEBAR */
         .sidebar { 
-            width: 280px; background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(15px); border-right: 1px solid var(--glass-border); 
-            padding: 30px; display: flex; flex-direction: column; z-index: 20; transition: transform 0.3s ease; 
+            width: 260px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-right: 1px solid var(--glass-border); 
+            display: flex; flex-direction: column; z-index: 50; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .brand { 
-            font-family: var(--font-mono); font-weight: 700; font-size: 1.8rem; margin-bottom: 50px; color: white; 
-            display: flex; align-items: center; gap: 12px; text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
+        .sidebar-header { padding: 30px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
+        .sidebar-header i { color: var(--primary); font-size: 1.6rem; }
         
+        .nav-links { padding: 0 15px; flex: 1; }
         .nav-item { 
-            padding: 16px; border-radius: 12px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 15px; 
-            margin-bottom: 10px; transition: 0.3s; font-weight: 500; border: 1px solid transparent;
+            padding: 14px 20px; border-radius: 10px; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; gap: 12px; 
+            margin-bottom: 5px; transition: 0.2s; font-weight: 500; font-size: 0.95rem;
         }
-        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; transform: translateX(5px); }
-        .nav-item.active { 
-            background: rgba(34, 211, 238, 0.1); color: var(--primary); border: 1px solid rgba(34, 211, 238, 0.2);
-            box-shadow: 0 0 15px rgba(34, 211, 238, 0.1);
-        }
+        .nav-item i { font-size: 1.2rem; }
+        .nav-item:hover { color: white; background: rgba(255,255,255,0.03); }
+        .nav-item.active { background: var(--primary-dim); color: var(--primary); font-weight: 600; }
 
-        /* --- MAIN AREA --- */
-        .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
-        .top-bar { 
-            height: 80px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; 
-            padding: 0 30px; background: rgba(2, 6, 23, 0.6); backdrop-filter: blur(10px); z-index: 10;
-        }
-        .user-profile { display: flex; align-items: center; gap: 15px; }
-        .avatar { 
-            width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            border-radius: 50%; color: black; display: flex; align-items: center; justify-content: center; font-weight: bold; 
-            box-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
-        }
-        .validity-badge {
-            font-size: 0.7rem; padding: 4px 8px; border-radius: 20px; background: rgba(34, 211, 238, 0.1); 
-            border: 1px solid var(--primary); color: var(--primary);
-        }
-
-        .content-area { flex: 1; padding: 30px; overflow-y: auto; scroll-behavior: smooth; }
-
-        /* DASHBOARD */
-        .stats-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--glass-border); }
+        /* MAIN CONTENT */
+        .main { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; }
         
-        .dashboard-grid { display: grid; gap: 25px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-        
-        .stat-card-main {
-            grid-column: 1 / -1;
-            background: linear-gradient(160deg, rgba(34, 211, 238, 0.1), rgba(15, 23, 42, 0.8));
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.15);
-            display: flex; align-items: center; justify-content: space-around; flex-wrap: wrap;
-            position: relative; overflow: hidden;
+        .header { 
+            height: 70px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; 
+            padding: 0 25px; background: rgba(3, 7, 18, 0.6); backdrop-filter: blur(10px); z-index: 40;
         }
         
-        .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-top: 20px;}
+        .scroll-area { flex: 1; overflow-y: auto; padding: 25px; scroll-behavior: smooth; }
+
+        /* DASHBOARD WIDGETS */
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
         
-        .topic-card {
-            background: rgba(30, 41, 59, 0.4); border: 1px solid var(--glass-border);
-            border-radius: var(--radius); padding: 20px; text-align: center;
-            transition: 0.3s; cursor: default; position: relative;
+        .mastery-card {
+            grid-column: 1 / -1; background: linear-gradient(180deg, rgba(6, 182, 212, 0.05), rgba(15, 23, 42, 0.6));
+            display: flex; align-items: center; justify-content: space-between; padding: 30px;
         }
-        .topic-card:hover { transform: translateY(-5px); border-color: var(--secondary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        @media (max-width: 768px) { .mastery-card { flex-direction: column-reverse; text-align: center; gap: 20px; } }
+
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        .cat-card {
+            background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 16px; padding: 20px;
+            text-align: center; transition: 0.3s; cursor: default;
+        }
+        .cat-card:hover { transform: translateY(-3px); background: rgba(255,255,255,0.04); border-color: var(--primary-glow); }
         
-        .progress-ring { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; }
-        .progress-ring circle {
-            fill: none; stroke-width: 8; stroke-linecap: round;
-            transform: rotate(-90deg); transform-origin: 50% 50%;
-            transition: stroke-dashoffset 1s ease-out;
+        /* CIRCULAR PROGRESS */
+        .ring-container { position: relative; width: 80px; height: 80px; margin: 0 auto 10px; }
+        .ring-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .ring-circle-bg { fill: none; stroke: rgba(255,255,255,0.05); stroke-width: 6; }
+        .ring-circle-val { 
+            fill: none; stroke: var(--c-color, var(--primary)); stroke-width: 6; stroke-linecap: round; 
+            stroke-dasharray: 220; stroke-dashoffset: 220; transition: stroke-dashoffset 1s ease-out;
+            filter: drop-shadow(0 0 4px var(--c-color));
         }
-        .ring-bg { stroke: rgba(255,255,255,0.1); }
-        .ring-val { stroke: var(--color); stroke-dasharray: 251; stroke-dashoffset: 251; filter: drop-shadow(0 0 4px var(--color)); }
+        .ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 0.9rem; font-weight: 700; font-family: var(--font-mono); }
+
+        /* QUIZ INTERFACE */
+        .quiz-container { max-width: 800px; margin: 0 auto; padding-bottom: 100px; }
+        .question-text { font-size: 1.25rem; line-height: 1.6; font-weight: 600; margin-bottom: 25px; color: #fff; }
         
-        .ring-text {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            font-family: var(--font-mono); font-weight: 700; font-size: 1.2rem;
+        .choice-btn {
+            display: flex; align-items: center; width: 100%; text-align: left; padding: 18px 20px;
+            margin-bottom: 12px; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
+            border-radius: 12px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; position: relative;
+        }
+        .choice-btn:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        .choice-key { 
+            width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.1); color: white;
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; margin-right: 15px; flex-shrink: 0;
         }
 
-        /* QUIZ UI & TIMER STYLES */
-        .quiz-timer-container {
-            display: flex; justify-content: center; margin-bottom: 25px;
-        }
-        .timer-pill {
-            background: rgba(34, 211, 238, 0.1);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 10px 30px;
-            border-radius: 50px;
-            font-family: var(--font-mono);
-            font-size: 1.5rem;
-            font-weight: 700;
-            box-shadow: 0 0 20px rgba(34, 211, 238, 0.2);
-            display: flex; align-items: center; gap: 10px;
-        }
-
-        .choice-label { 
-            display:flex; align-items: center; padding:20px; background:rgba(255,255,255,0.03); 
-            margin-bottom:15px; border-radius:12px; cursor:pointer; border:1px solid var(--glass-border); 
-            transition:0.2s; font-size: 1.05rem; 
-        }
-        .choice-label:hover { border-color: var(--primary); background: rgba(34, 211, 238, 0.1); transform: translateX(10px); }
+        .choice-correct { background: rgba(16, 185, 129, 0.1) !important; border-color: var(--success) !important; color: white !important; }
+        .choice-correct .choice-key { background: var(--success); }
         
-        .choice-letter {
-             width:35px; height:35px; border:2px solid var(--text-muted); border-radius:50%; margin-right:20px; 
-             display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink: 0; transition: 0.2s;
-        }
-        
-        .choice-correct { border-color: var(--success) !important; background: rgba(52, 211, 153, 0.15) !important; box-shadow: 0 0 15px rgba(52, 211, 153, 0.2); }
-        .choice-correct .choice-letter { background: var(--success); color: black; border-color: var(--success); }
-        
-        .choice-wrong { border-color: var(--danger) !important; background: rgba(248, 113, 113, 0.15) !important; animation: shake 0.4s; }
-        .choice-wrong .choice-letter { background: var(--danger); color: white; border-color: var(--danger); }
+        .choice-wrong { background: rgba(239, 68, 68, 0.1) !important; border-color: var(--danger) !important; color: white !important; }
+        .choice-wrong .choice-key { background: var(--danger); }
 
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-
-        /* --- NEW RATIONALE & NEXT TIMER STYLES --- */
-        .rationale-container {
-            margin-top: 30px; 
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            background: rgba(15, 23, 42, 0.5);
-            /* This ensures the container is the focus for scroll */
-            scroll-margin-top: 20px; 
+        /* RATIONALE BOX */
+        .rationale-panel {
+            margin-top: 30px; background: #0f1c30; border: 1px solid var(--primary-dim); border-left: 4px solid var(--primary);
+            border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
         }
-
-        /* The bar containing the timer and Next button */
-        .rationale-header {
-            background: rgba(34, 211, 238, 0.1);
-            padding: 20px;
-            border-bottom: 1px solid var(--glass-border);
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
+        .rationale-timer-bar {
+            background: rgba(6, 182, 212, 0.05); padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .rationale-content { padding: 25px; line-height: 1.7; font-size: 0.95rem; color: #cbd5e1; }
 
-        /* The big circular countdown */
-        .next-timer-visual {
-            position: relative;
-            width: 70px; 
-            height: 70px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-        }
-
-        .next-timer-visual svg {
-            transform: rotate(-90deg);
-            width: 70px;
-            height: 70px;
-        }
-
-        .next-timer-visual circle {
-            fill: none;
-            stroke-width: 6;
-            stroke-linecap: round;
-        }
-        
-        .next-timer-bg { stroke: rgba(255,255,255,0.1); }
-        .next-timer-progress {
-            stroke: var(--primary);
-            stroke-dasharray: 188; /* 2 * PI * 30 (radius) approx */
-            stroke-dashoffset: 0;
-            transition: stroke-dashoffset 1s linear;
-        }
-
-        .next-timer-text {
-            position: absolute;
-            font-family: var(--font-mono);
-            font-weight: 700;
-            font-size: 1.4rem;
-            color: var(--primary);
-        }
-
-        .next-label {
+        /* SOURCE LINK STYLING */
+        .source-box {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
             gap: 15px;
         }
-        
-        .next-label span {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+        .btn-source {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 700;
+            transition: 0.3s;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
+        }
+        .btn-source:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
+            transform: translateY(-2px);
         }
 
-        .rationale-text {
-            padding: 25px; 
-            color: #e2e8f0; line-height: 1.7; 
+        /* CIRCULAR TIMER */
+        .circular-timer { width: 40px; height: 40px; position: relative; display: flex; justify-content: center; align-items: center; }
+        .circular-timer svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .circular-timer circle { fill: none; stroke-width: 3; }
+        .timer-bg { stroke: rgba(255,255,255,0.1); }
+        .timer-progress { stroke: var(--primary); stroke-dasharray: 113; transition: stroke-dashoffset 1s linear; }
+        .timer-val { position: absolute; font-size: 0.8rem; font-weight: 700; color: var(--primary); }
+
+        /* MOBILE & LOADING */
+        .menu-toggle { display: none; font-size: 1.8rem; color: white; background: none; border: none; cursor: pointer; }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); z-index: 45; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .overlay.active { opacity: 1; pointer-events: auto; }
+
+        @media (max-width: 900px) {
+            .sidebar { position: fixed; left: -100%; height: 100%; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
+            .sidebar.active { left: 0; transform: none; }
+            .menu-toggle { display: block; }
         }
 
-        .fade-in { animation: fadeIn 0.5s ease forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Mobile */
-        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 15; backdrop-filter: blur(5px);}
-        .menu-btn { display: none; background: none; border: none; color: white; font-size: 2rem; cursor: pointer; }
-
-        @media (max-width: 900px) { 
-            .sidebar { position: fixed; left: -300px; height: 100%; box-shadow: 10px 0 30px rgba(0,0,0,0.5); }
-            .sidebar.active { transform: translateX(300px); }
-            .menu-btn { display: block; }
-            .sidebar-overlay.active { display: block; }
-            .content-area { padding: 15px; }
-            .overall-info { text-align: center; }
-            
-            /* Responsive Cards */
-            .card { padding: 20px; }
-            .timer-pill { font-size: 1.2rem; padding: 8px 20px; }
-            .choice-label { padding: 15px; font-size: 0.95rem; }
-            
-            .rationale-header { padding: 15px; }
-            .next-label span { font-size: 0.75rem; }
+        .loader {
+            width: 48px; height: 48px; border: 3px solid #FFF; border-bottom-color: var(--primary);
+            border-radius: 50%; display: inline-block; box-sizing: border-box;
+            animation: rotation 1s linear infinite;
         }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div class="bg-animate"></div>
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-
-    <div id="view-auth" class="wrapper fade-in" style="justify-content: center; align-items: center; position: fixed; z-index: 100; backdrop-filter: blur(20px); background: rgba(2,6,23,0.8);">
-        
-        <div id="form-login" class="card" style="width: 100%; max-width: 420px; text-align: center; border-top: 4px solid var(--primary);">
-            <div style="margin-bottom: 30px;">
-                <i class='bx bxs-capsule' style='font-size: 3.5rem; color: var(--primary); filter: drop-shadow(0 0 10px var(--primary));'></i>
-                <h1 style="color: white; font-family: var(--font-mono); font-size: 2rem; margin-top: 10px;">PNLE ELITE</h1>
-                <p style="color: var(--text-muted); letter-spacing: 2px; font-size: 0.8rem;">MEMBER LOGIN</p>
-            </div>
-            <div style="text-align: left;">
-                <input type="email" id="inp-email" class="input" placeholder="Email Address">
-                <input type="password" id="inp-pass" class="input" placeholder="Password">
-            </div>
-            <button id="btn-login" class="btn btn-primary" style="width:100%; height: 50px;">ENTER SYSTEM</button>
-            <div class="auth-toggle" onclick="toggleAuthMode()">No account? Register Payment Here</div>
-            <div id="login-msg" style="margin-top:20px; color:var(--danger); font-size:0.85rem; min-height: 20px;"></div>
-        </div>
-
-        <div id="form-register" class="card hidden" style="width: 100%; max-width: 450px; text-align: center; border-top: 4px solid var(--success);">
-            <div style="margin-bottom: 20px;">
-                <i class='bx bxs-wallet' style='font-size: 3.5rem; color: var(--success); filter: drop-shadow(0 0 10px var(--success));'></i>
-                <h1 style="color: white; font-family: var(--font-mono); font-size: 1.8rem; margin-top: 10px;">REGISTER</h1>
-                <p style="color: var(--text-muted); font-size: 0.8rem;">Create account & submit GCash Ref</p>
-            </div>
+    <div id="view-auth" class="auth-wrapper fade-in">
+        <div id="form-login" class="card auth-card">
+            <div class="brand-logo"><i class='bx bxs-capsule'></i></div>
+            <h2 style="text-align: center; margin-bottom: 5px;">PNLE ELITE</h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 0.9rem;">Reviewer Access Terminal</p>
             
-            <div style="background: rgba(34, 211, 238, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 20px; border: 1px dashed var(--primary); text-align: left;">
-                <p style="font-size: 0.8rem; color: var(--primary); font-weight: bold; margin-bottom: 5px;">SEND GCASH PAYMENT TO:</p>
-                <div style="font-family: var(--font-mono); font-size: 1.1rem; color: white;">0948 374 8304</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">Name:A...LO</div>
+            <div class="input-group"><input type="email" id="inp-email" class="input" placeholder="Enter Email"></div>
+            <div class="input-group"><input type="password" id="inp-pass" class="input" placeholder="Enter Password"></div>
+            
+            <button id="btn-login" class="btn btn-primary" style="width: 100%; margin-top: 10px;">SECURE LOGIN <i class='bx bx-log-in-circle'></i></button>
+            <div style="text-align: center; margin-top: 20px;">
+                <span class="btn-ghost" onclick="toggleAuthMode()" style="font-size: 0.8rem; cursor: pointer;">Create an Account</span>
             </div>
-
-            <div style="text-align: left;">
-                <input type="email" id="reg-email" class="input" placeholder="Email Address">
-                <input type="password" id="reg-pass" class="input" placeholder="Password (Min 6 chars)">
-                <input type="text" id="reg-ref" class="input" placeholder="GCash Reference No. (Required)" style="border-color: var(--success);">
-            </div>
-            <button id="btn-register" class="btn btn-primary" style="width:100%; height: 50px; background: var(--success); color: black;">SUBMIT REGISTRATION</button>
-            <div class="auth-toggle" onclick="toggleAuthMode()">Already have an account? Login</div>
-            <div id="reg-msg" style="margin-top:20px; color:var(--warning); font-size:0.85rem; min-height: 20px;"></div>
+            <div id="login-msg" style="text-align:center; margin-top:15px; color:var(--danger); font-size:0.8rem;"></div>
         </div>
 
+        <div id="form-register" class="card auth-card hidden">
+            <h2 style="text-align: center; margin-bottom: 5px; color: var(--success);">REGISTER</h2>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Step 1: Send GCash Payment</p>
+            
+            <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed var(--success); margin-bottom: 20px;">
+                <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--success); font-weight: bold;">Send to GCash</div>
+                <div style="font-size: 1.2rem; font-family: var(--font-mono); color: white; margin: 5px 0;">0948 374 8304</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">Name: A...LO</div>
+            </div>
+
+            <div class="input-group"><input type="email" id="reg-email" class="input" placeholder="Email Address"></div>
+            <div class="input-group"><input type="password" id="reg-pass" class="input" placeholder="Password (Min 6 chars)"></div>
+            <div class="input-group"><input type="text" id="reg-ref" class="input" placeholder="GCash Reference No." style="border-color: var(--success);"></div>
+            
+            <button id="btn-register" class="btn btn-primary" style="width: 100%; background: var(--success); color: #000;">SUBMIT REGISTRATION</button>
+            <div style="text-align: center; margin-top: 20px;">
+                <span class="btn-ghost" onclick="toggleAuthMode()" style="font-size: 0.8rem; cursor: pointer;">Back to Login</span>
+            </div>
+            <div id="reg-msg" style="text-align:center; margin-top:15px; color:var(--warning); font-size:0.8rem;"></div>
+        </div>
     </div>
 
-    <div id="app-layout" class="wrapper hidden">
+    <div id="app-layout" class="layout hidden">
+        <div class="overlay" onclick="toggleSidebar()"></div>
         
-        <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
-
-        <aside class="sidebar" id="main-sidebar">
-            <div class="brand"><i class='bx bxs-virus' style='color:var(--primary)'></i> PNLE PRO</div>
-            <nav>
-                <div class="nav-item active" onclick="window.navTo('dashboard'); toggleSidebar()">
-                    <i class='bx bxs-grid-alt'></i> Dashboard
-                </div>
-                <div class="nav-item" onclick="window.navTo('topics'); toggleSidebar()">
-                    <i class='bx bxs-brain'></i> Start Review
-                </div>
-            </nav>
-            <div style="flex:1"></div>
-            <div class="card" style="padding: 15px; background: rgba(0,0,0,0.3); border:none;">
-                <p style="font-size: 0.7rem; color: var(--text-muted); margin-bottom: 5px;">ACCOUNT STATUS</p>
-                <div style="display:flex; align-items:center; gap:8px; font-size:0.8rem; color:var(--success);">
-                    <div style="width:8px; height:8px; background:var(--success); border-radius:50%; box-shadow: 0 0 8px var(--success);"></div>
-                    Active Member
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header"><i class='bx bxs-virus'></i> PNLE PRO</div>
+            <div class="nav-links">
+                <div class="nav-item active" onclick="navTo('dashboard'); toggleSidebar()"><i class='bx bxs-dashboard'></i> Dashboard</div>
+                <div class="nav-item" onclick="navTo('topics'); toggleSidebar()"><i class='bx bxs-layer'></i> Start Review</div>
+            </div>
+            <div style="padding: 20px;">
+                <div class="card" style="padding: 15px; background: rgba(0,0,0,0.2); border: none;">
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Subscription</div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-top: 5px; color: var(--success); font-weight: 600; font-size: 0.85rem;">
+                        <span style="width:8px; height:8px; background:var(--success); border-radius:50%; box-shadow: 0 0 10px var(--success);"></span> Active
+                    </div>
+                    <div id="days-remaining" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">Checking...</div>
                 </div>
             </div>
         </aside>
 
-        <main class="main-content">
-            <header class="top-bar">
-                <div style="display: flex; align-items: center;">
-                    <button class="menu-btn" onclick="toggleSidebar()"><i class='bx bx-menu-alt-left'></i></button>
-                    <div style="font-weight: 700; font-size: 1.2rem; letter-spacing: 1px;" id="page-title">DASHBOARD</div>
+        <main class="main">
+            <header class="header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="menu-toggle" onclick="toggleSidebar()"><i class='bx bx-menu'></i></button>
+                    <h3 id="page-title" style="margin: 0;">Dashboard</h3>
                 </div>
-                
-                <div class="user-profile">
-                    <div style="text-align: right; display: none; @media(min-width:600px){display:block;}">
-                        <div style="font-size: 0.9rem; font-weight: 700; color: white;" id="user-name">User</div>
-                        <div class="validity-badge" id="days-remaining">Checking...</div>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <div style="text-align: right;" class="hidden-xs">
+                        <div id="user-name" style="font-size: 0.9rem; font-weight: 600;">Nurse</div>
                     </div>
-                    <div class="avatar">RN</div>
-                    <button class="btn btn-danger" id="btn-logout" style="padding: 8px 12px; border-radius: 8px;">
-                        <i class='bx bx-power-off'></i>
-                    </button>
+                    <div style="width: 35px; height: 35px; background: linear-gradient(to right, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">RN</div>
+                    <button id="btn-logout" class="btn btn-ghost" style="padding: 8px;"><i class='bx bx-power-off' style="font-size: 1.2rem;"></i></button>
                 </div>
             </header>
 
-            <div class="content-area" id="main-scroll-area">
+            <div class="scroll-area" id="main-scroll">
                 
-                <div id="view-loading" class="hidden" style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:80%;">
-                    <div style="width: 60px; height: 60px; border: 4px solid rgba(34, 211, 238, 0.1); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; box-shadow: 0 0 20px var(--primary-glow);"></div>
-                    <p style="color:var(--text-muted); margin-top: 25px; font-family: var(--font-mono); letter-spacing: 2px;">VERIFYING ACCOUNT...</p>
+                <div id="view-loading" class="hidden" style="height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <span class="loader"></span>
+                    <p style="margin-top: 20px; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 2px; font-size: 0.8rem;">LOADING SYSTEM DATA...</p>
                 </div>
 
                 <div id="view-dashboard" class="fade-in">
-                    <div class="stats-header">
-                        <div>
-                            <h2 style="margin-bottom: 5px; font-size: 1.8rem;">Welcome Back, Nurse.</h2>
-                            <p style="font-size: 0.95rem; color: var(--text-muted);">Here is your performance overview.</p>
+                    <div class="stat-grid">
+                        <div class="card mastery-card">
+                            <div>
+                                <h4 style="color: var(--primary); font-family: var(--font-mono); letter-spacing: 1px; margin-bottom: 8px;">OVERALL MASTERY</h4>
+                                <div id="txt-ALL" style="font-size: 4rem; font-weight: 800; line-height: 1; letter-spacing: -2px; text-shadow: 0 0 30px rgba(6, 182, 212, 0.4);">0%</div>
+                                <div style="color: var(--text-muted); margin-top: 5px; font-size: 0.9rem;">Total Questions Answered: <span id="ans-ALL" style="color: white; font-weight: 700;">0</span></div>
+                                <div style="margin-top: 25px;">
+                                    <button onclick="navTo('topics')" class="btn btn-primary">Start New Session <i class='bx bx-right-arrow-alt'></i></button>
+                                </div>
+                            </div>
+                            <div style="position: relative; width: 180px; height: 180px;">
+                                <svg width="180" height="180" style="transform: rotate(-90deg);">
+                                    <defs>
+                                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:var(--secondary);stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <circle cx="90" cy="90" r="80" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="15" />
+                                    <circle id="ring-ALL" cx="90" cy="90" r="80" fill="none" stroke="url(#grad1)" stroke-width="15" stroke-dasharray="502" stroke-dashoffset="502" stroke-linecap="round" style="filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4)); transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);"/>
+                                </svg>
+                                <i class='bx bxs-trophy' style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3.5rem; color: rgba(255,255,255,0.8);"></i>
+                            </div>
                         </div>
-                        <button class="btn btn-outline" onclick="window.resetStats()" style="font-size: 0.8rem;">
-                            <i class='bx bx-reset'></i> RESET DATA
-                        </button>
                     </div>
 
-                    <div class="dashboard-grid">
-                        <div class="card stat-card-main">
-                            <div class="overall-info" style="z-index: 2;">
-                                <h3 style="color:var(--primary); font-family:var(--font-mono); margin-bottom: 5px;">OVERALL MASTERY</h3>
-                                <div style="font-size: 3.5rem; font-weight: 800; line-height: 1; text-shadow: 0 0 20px rgba(34,211,238,0.5);" id="txt-ALL">0%</div>
-                                <p style="margin-top: 10px; color: var(--text-muted);">Questions Answered: <strong style="color:white" id="ans-ALL">0</strong></p>
-                            </div>
-                            <div style="position: relative; width: 160px; height: 160px; display: flex; align-items: center; justify-content: center;">
-                                <svg width="160" height="160" style="transform: rotate(-90deg);">
-                                    <circle cx="80" cy="80" r="70" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="12" />
-                                    <circle id="ring-ALL" cx="80" cy="80" r="70" fill="none" stroke="var(--primary)" stroke-width="12" stroke-dasharray="440" stroke-dashoffset="440" stroke-linecap="round" style="filter: drop-shadow(0 0 8px var(--primary)); transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);"/>
-                                </svg>
-                                <i class='bx bxs-trophy' style="position: absolute; font-size: 3rem; color: white;"></i>
-                            </div>
-                        </div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+                        <h4 style="font-weight: 600; font-size: 1.1rem;">Topic Breakdown</h4>
+                        <button onclick="resetStats()" class="btn btn-ghost" style="font-size: 0.75rem; padding: 6px 12px;"><i class='bx bx-reset'></i> Reset Stats</button>
                     </div>
 
-                    <div style="margin-top: 25px;">
-                        <button class="btn btn-primary" onclick="window.navTo('topics')" style="width: 100%; padding: 18px; font-size: 1.1rem; border-radius: 12px; display:flex; justify-content: space-between;">
-                            <span>START REVIEW SESSION</span>
-                            <i class='bx bx-right-arrow-circle' style="font-size: 1.4rem;"></i>
-                        </button>
-                    </div>
-
-                    <h3 style="margin: 30px 0 15px; color: var(--text-muted); font-size: 0.9rem; letter-spacing: 2px;">TOPIC BREAKDOWN</h3>
-                    <div class="topic-grid">
-                        <div class="topic-card">
-                            <div class="progress-ring">
-                                <svg width="100" height="100">
-                                    <circle class="ring-bg" cx="50" cy="50" r="40" />
-                                    <circle class="ring-val" id="ring-NP1" cx="50" cy="50" r="40" style="--color: var(--success);" />
-                                </svg>
-                                <span class="ring-text" id="txt-NP1">0%</span>
-                            </div>
-                            <div style="font-weight:700; color:var(--success);">NP1</div>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">Community Health</div>
-                        </div>
-                        <div class="topic-card">
-                            <div class="progress-ring">
-                                <svg width="100" height="100">
-                                    <circle class="ring-bg" cx="50" cy="50" r="40" />
-                                    <circle class="ring-val" id="ring-NP2" cx="50" cy="50" r="40" style="--color: var(--warning);" />
-                                </svg>
-                                <span class="ring-text" id="txt-NP2">0%</span>
-                            </div>
-                            <div style="font-weight:700; color:var(--warning);">NP2</div>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">Maternal & Child</div>
-                        </div>
-                        <div class="topic-card">
-                            <div class="progress-ring">
-                                <svg width="100" height="100">
-                                    <circle class="ring-bg" cx="50" cy="50" r="40" />
-                                    <circle class="ring-val" id="ring-NP3" cx="50" cy="50" r="40" style="--color: #a855f7;" />
-                                </svg>
-                                <span class="ring-text" id="txt-NP3">0%</span>
-                            </div>
-                            <div style="font-weight:700; color:#a855f7;">NP3</div>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">MedSurg I</div>
-                        </div>
-                        <div class="topic-card">
-                            <div class="progress-ring">
-                                <svg width="100" height="100">
-                                    <circle class="ring-bg" cx="50" cy="50" r="40" />
-                                    <circle class="ring-val" id="ring-NP4" cx="50" cy="50" r="40" style="--color: #ec4899;" />
-                                </svg>
-                                <span class="ring-text" id="txt-NP4">0%</span>
-                            </div>
-                            <div style="font-weight:700; color:#ec4899;">NP4</div>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">MedSurg II</div>
-                        </div>
-                        <div class="topic-card">
-                            <div class="progress-ring">
-                                <svg width="100" height="100">
-                                    <circle class="ring-bg" cx="50" cy="50" r="40" />
-                                    <circle class="ring-val" id="ring-NP5" cx="50" cy="50" r="40" style="--color: #f43f5e;" />
-                                </svg>
-                                <span class="ring-text" id="txt-NP5">0%</span>
-                            </div>
-                            <div style="font-weight:700; color:#f43f5e;">NP5</div>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">Psychiatric</div>
-                        </div>
+                    <div class="category-grid">
+                        <div class="cat-card"><div class="ring-container"><svg class="ring-svg"><circle class="ring-circle-bg" cx="40" cy="40" r="35"></circle><circle id="ring-NP1" class="ring-circle-val" cx="40" cy="40" r="35" style="--c-color: var(--success);"></circle></svg><div class="ring-text" id="txt-NP1">0%</div></div><div style="font-weight:700; color:var(--success);">NP1</div><div style="font-size:0.75rem; color:var(--text-muted);">Community Health</div></div>
+                        <div class="cat-card"><div class="ring-container"><svg class="ring-svg"><circle class="ring-circle-bg" cx="40" cy="40" r="35"></circle><circle id="ring-NP2" class="ring-circle-val" cx="40" cy="40" r="35" style="--c-color: var(--warning);"></circle></svg><div class="ring-text" id="txt-NP2">0%</div></div><div style="font-weight:700; color:var(--warning);">NP2</div><div style="font-size:0.75rem; color:var(--text-muted);">Maternal & Child</div></div>
+                        <div class="cat-card"><div class="ring-container"><svg class="ring-svg"><circle class="ring-circle-bg" cx="40" cy="40" r="35"></circle><circle id="ring-NP3" class="ring-circle-val" cx="40" cy="40" r="35" style="--c-color: var(--secondary);"></circle></svg><div class="ring-text" id="txt-NP3">0%</div></div><div style="font-weight:700; color:var(--secondary);">NP3</div><div style="font-size:0.75rem; color:var(--text-muted);">MedSurg I</div></div>
+                        <div class="cat-card"><div class="ring-container"><svg class="ring-svg"><circle class="ring-circle-bg" cx="40" cy="40" r="35"></circle><circle id="ring-NP4" class="ring-circle-val" cx="40" cy="40" r="35" style="--c-color: var(--accent);"></circle></svg><div class="ring-text" id="txt-NP4">0%</div></div><div style="font-weight:700; color:var(--accent);">NP4</div><div style="font-size:0.75rem; color:var(--text-muted);">MedSurg II</div></div>
+                        <div class="cat-card"><div class="ring-container"><svg class="ring-svg"><circle class="ring-circle-bg" cx="40" cy="40" r="35"></circle><circle id="ring-NP5" class="ring-circle-val" cx="40" cy="40" r="35" style="--c-color: var(--danger);"></circle></svg><div class="ring-text" id="txt-NP5">0%</div></div><div style="font-weight:700; color:var(--danger);">NP5</div><div style="font-size:0.75rem; color:var(--text-muted);">Psychiatric</div></div>
                     </div>
                 </div>
 
                 <div id="view-topics" class="hidden fade-in">
-                    <h2 style="margin-bottom: 25px; text-align: center;">SELECT SUBJECT</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
-                        <div class="card" onclick="window.selectTopic('NP1')" style="cursor:pointer; text-align:center; border-top: 4px solid var(--success);">
-                            <i class='bx bxs-buildings' style="font-size:4rem; color:var(--success); margin-bottom:15px;"></i>
-                            <h3>NP1</h3>
-                            <p style="font-size:0.8rem; color:var(--text-muted);">Community Health Nursing</p>
-                        </div>
-                        <div class="card" onclick="window.selectTopic('NP2')" style="cursor:pointer; text-align:center; border-top: 4px solid var(--warning);">
-                            <i class='bx bxs-baby-carriage' style="font-size:4rem; color:var(--warning); margin-bottom:15px;"></i>
-                            <h3>NP2</h3>
-                            <p style="font-size:0.8rem; color:var(--text-muted);">Maternal & Child</p>
-                        </div>
-                        <div class="card" onclick="window.selectTopic('NP3')" style="cursor:pointer; text-align:center; border-top: 4px solid #a855f7;">
-                            <i class='bx bxs-heart' style="font-size:4rem; color:#a855f7; margin-bottom:15px;"></i>
-                            <h3>NP3</h3>
-                            <p style="font-size:0.8rem; color:var(--text-muted);">Medical Surgical I</p>
-                        </div>
-                        <div class="card" onclick="window.selectTopic('NP4')" style="cursor:pointer; text-align:center; border-top: 4px solid #ec4899;">
-                            <i class='bx bxs-ambulance' style="font-size:4rem; color:#ec4899; margin-bottom:15px;"></i>
-                            <h3>NP4</h3>
-                            <p style="font-size:0.8rem; color:var(--text-muted);">Medical Surgical II</p>
-                        </div>
-                        <div class="card" onclick="window.selectTopic('NP5')" style="cursor:pointer; text-align:center; border-top: 4px solid #f43f5e;">
-                            <i class='bx bxs-brain' style="font-size:4rem; color:#f43f5e; margin-bottom:15px;"></i>
-                            <h3>NP5</h3>
-                            <p style="font-size:0.8rem; color:var(--text-muted);">Psychiatric Nursing</p>
-                        </div>
-                        <div class="card" onclick="window.selectTopic('ALL')" style="cursor:pointer; text-align:center; border: 2px solid var(--primary); background: rgba(34, 211, 238, 0.05);">
-                            <i class='bx bxs-layer' style="font-size:4rem; color:var(--primary); margin-bottom:15px;"></i>
-                            <h3>MIXED</h3>
-                            <p style="font-size:0.8rem; color:var(--text-muted);">Comprehensive Exam</p>
+                    <h2 style="margin-bottom: 20px; font-weight: 300;">Choose <span style="font-weight:800; color:var(--primary);">Category</span></h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
+                        <button onclick="selectTopic('NP1')" class="card" style="padding: 30px; text-align: left; transition: 0.3s; cursor:pointer;"><i class='bx bxs-buildings' style="font-size: 2.5rem; color: var(--success); margin-bottom: 15px;"></i><h3>NP1</h3><p style="font-size: 0.8rem; color: var(--text-muted);">Community Health Nursing</p></button>
+                        <button onclick="selectTopic('NP2')" class="card" style="padding: 30px; text-align: left; transition: 0.3s; cursor:pointer;"><i class='bx bxs-baby-carriage' style="font-size: 2.5rem; color: var(--warning); margin-bottom: 15px;"></i><h3>NP2</h3><p style="font-size: 0.8rem; color: var(--text-muted);">Maternal & Child Health</p></button>
+                        <button onclick="selectTopic('NP3')" class="card" style="padding: 30px; text-align: left; transition: 0.3s; cursor:pointer;"><i class='bx bxs-heart' style="font-size: 2.5rem; color: var(--secondary); margin-bottom: 15px;"></i><h3>NP3</h3><p style="font-size: 0.8rem; color: var(--text-muted);">Medical Surgical I</p></button>
+                        <button onclick="selectTopic('NP4')" class="card" style="padding: 30px; text-align: left; transition: 0.3s; cursor:pointer;"><i class='bx bxs-ambulance' style="font-size: 2.5rem; color: var(--accent); margin-bottom: 15px;"></i><h3>NP4</h3><p style="font-size: 0.8rem; color: var(--text-muted);">Medical Surgical II</p></button>
+                        <button onclick="selectTopic('NP5')" class="card" style="padding: 30px; text-align: left; transition: 0.3s; cursor:pointer;"><i class='bx bxs-brain' style="font-size: 2.5rem; color: var(--danger); margin-bottom: 15px;"></i><h3>NP5</h3><p style="font-size: 0.8rem; color: var(--text-muted);">Psychiatric Nursing</p></button>
+                        <button onclick="selectTopic('ALL')" class="card" style="padding: 30px; text-align: left; transition: 0.3s; cursor:pointer; border-color: var(--primary);"><i class='bx bxs-layer' style="font-size: 2.5rem; color: var(--primary); margin-bottom: 15px;"></i><h3>Comprehensive</h3><p style="font-size: 0.8rem; color: var(--text-muted);">Mixed Questions (Random)</p></button>
+                    </div>
+                </div>
+
+                <div id="view-count" class="hidden fade-in" style="max-width: 500px; margin: 0 auto;">
+                    <button onclick="navTo('topics')" class="btn btn-ghost" style="margin-bottom: 20px;"><i class='bx bx-arrow-back'></i> Back</button>
+                    <div class="card" style="padding: 40px; text-align: center;">
+                        <h2 style="margin-bottom: 10px;">Exam Settings</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 30px;">How many questions do you want to tackle?</p>
+                        <div style="display: grid; gap: 15px;">
+                            <button onclick="startQuiz(10)" class="btn btn-outline" style="justify-content: space-between;">10 Items <i class='bx bx-chevron-right'></i></button>
+                            <button onclick="startQuiz(30)" class="btn btn-outline" style="justify-content: space-between;">30 Items <i class='bx bx-chevron-right'></i></button>
+                            <button onclick="startQuiz(50)" class="btn btn-outline" style="justify-content: space-between;">50 Items <i class='bx bx-chevron-right'></i></button>
+                            <button onclick="startQuiz(100)" class="btn btn-outline" style="justify-content: space-between; border-color: var(--primary);">100 Items <i class='bx bx-chevron-right'></i></button>
                         </div>
                     </div>
                 </div>
 
-                <div id="view-count" class="hidden fade-in">
-                    <button class="btn btn-ghost" onclick="window.navTo('topics')"><i class='bx bx-left-arrow-alt'></i> Back</button>
-                    <div class="card" style="max-width: 500px; margin: 40px auto; text-align: center; border-top: 4px solid var(--primary);">
-                        <h2 style="margin-bottom: 30px;">How many questions?</h2>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                            <button class="btn btn-outline" onclick="window.startQuiz(10)">10 Items</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(30)">30 Items</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(50)">50 Items</button>
-                            <button class="btn btn-outline" onclick="window.startQuiz(100)">100 Items</button>
-                        </div>
+                <div id="view-quiz" class="hidden fade-in quiz-container">
                     </div>
-                </div>
-
-                <div id="view-quiz" class="hidden fade-in" style="position: relative; min-height: 100%; padding-bottom: 80px;"></div>
 
             </div>
         </main>
@@ -591,7 +433,7 @@
         import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // CONFIG (Replace with your actual keys if different)
+        // CONFIG (Same Keys)
         const firebaseConfig = {
             apiKey: "AIzaSyCmd6vmuXUPslLJf0w7I518C8UIaO2DoAA",
             authDomain: "pnle-class.firebaseapp.com",
@@ -606,7 +448,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- GLOBAL VARS ---
+        // VARS
         let questions = []; 
         let currentSet = [];
         let sessionResults = []; 
@@ -614,13 +456,13 @@
         let selectedTopic = "ALL";
         let questionTimerInterval;
         let nextTimerInterval;
-        const TIME_LIMIT = 60; // 60 seconds per question
-        const NEXT_TIME = 10; // 10 seconds auto next
+        const TIME_LIMIT = 60;
+        const NEXT_TIME = 10;
 
-        // --- UI FUNCTIONS ---
+        // UI HELPERS
         window.toggleSidebar = () => {
-            document.getElementById('main-sidebar').classList.toggle('active');
-            document.querySelector('.sidebar-overlay').classList.toggle('active');
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelector('.overlay').classList.toggle('active');
         }
 
         window.toggleAuthMode = () => {
@@ -630,7 +472,30 @@
             document.getElementById('reg-msg').innerText = "";
         }
 
-        // --- AUTH & VALIDATION LOGIC ---
+        window.navTo = (page) => {
+            clearInterval(questionTimerInterval);
+            clearInterval(nextTimerInterval);
+            ['view-dashboard', 'view-topics', 'view-count', 'view-quiz'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+                document.getElementById(id).classList.remove('fade-in');
+            });
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            if(page === 'dashboard') {
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                document.getElementById('view-dashboard').classList.add('fade-in');
+                document.getElementById('page-title').innerText = "Dashboard";
+                document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+                if(auth.currentUser) fetchUserStats(auth.currentUser.uid);
+            } else if (page === 'topics') {
+                document.getElementById('view-topics').classList.remove('hidden');
+                document.getElementById('view-topics').classList.add('fade-in');
+                document.getElementById('page-title').innerText = "Review Session";
+                document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            }
+        };
+
+        // AUTH
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 document.getElementById('view-auth').classList.add('hidden');
@@ -643,283 +508,198 @@
 
                 if (userSnap.exists()) {
                     const data = userSnap.data();
-                    const status = data.status || "pending";
-                    
-                    if(status === 'pending') {
-                        alert("Your account is currently PENDING approval.\nPlease wait for the Admin to verify your GCash payment.");
-                        await signOut(auth);
-                        window.location.reload();
-                        return;
-                    }
+                    if(data.status === 'pending') { alert("Account PENDING."); await signOut(auth); location.reload(); return; }
+                    if(data.status === 'expired') { alert("Account EXPIRED."); await signOut(auth); location.reload(); return; }
 
-                    if(status === 'expired') {
-                        alert("Your account has EXPIRED. Please renew your subscription.");
-                        await signOut(auth);
-                        window.location.reload();
-                        return;
-                    }
+                    const now = new Date();
+                    let expiryDate;
+                    if(!data.activationDate) {
+                        expiryDate = new Date(); expiryDate.setDate(expiryDate.getDate() + 90); 
+                        await updateDoc(userRef, { activationDate: Timestamp.fromDate(now), expiryDate: Timestamp.fromDate(expiryDate) });
+                    } else { expiryDate = data.expiryDate.toDate(); }
 
-                    if(status === 'active') {
-                        const now = new Date();
-                        let expiryDate;
+                    if(now > expiryDate) { await updateDoc(userRef, { status: 'expired' }); alert("Expired."); await signOut(auth); return; }
 
-                        if(!data.activationDate) {
-                            expiryDate = new Date();
-                            expiryDate.setDate(expiryDate.getDate() + 90); 
-
-                            await updateDoc(userRef, {
-                                activationDate: Timestamp.fromDate(now),
-                                expiryDate: Timestamp.fromDate(expiryDate)
-                            });
-                        } else {
-                            expiryDate = data.expiryDate.toDate();
-                        }
-
-                        if(now > expiryDate) {
-                            await updateDoc(userRef, { status: 'expired' });
-                            alert("Your 90-day access period has ended. Account expired.");
-                            await signOut(auth);
-                            window.location.reload();
-                            return;
-                        }
-
-                        const diffTime = Math.abs(expiryDate - now);
-                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                        document.getElementById('days-remaining').innerText = `${diffDays} Days Left`;
-                    }
-
+                    const diffDays = Math.ceil(Math.abs(expiryDate - now) / (1000 * 60 * 60 * 24));
+                    document.getElementById('days-remaining').innerText = `${diffDays} Days Remaining`;
                     document.getElementById('user-name').innerText = user.email.split('@')[0];
+
                     await fetchQuestionsFromDB();
                     await fetchUserStats(user.uid);
                     document.getElementById('view-loading').classList.add('hidden');
                     window.navTo('dashboard');
 
-                } else {
-                    await setDoc(userRef, { email: user.email, status: 'active', stats: {} });
-                    window.location.reload();
-                }
-
+                } else { await setDoc(userRef, { email: user.email, status: 'active', stats: {} }); location.reload(); }
             } else {
                 document.getElementById('view-auth').classList.remove('hidden');
                 document.getElementById('app-layout').classList.add('hidden');
             }
         });
 
-        // --- REGISTRATION FUNCTION ---
         document.getElementById('btn-register').addEventListener('click', async () => {
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-pass').value;
             const ref = document.getElementById('reg-ref').value;
             const msg = document.getElementById('reg-msg');
-
-            if(!email || !pass || !ref) {
-                msg.innerText = "Please fill in all fields including GCash Ref.";
-                return;
-            }
-
-            msg.innerText = "Processing registration...";
-            msg.style.color = "var(--primary)";
-
+            if(!email || !pass || !ref) { msg.innerText = "All fields required."; return; }
+            msg.innerText = "Processing...";
             try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-                const user = userCredential.user;
-
-                await setDoc(doc(db, "users", user.uid), {
-                    email: email,
-                    gcashReference: ref,
-                    status: 'pending',
-                    createdAt: Timestamp.fromDate(new Date()),
-                    stats: {
-                        ALL: { correct: 0, total: 0 },
-                        NP1: { correct: 0, total: 0 }, NP2: { correct: 0, total: 0 },
-                        NP3: { correct: 0, total: 0 }, NP4: { correct: 0, total: 0 }, NP5: { correct: 0, total: 0 }
-                    }
+                const cred = await createUserWithEmailAndPassword(auth, email, pass);
+                await setDoc(doc(db, "users", cred.user.uid), {
+                    email: email, gcashReference: ref, status: 'pending', createdAt: Timestamp.fromDate(new Date()), stats: { ALL: { correct: 0, total: 0 } }
                 });
-
                 await signOut(auth);
-
-                alert("Registration Successful!\n\nYour account is now PENDING.\nPlease wait for the Admin to verify your GCash Reference: " + ref + ".\nYou will be able to login once verified.");
-                window.location.reload();
-
-            } catch (error) {
-                console.error(error);
-                msg.style.color = "var(--danger)";
-                msg.innerText = "Error: " + error.message;
-            }
+                alert("Registered! Pending approval.");
+                location.reload();
+            } catch (e) { msg.innerText = e.message; }
         });
 
-        // --- EXISTING LOGIN FUNCTION ---
         document.getElementById('btn-login').addEventListener('click', () => {
             const e = document.getElementById('inp-email').value;
             const p = document.getElementById('inp-pass').value;
-            document.getElementById('login-msg').innerText = "Authenticating...";
-            
-            signInWithEmailAndPassword(auth, e, p)
-            .catch(err => { 
-                document.getElementById('login-msg').innerText = "Login failed: " + err.message; 
-            });
+            document.getElementById('login-msg').innerText = "Verifying...";
+            signInWithEmailAndPassword(auth, e, p).catch(err => { document.getElementById('login-msg').innerText = "Login Failed: " + err.message; });
         });
-
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
 
-        // --- DATA FETCHING ---
+        // DB FETCH
         async function fetchQuestionsFromDB() {
-            const collections = ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'];
+            const cols = ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'];
             questions = [];
             try {
-                const promises = collections.map(async (colName) => {
-                    const snap = await getDocs(collection(db, colName));
-                    snap.forEach(doc => {
-                        const data = doc.data();
-                        let formattedChoices = [];
+                const promises = cols.map(async (c) => {
+                    const snap = await getDocs(collection(db, c));
+                    snap.forEach(d => {
+                        const data = d.data();
+                        let fChoices = [];
                         if (data.choices) {
-                            if (Array.isArray(data.choices)) {
-                                formattedChoices = data.choices.map((txt, idx) => ({ id: String.fromCharCode(65 + idx), text: txt }));
-                            } else if (typeof data.choices === 'object') {
-                                Object.keys(data.choices).sort().forEach(key => formattedChoices.push({ id: key, text: data.choices[key] }));
-                            }
+                            if (Array.isArray(data.choices)) fChoices = data.choices.map((t, i) => ({ id: String.fromCharCode(65 + i), text: t }));
+                            else Object.keys(data.choices).sort().forEach(k => fChoices.push({ id: k, text: data.choices[k] }));
                         }
-                        if (formattedChoices.length > 0 && data.question) {
+                        if (fChoices.length > 0 && data.question) {
+                            // ROBUST SOURCE LINK CHECK
+                            const src = data.sourceLink || data.source || data.link || "";
                             questions.push({ 
-                                id: doc.id, category: colName, question: data.question,
-                                answer: data.answer, choices: formattedChoices,
-                                rationale: data.rationale || "No rationale provided.",
-                                sourceLink: data.sourceLink || data.source || ""
+                                id: d.id, category: c, question: data.question,
+                                answer: data.answer, choices: fChoices,
+                                rationale: data.rationale || "No rationale.", sourceLink: src
                             });
                         }
                     });
                 });
                 await Promise.all(promises);
-            } catch (error) { console.error("Fetch Error:", error); }
+            } catch (e) { console.log(e); }
         }
 
         async function fetchUserStats(uid) {
             try {
-                const docRef = doc(db, "users", uid);
-                const docSnap = await getDoc(docRef);
-                const stats = (docSnap.exists() && docSnap.data().stats) ? docSnap.data().stats : {};
+                const snap = await getDoc(doc(db, "users", uid));
+                const stats = (snap.exists() && snap.data().stats) ? snap.data().stats : {};
                 
-                const getPercent = (key) => {
+                const updateRing = (key, id) => {
                     const s = stats[key] || { correct: 0, total: 0 };
-                    if (!s.total || s.total === 0) return 0;
-                    return Math.round((s.correct / s.total) * 100);
-                };
-
-                const updateRing = (key, elementId) => {
-                    const pct = getPercent(key);
-                    const txt = document.getElementById(elementId.replace('ring','txt'));
-                    const ring = document.getElementById(elementId);
+                    const pct = (s.total > 0) ? Math.round((s.correct / s.total) * 100) : 0;
+                    const ring = document.getElementById(id);
+                    const txt = document.getElementById(id.replace('ring', 'txt'));
                     if(txt) txt.innerText = pct + "%";
                     if(ring) {
-                        const circumference = key === 'ALL' ? 440 : 251; 
-                        const offset = circumference - (pct / 100) * circumference;
+                        const max = key === 'ALL' ? 502 : 220; 
+                        const offset = max - (pct / 100) * max;
                         ring.style.strokeDashoffset = offset;
                     }
                 };
-
                 updateRing('ALL', 'ring-ALL');
                 if(stats.ALL) document.getElementById('ans-ALL').innerText = stats.ALL.total || 0;
                 ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'].forEach(k => updateRing(k, `ring-${k}`));
-
-            } catch (e) { console.error("Stats Error:", e); }
+            } catch (e) { console.log(e); }
         }
 
-        // --- NAVIGATION & QUIZ ENGINE ---
-        window.navTo = (page) => {
-            clearInterval(questionTimerInterval);
-            clearInterval(nextTimerInterval);
-            ['view-dashboard', 'view-topics', 'view-count', 'view-quiz'].forEach(id => document.getElementById(id).classList.add('hidden'));
-            if(page === 'dashboard') {
-                document.getElementById('view-dashboard').classList.remove('hidden');
-                document.getElementById('page-title').innerText = "DASHBOARD";
-                if(auth.currentUser) fetchUserStats(auth.currentUser.uid);
-            } else if (page === 'topics') {
-                document.getElementById('view-topics').classList.remove('hidden');
-                document.getElementById('page-title').innerText = "REVIEW MODE";
-            }
-        };
-
+        // QUIZ ENGINE
         window.selectTopic = (t) => {
             selectedTopic = t;
             document.getElementById('view-topics').classList.add('hidden');
             document.getElementById('view-count').classList.remove('hidden');
+            document.getElementById('view-count').classList.add('fade-in');
         };
 
         window.startQuiz = (n) => {
             let filtered = selectedTopic === "ALL" ? questions : questions.filter(q => q.category === selectedTopic);
             if(filtered.length === 0) { alert("No questions found."); return; }
+            
             currentSet = filtered.sort(() => 0.5 - Math.random()).slice(0, n);
             sessionResults = [];
             currentIndex = 0;
             document.getElementById('view-count').classList.add('hidden');
             document.getElementById('view-quiz').classList.remove('hidden');
+            document.getElementById('view-quiz').classList.add('fade-in');
             renderQuestion();
         };
 
         function renderQuestion() {
             clearInterval(questionTimerInterval);
             clearInterval(nextTimerInterval);
-            document.getElementById('main-scroll-area').scrollTop = 0;
+            document.getElementById('main-scroll').scrollTop = 0;
 
             if (currentIndex >= currentSet.length) { finishQuiz(); return; }
-
             const q = currentSet[currentIndex];
-            const choicesHTML = q.choices.map(c => `
-                <div class="choice-label fade-in" id="choice-${c.id}" onclick="window.checkAns('${c.id}', this)" style="animation-delay: ${0.1 * (c.id.charCodeAt(0) - 65)}s">
-                    <div class="choice-letter">${c.id}</div>
-                    <div style="flex:1">${c.text}</div>
+
+            let choicesHTML = q.choices.map(c => `
+                <div class="choice-btn" id="choice-${c.id}" onclick="window.checkAns('${c.id}', this)">
+                    <div class="choice-key">${c.id}</div>
+                    <div>${c.text}</div>
                 </div>
             `).join('');
-            const linkHTML = q.sourceLink ? `<a href="${q.sourceLink}" target="_blank" class="source-link"><i class='bx bx-link-external'></i> Source Ref</a>` : '';
+
+            // NEW SOURCE LINK HTML GENERATION
+            let sourceHTML = '';
+            if(q.sourceLink && q.sourceLink.length > 5) {
+                sourceHTML = `
+                    <div class="source-box">
+                        <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px;">Reference / Source</div>
+                        <a href="${q.sourceLink}" target="_blank" class="btn-source">
+                             VERIFY SOURCE <i class='bx bx-link-external'></i>
+                        </a>
+                    </div>
+                `;
+            }
 
             document.getElementById('view-quiz').innerHTML = `
-                <div class="card fade-in" style="max-width:850px; margin:0 auto; border-top: 4px solid var(--primary);">
-                    
-                    <div class="quiz-timer-container">
-                        <div class="timer-pill">
-                            <i class='bx bx-stopwatch'></i> <span id="q-timer">${TIME_LIMIT}s</span>
+                <div class="card" style="padding: 30px; border-top: 3px solid var(--primary);">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                        <span style="font-size:0.8rem; background:rgba(255,255,255,0.05); padding:4px 10px; border-radius:20px; color:var(--text-muted);">
+                            Q ${currentIndex+1} of ${currentSet.length}
+                        </span>
+                        <div style="display:flex; align-items:center; gap:8px; color:var(--warning); font-family:var(--font-mono); font-weight:700;">
+                            <i class='bx bx-time'></i> <span id="q-timer">${TIME_LIMIT}s</span>
                         </div>
                     </div>
+                    
+                    <div class="question-text">${q.question}</div>
+                    <div id="choices-area">${choicesHTML}</div>
 
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; color:var(--text-muted); font-size:0.9rem;">
-                        <span style="background:rgba(255,255,255,0.1); padding:4px 10px; border-radius:20px;">Question ${currentIndex+1} / ${currentSet.length}</span>
-                        <span style="font-size:0.75rem; background:rgba(34, 211, 238, 0.1); padding:4px 10px; border-radius:4px; color:var(--primary); font-weight:700; border:1px solid rgba(34, 211, 238, 0.2);">${q.category}</span>
-                    </div>
-                    
-                    <h3 style="margin:20px 0 30px 0; font-size:1.3rem; line-height:1.6; font-weight:600;">${q.question}</h3>
-                    <div id="choices-box">${choicesHTML}</div>
-                    
-                    <div id="rationale-container" class="hidden fade-in rationale-container">
-                        <div class="rationale-header">
-                            <div class="next-label">
-                                <div class="next-timer-visual">
-                                    <svg>
-                                        <circle class="next-timer-bg" cx="35" cy="35" r="30"></circle>
-                                        <circle id="next-timer-ring" class="next-timer-progress" cx="35" cy="35" r="30"></circle>
-                                    </svg>
-                                    <div class="next-timer-text" id="next-timer-text">${NEXT_TIME}</div>
+                    <div id="rationale-box" class="rationale-panel hidden fade-in">
+                        <div class="rationale-timer-bar">
+                             <div style="display:flex; align-items:center; gap:15px;">
+                                <div class="circular-timer">
+                                    <svg><circle class="timer-bg" cx="20" cy="20" r="18"></circle><circle id="next-ring" class="timer-progress" cx="20" cy="20" r="18"></circle></svg>
+                                    <div class="timer-val" id="next-val">${NEXT_TIME}</div>
                                 </div>
                                 <div>
-                                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:4px;">MOVING TO</div>
-                                    <div style="color:white; font-weight:700;">NEXT QUESTION</div>
+                                    <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">Next Question</div>
+                                    <div style="font-weight:700; color:white;">Auto-Forward</div>
                                 </div>
-                            </div>
-
-                            <button class="btn btn-primary" onclick="window.nextQ()" style="padding:12px 30px;">
-                                SKIP <i class='bx bx-skip-next'></i>
-                            </button>
+                             </div>
+                             <button class="btn btn-primary" style="padding: 8px 16px; font-size: 0.8rem;" onclick="window.nextQ()">Next Now <i class='bx bx-skip-next'></i></button>
                         </div>
-                        <div style="background:rgba(0,0,0,0.2); padding:15px 25px; border-bottom:1px solid var(--glass-border);">
-                            <strong style="color:var(--success); font-size:1.1rem;">Correct Answer: ${q.answer}</strong>
-                        </div>
-                        <div class="rationale-text">
-                            ${q.rationale}<br/>${linkHTML}
-                        </div>
+                        <div class="rationale-content">
+                            <strong style="display:block; color:var(--success); margin-bottom:15px; font-size:1.1rem;">Correct Answer: ${q.answer}</strong>
+                            ${q.rationale}
+                            ${sourceHTML} </div>
                     </div>
                 </div>
             `;
-            
+
             let t = TIME_LIMIT;
             questionTimerInterval = setInterval(() => {
                 t--; document.getElementById('q-timer').innerText = t + "s";
@@ -930,111 +710,88 @@
         window.checkAns = (selectedId, el) => {
             clearInterval(questionTimerInterval);
             const q = currentSet[currentIndex];
-            const box = document.getElementById('choices-box');
-            if(box.style.pointerEvents === 'none') return;
-            box.style.pointerEvents = 'none';
+            const area = document.getElementById('choices-area');
+            if(area.style.pointerEvents === 'none') return; 
+            area.style.pointerEvents = 'none';
 
             const correctId = q.answer;
-            if(document.getElementById(`choice-${correctId}`)) document.getElementById(`choice-${correctId}`).classList.add('choice-correct');
-            
             const isCorrect = (selectedId === correctId);
-            sessionResults.push({ category: q.category, isCorrect: isCorrect });
+            sessionResults.push({ category: q.category, isCorrect });
 
+            if(document.getElementById(`choice-${correctId}`)) 
+                document.getElementById(`choice-${correctId}`).classList.add('choice-correct');
+            
             if (selectedId && !isCorrect && el) el.classList.add('choice-wrong');
 
-            // Show Rationale
-            const rationaleBox = document.getElementById('rationale-container');
-            rationaleBox.classList.remove('hidden');
+            const rBox = document.getElementById('rationale-box');
+            rBox.classList.remove('hidden');
+            setTimeout(() => rBox.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+
+            let nt = NEXT_TIME;
+            const nRing = document.getElementById('next-ring');
+            const nVal = document.getElementById('next-val');
+            const maxDash = 113;
             
-            // Auto Scroll
-            setTimeout(() => {
-               rationaleBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 100);
-
-            // Start Next Question Timer
-            runNextTimer();
-        };
-
-        function runNextTimer() {
-            let t = NEXT_TIME;
-            const ring = document.getElementById('next-timer-ring');
-            const txt = document.getElementById('next-timer-text');
-            const totalDash = 188; // Circumference of radius 30
-
             nextTimerInterval = setInterval(() => {
-                t--;
-                txt.innerText = t;
-                
-                // Visual Update
-                const offset = totalDash - ((t / NEXT_TIME) * totalDash);
-                ring.style.strokeDashoffset = totalDash - offset; // Inverse logic for countdown effect
-
-                if(t <= 0) window.nextQ();
+                nt--; nVal.innerText = nt;
+                const offset = maxDash - ((nt / NEXT_TIME) * maxDash);
+                nRing.style.strokeDashoffset = maxDash - offset;
+                if(nt <= 0) window.nextQ();
             }, 1000);
-        }
+        };
 
         window.nextQ = () => { currentIndex++; renderQuestion(); };
 
         async function finishQuiz() {
             document.getElementById('view-quiz').innerHTML = `
-                <div class="card" style="text-align:center; padding:60px; max-width:500px; margin:50px auto;">
-                    <div style="width: 50px; height: 50px; border: 4px solid var(--primary); border-radius: 50%; border-top-color: transparent; animation: spin 1s infinite linear; margin:0 auto 20px;"></div>
-                    <h2 class="fade-in">Saving Progress...</h2>
+                <div style="height:60vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                    <span class="loader"></span>
+                    <p style="margin-top:20px; color:var(--text-muted);">Saving Results...</p>
                 </div>`;
             
             const correctCount = sessionResults.filter(r => r.isCorrect).length;
             
             if(auth.currentUser) {
-                const uid = auth.currentUser.uid;
-                const userRef = doc(db, "users", uid);
-                const catStats = {};
+                const userRef = doc(db, "users", auth.currentUser.uid);
+                const updates = {};
+                const batchStats = {};
                 sessionResults.forEach(r => {
-                    const catName = r.category || "Uncategorized";
-                    if(!catStats[catName]) catStats[catName] = { c: 0, t: 0 };
-                    catStats[catName].t++;
-                    if(r.isCorrect) catStats[catName].c++;
+                    if(!batchStats[r.category]) batchStats[r.category] = {c:0, t:0};
+                    batchStats[r.category].t++;
+                    if(r.isCorrect) batchStats[r.category].c++;
                 });
 
-                const updatePayload = {};
-                updatePayload[`stats.ALL.correct`] = increment(correctCount);
-                updatePayload[`stats.ALL.total`] = increment(currentSet.length);
-                Object.keys(catStats).forEach(cat => {
-                    updatePayload[`stats.${cat}.correct`] = increment(catStats[cat].c);
-                    updatePayload[`stats.${cat}.total`] = increment(catStats[cat].t);
+                updates[`stats.ALL.correct`] = increment(correctCount);
+                updates[`stats.ALL.total`] = increment(currentSet.length);
+                Object.keys(batchStats).forEach(cat => {
+                    updates[`stats.${cat}.correct`] = increment(batchStats[cat].c);
+                    updates[`stats.${cat}.total`] = increment(batchStats[cat].t);
                 });
-                await updateDoc(userRef, updatePayload);
+                await updateDoc(userRef, updates);
             }
+
+            const pct = Math.round((correctCount/currentSet.length)*100);
+            const passed = pct >= 60;
+            const color = passed ? "var(--success)" : "var(--danger)";
             
-            const pct = currentSet.length > 0 ? Math.round((correctCount/currentSet.length)*100) : 0;
-            let color = pct >= 60 ? "var(--success)" : "var(--danger)";
-            
-            if(pct >= 60) confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#22d3ee', '#34d399', '#ffffff'] });
+            if(passed) confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 }, colors: ['#06b6d4', '#10b981'] });
 
             document.getElementById('view-quiz').innerHTML = `
-                <div class="card fade-in" style="text-align:center; max-width:500px; margin:40px auto; padding:50px; border-top: 5px solid ${color};">
-                    <div style="font-size:5rem; font-weight:800; color:${color}; margin-bottom:10px; line-height:1; text-shadow: 0 0 20px ${color}40;">${pct}%</div>
-                    <h3 style="margin-bottom:10px; font-size:1.5rem;">SESSION COMPLETE</h3>
-                    <p style="color:var(--text-muted); margin-bottom:40px; font-size:1.1rem;">You scored <strong style="color:white">${correctCount}</strong> out of ${currentSet.length}</p>
-                    <button class="btn btn-primary" style="width:100%; height:50px;" onclick="window.navTo('dashboard')">RETURN TO DASHBOARD</button>
+                <div class="card fade-in" style="max-width:450px; margin:40px auto; padding:40px; text-align:center; border-top: 4px solid ${color};">
+                    <h2 style="color:${color}; margin-bottom:10px;">${passed ? "EXCELLENT!" : "KEEP STUDYING"}</h2>
+                    <div style="font-size:5rem; font-weight:800; line-height:1; margin-bottom:10px; text-shadow:0 0 30px ${color}50;">${pct}%</div>
+                    <p style="color:var(--text-muted); margin-bottom:30px;">You got <strong style="color:white">${correctCount}</strong> out of ${currentSet.length}</p>
+                    <button class="btn btn-primary" style="width:100%;" onclick="navTo('dashboard')">RETURN TO DASHBOARD</button>
                 </div>
             `;
         }
 
         window.resetStats = async () => {
-            if(confirm("Are you sure? This will wipe your performance data.")) {
-                const emptyStats = {
-                    ALL: { correct: 0, total: 0 },
-                    NP1: { correct: 0, total: 0 }, NP2: { correct: 0, total: 0 },
-                    NP3: { correct: 0, total: 0 }, NP4: { correct: 0, total: 0 }, NP5: { correct: 0, total: 0 }
-                };
-                await updateDoc(doc(db, "users", auth.currentUser.uid), { stats: emptyStats });
-                window.location.reload();
+            if(confirm("Reset all statistics?")) {
+                await updateDoc(doc(db, "users", auth.currentUser.uid), { stats: { ALL: {correct:0, total:0} } });
+                location.reload();
             }
         }
-        
-        const style = document.createElement('style');
-        style.innerHTML = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
-        document.head.appendChild(style);
     </script>
 </body>
 </html>
