@@ -198,7 +198,7 @@
             font-family: var(--font-mono); font-weight: 700; font-size: 1.2rem;
         }
 
-        /* QUIZ UI */
+        /* QUIZ UI & TIMER STYLES */
         .quiz-timer-container {
             display: flex; justify-content: center; margin-bottom: 25px;
         }
@@ -235,35 +235,82 @@
 
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
-        /* OVERLAY FIX FOR BOTTOM */
-        #next-overlay {
-            position: fixed; 
-            bottom: 20px; 
-            left: 50%; 
-            transform: translateX(-50%) translateY(150px); 
-            opacity: 0;
-            width: 95%; 
-            max-width: 500px;
-            background: rgba(15, 23, 42, 0.95); 
-            backdrop-filter: blur(20px);
-            border: 1px solid var(--primary); 
-            border-radius: 20px;
-            padding: 15px 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(34, 211, 238, 0.2);
-            z-index: 1000; 
+        /* --- NEW RATIONALE & NEXT TIMER STYLES --- */
+        .rationale-container {
+            margin-top: 30px; 
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            background: rgba(15, 23, 42, 0.5);
+            /* This ensures the container is the focus for scroll */
+            scroll-margin-top: 20px; 
+        }
+
+        /* The bar containing the timer and Next button */
+        .rationale-header {
+            background: rgba(34, 211, 238, 0.1);
+            padding: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+        }
+
+        /* The big circular countdown */
+        .next-timer-visual {
+            position: relative;
+            width: 70px; 
+            height: 70px;
             display: flex; 
             align-items: center; 
-            justify-content: space-between;
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            justify-content: center;
         }
-        #next-overlay.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        .next-timer-visual svg {
+            transform: rotate(-90deg);
+            width: 70px;
+            height: 70px;
+        }
+
+        .next-timer-visual circle {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+        }
+        
+        .next-timer-bg { stroke: rgba(255,255,255,0.1); }
+        .next-timer-progress {
+            stroke: var(--primary);
+            stroke-dasharray: 188; /* 2 * PI * 30 (radius) approx */
+            stroke-dashoffset: 0;
+            transition: stroke-dashoffset 1s linear;
+        }
+
+        .next-timer-text {
+            position: absolute;
+            font-family: var(--font-mono);
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--primary);
+        }
+
+        .next-label {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .next-label span {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
 
         .rationale-text {
-            margin-top: 30px; padding: 25px; 
-            border-left: 4px solid var(--primary);
-            background: linear-gradient(90deg, rgba(34, 211, 238, 0.05), transparent);
-            border-radius: 0 12px 12px 0;
-            color: #e2e8f0; line-height: 1.7; position: relative;
+            padding: 25px; 
+            color: #e2e8f0; line-height: 1.7; 
         }
 
         .fade-in { animation: fadeIn 0.5s ease forwards; }
@@ -285,6 +332,9 @@
             .card { padding: 20px; }
             .timer-pill { font-size: 1.2rem; padding: 8px 20px; }
             .choice-label { padding: 15px; font-size: 0.95rem; }
+            
+            .rationale-header { padding: 15px; }
+            .next-label span { font-size: 0.75rem; }
         }
     </style>
 </head>
@@ -414,6 +464,13 @@
                         </div>
                     </div>
 
+                    <div style="margin-top: 25px;">
+                        <button class="btn btn-primary" onclick="window.navTo('topics')" style="width: 100%; padding: 18px; font-size: 1.1rem; border-radius: 12px; display:flex; justify-content: space-between;">
+                            <span>START REVIEW SESSION</span>
+                            <i class='bx bx-right-arrow-circle' style="font-size: 1.4rem;"></i>
+                        </button>
+                    </div>
+
                     <h3 style="margin: 30px 0 15px; color: var(--text-muted); font-size: 0.9rem; letter-spacing: 2px;">TOPIC BREAKDOWN</h3>
                     <div class="topic-grid">
                         <div class="topic-card">
@@ -472,12 +529,6 @@
                             <div style="font-size:0.75rem; color:var(--text-muted);">Psychiatric</div>
                         </div>
                     </div>
-
-                    <div style="text-align: center; margin-top: 50px;">
-                        <button class="btn btn-primary" onclick="window.navTo('topics')" style="padding: 18px 50px; font-size: 1.1rem; border-radius: 50px;">
-                            START REVIEW SESSION <i class='bx bx-right-arrow-alt'></i>
-                        </button>
-                    </div>
                 </div>
 
                 <div id="view-topics" class="hidden fade-in">
@@ -529,7 +580,7 @@
                     </div>
                 </div>
 
-                <div id="view-quiz" class="hidden fade-in" style="position: relative; min-height: 100%; padding-bottom: 180px;"></div>
+                <div id="view-quiz" class="hidden fade-in" style="position: relative; min-height: 100%; padding-bottom: 80px;"></div>
 
             </div>
         </main>
@@ -563,8 +614,8 @@
         let selectedTopic = "ALL";
         let questionTimerInterval;
         let nextTimerInterval;
-        const TIME_LIMIT = 60; 
-        const NEXT_DELAY = 10; 
+        const TIME_LIMIT = 60; // 60 seconds per question
+        const NEXT_TIME = 10; // 10 seconds auto next
 
         // --- UI FUNCTIONS ---
         window.toggleSidebar = () => {
@@ -575,7 +626,6 @@
         window.toggleAuthMode = () => {
             document.getElementById('form-login').classList.toggle('hidden');
             document.getElementById('form-register').classList.toggle('hidden');
-            // Clear messages
             document.getElementById('login-msg').innerText = "";
             document.getElementById('reg-msg').innerText = "";
         }
@@ -583,13 +633,11 @@
         // --- AUTH & VALIDATION LOGIC ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                // Show loading
                 document.getElementById('view-auth').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
                 document.getElementById('view-dashboard').classList.add('hidden');
                 document.getElementById('view-loading').classList.remove('hidden');
 
-                // CHECK USER STATUS IN FIRESTORE
                 const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
 
@@ -597,7 +645,6 @@
                     const data = userSnap.data();
                     const status = data.status || "pending";
                     
-                    // 1. Check if Pending
                     if(status === 'pending') {
                         alert("Your account is currently PENDING approval.\nPlease wait for the Admin to verify your GCash payment.");
                         await signOut(auth);
@@ -605,7 +652,6 @@
                         return;
                     }
 
-                    // 2. Check if Blocked/Expired Manually
                     if(status === 'expired') {
                         alert("Your account has EXPIRED. Please renew your subscription.");
                         await signOut(auth);
@@ -613,15 +659,13 @@
                         return;
                     }
 
-                    // 3. Activation & 90 Days Logic
                     if(status === 'active') {
                         const now = new Date();
                         let expiryDate;
 
-                        // First login after admin set to 'active'? Set the dates.
                         if(!data.activationDate) {
                             expiryDate = new Date();
-                            expiryDate.setDate(expiryDate.getDate() + 90); // Add 90 days
+                            expiryDate.setDate(expiryDate.getDate() + 90); 
 
                             await updateDoc(userRef, {
                                 activationDate: Timestamp.fromDate(now),
@@ -631,22 +675,19 @@
                             expiryDate = data.expiryDate.toDate();
                         }
 
-                        // Check if current date is past expiry
                         if(now > expiryDate) {
-                            await updateDoc(userRef, { status: 'expired' }); // Lock the account
+                            await updateDoc(userRef, { status: 'expired' });
                             alert("Your 90-day access period has ended. Account expired.");
                             await signOut(auth);
                             window.location.reload();
                             return;
                         }
 
-                        // Display Days Remaining
                         const diffTime = Math.abs(expiryDate - now);
                         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                         document.getElementById('days-remaining').innerText = `${diffDays} Days Left`;
                     }
 
-                    // Proceed to App
                     document.getElementById('user-name').innerText = user.email.split('@')[0];
                     await fetchQuestionsFromDB();
                     await fetchUserStats(user.uid);
@@ -654,14 +695,11 @@
                     window.navTo('dashboard');
 
                 } else {
-                    // Fallback for old users without docs (Optional safety)
-                    console.log("No user doc found, creating default...");
                     await setDoc(userRef, { email: user.email, status: 'active', stats: {} });
                     window.location.reload();
                 }
 
             } else {
-                // No user
                 document.getElementById('view-auth').classList.remove('hidden');
                 document.getElementById('app-layout').classList.add('hidden');
             }
@@ -683,15 +721,13 @@
             msg.style.color = "var(--primary)";
 
             try {
-                // 1. Create Auth User
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
 
-                // 2. Save details to Firestore with PENDING status
                 await setDoc(doc(db, "users", user.uid), {
                     email: email,
                     gcashReference: ref,
-                    status: 'pending', // IMPORTANT
+                    status: 'pending',
                     createdAt: Timestamp.fromDate(new Date()),
                     stats: {
                         ALL: { correct: 0, total: 0 },
@@ -700,7 +736,6 @@
                     }
                 });
 
-                // 3. Sign out immediately so they can't enter yet
                 await signOut(auth);
 
                 alert("Registration Successful!\n\nYour account is now PENDING.\nPlease wait for the Admin to verify your GCash Reference: " + ref + ".\nYou will be able to login once verified.");
@@ -728,7 +763,7 @@
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
 
-        // --- DATA FETCHING (Unchanged from your previous version) ---
+        // --- DATA FETCHING ---
         async function fetchQuestionsFromDB() {
             const collections = ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'];
             questions = [];
@@ -790,7 +825,7 @@
             } catch (e) { console.error("Stats Error:", e); }
         }
 
-        // --- NAVIGATION & QUIZ ENGINE (Standard Logic) ---
+        // --- NAVIGATION & QUIZ ENGINE ---
         window.navTo = (page) => {
             clearInterval(questionTimerInterval);
             clearInterval(nextTimerInterval);
@@ -825,8 +860,6 @@
         function renderQuestion() {
             clearInterval(questionTimerInterval);
             clearInterval(nextTimerInterval);
-            const oldOverlay = document.getElementById('next-overlay');
-            if(oldOverlay) oldOverlay.remove();
             document.getElementById('main-scroll-area').scrollTop = 0;
 
             if (currentIndex >= currentSet.length) { finishQuiz(); return; }
@@ -856,9 +889,31 @@
                     
                     <h3 style="margin:20px 0 30px 0; font-size:1.3rem; line-height:1.6; font-weight:600;">${q.question}</h3>
                     <div id="choices-box">${choicesHTML}</div>
-                    <div id="rationale-container" class="hidden fade-in">
+                    
+                    <div id="rationale-container" class="hidden fade-in rationale-container">
+                        <div class="rationale-header">
+                            <div class="next-label">
+                                <div class="next-timer-visual">
+                                    <svg>
+                                        <circle class="next-timer-bg" cx="35" cy="35" r="30"></circle>
+                                        <circle id="next-timer-ring" class="next-timer-progress" cx="35" cy="35" r="30"></circle>
+                                    </svg>
+                                    <div class="next-timer-text" id="next-timer-text">${NEXT_TIME}</div>
+                                </div>
+                                <div>
+                                    <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:4px;">MOVING TO</div>
+                                    <div style="color:white; font-weight:700;">NEXT QUESTION</div>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-primary" onclick="window.nextQ()" style="padding:12px 30px;">
+                                SKIP <i class='bx bx-skip-next'></i>
+                            </button>
+                        </div>
+                        <div style="background:rgba(0,0,0,0.2); padding:15px 25px; border-bottom:1px solid var(--glass-border);">
+                            <strong style="color:var(--success); font-size:1.1rem;">Correct Answer: ${q.answer}</strong>
+                        </div>
                         <div class="rationale-text">
-                            <strong style="color:var(--success); display:block; margin-bottom:10px; font-size:1.1rem;">Correct Answer: ${q.answer}</strong>
                             ${q.rationale}<br/>${linkHTML}
                         </div>
                     </div>
@@ -887,31 +942,33 @@
 
             if (selectedId && !isCorrect && el) el.classList.add('choice-wrong');
 
-            document.getElementById('rationale-container').classList.remove('hidden');
+            // Show Rationale
+            const rationaleBox = document.getElementById('rationale-container');
+            rationaleBox.classList.remove('hidden');
+            
+            // Auto Scroll
             setTimeout(() => {
-               const rationale = document.querySelector('.rationale-text');
-               if(rationale) rationale.scrollIntoView({ behavior: 'smooth', block: 'start' });
+               rationaleBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 100);
 
-            showNextOverlay();
+            // Start Next Question Timer
+            runNextTimer();
         };
 
-        function showNextOverlay() {
-            const overlay = document.createElement('div');
-            overlay.id = "next-overlay";
-            overlay.innerHTML = `
-                <div style="text-align:left;">
-                    <div style="font-size:0.7rem; color:var(--text-muted); letter-spacing:1px; margin-bottom:2px;">NEXT QUESTION IN</div>
-                    <div style="font-weight:800; font-family:var(--font-mono); font-size:2.8rem; color:var(--primary); line-height:1;" id="next-count-text">${NEXT_DELAY}</div>
-                </div>
-                <button class="btn btn-primary" onclick="window.nextQ()" style="padding:15px 30px;">NEXT <i class='bx bx-right-arrow-alt'></i></button>
-            `;
-            document.getElementById('view-quiz').appendChild(overlay);
-            setTimeout(() => overlay.classList.add('show'), 50);
+        function runNextTimer() {
+            let t = NEXT_TIME;
+            const ring = document.getElementById('next-timer-ring');
+            const txt = document.getElementById('next-timer-text');
+            const totalDash = 188; // Circumference of radius 30
 
-            let t = NEXT_DELAY;
             nextTimerInterval = setInterval(() => {
-                t--; document.getElementById('next-count-text').innerText = t;
+                t--;
+                txt.innerText = t;
+                
+                // Visual Update
+                const offset = totalDash - ((t / NEXT_TIME) * totalDash);
+                ring.style.strokeDashoffset = totalDash - offset; // Inverse logic for countdown effect
+
                 if(t <= 0) window.nextQ();
             }, 1000);
         }
