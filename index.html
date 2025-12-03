@@ -115,7 +115,7 @@
         .auth-wrapper { 
             display: flex; height: 100vh; width: 100%; justify-content: center; align-items: center; 
             background: radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, var(--bg-deep) 70%);
-            z-index: 100; position: fixed;
+            z-index: 100; position: fixed; inset: 0;
         }
         .auth-card { width: 100%; max-width: 400px; padding: 40px 30px; }
         .brand-logo { 
@@ -312,6 +312,27 @@
         </div>
     </div>
 
+    <div id="view-pending" class="auth-wrapper fade-in hidden">
+        <div class="card auth-card" style="text-align: center; border-top: 4px solid var(--warning);">
+            <div style="font-size: 4rem; color: var(--warning); margin-bottom: 15px; text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);">
+                <i class='bx bx-time-five fade-in'></i>
+            </div>
+            <h2 style="color: #fff; margin-bottom: 5px; font-weight: 700; letter-spacing: 1px;">APPROVAL PENDING</h2>
+            <p style="color: var(--warning); font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 25px;">STATUS: VERIFICATION IN PROGRESS</p>
+            
+            <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 25px; text-align: left;">
+                <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+                    <i class='bx bx-info-circle' style="color: var(--primary);"></i> 
+                    We are currently validating your GCash payment reference. This usually takes <strong>1-24 hours</strong>.
+                </p>
+            </div>
+
+            <button onclick="window.forceLogout()" class="btn btn-outline" style="width: 100%;">
+                <i class='bx bx-log-out'></i> Check Again Later (Logout)
+            </button>
+        </div>
+    </div>
+
     <div id="app-layout" class="layout hidden">
         <div class="overlay" onclick="toggleSidebar()"></div>
         
@@ -472,6 +493,12 @@
             document.getElementById('reg-msg').innerText = "";
         }
 
+        // NEW LOGOUT HELPER FOR PENDING SCREEN
+        window.forceLogout = async () => {
+            await signOut(auth);
+            location.reload();
+        }
+
         window.navTo = (page) => {
             clearInterval(questionTimerInterval);
             clearInterval(nextTimerInterval);
@@ -495,21 +522,37 @@
             }
         };
 
-        // AUTH
+        // AUTH & STATE MANAGEMENT
         onAuthStateChanged(auth, async (user) => {
             if (user) {
+                // Initial visibility state
                 document.getElementById('view-auth').classList.add('hidden');
                 document.getElementById('app-layout').classList.remove('hidden');
                 document.getElementById('view-dashboard').classList.add('hidden');
                 document.getElementById('view-loading').classList.remove('hidden');
+                document.getElementById('view-pending').classList.add('hidden');
 
                 const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
 
                 if (userSnap.exists()) {
                     const data = userSnap.data();
-                    if(data.status === 'pending') { alert("Account PENDING."); await signOut(auth); location.reload(); return; }
-                    if(data.status === 'expired') { alert("Account EXPIRED."); await signOut(auth); location.reload(); return; }
+
+                    // --- NEW PENDING CHECK ---
+                    if(data.status === 'pending') {
+                        document.getElementById('view-loading').classList.add('hidden');
+                        document.getElementById('app-layout').classList.add('hidden'); // Hide app
+                        document.getElementById('view-pending').classList.remove('hidden'); // Show pending
+                        return; // STOP EXECUTION
+                    }
+
+                    // --- EXPIRED CHECK ---
+                    if(data.status === 'expired') { 
+                        alert("Account EXPIRED. Please renew subscription."); 
+                        await signOut(auth); 
+                        location.reload(); 
+                        return; 
+                    }
 
                     const now = new Date();
                     let expiryDate;
@@ -527,12 +570,14 @@
                     await fetchQuestionsFromDB();
                     await fetchUserStats(user.uid);
                     document.getElementById('view-loading').classList.add('hidden');
+                    document.getElementById('app-layout').classList.remove('hidden'); // Ensure app is visible
                     window.navTo('dashboard');
 
                 } else { await setDoc(userRef, { email: user.email, status: 'active', stats: {} }); location.reload(); }
             } else {
                 document.getElementById('view-auth').classList.remove('hidden');
                 document.getElementById('app-layout').classList.add('hidden');
+                document.getElementById('view-pending').classList.add('hidden');
             }
         });
 
@@ -548,9 +593,8 @@
                 await setDoc(doc(db, "users", cred.user.uid), {
                     email: email, gcashReference: ref, status: 'pending', createdAt: Timestamp.fromDate(new Date()), stats: { ALL: { correct: 0, total: 0 } }
                 });
-                await signOut(auth);
-                alert("Registered! Pending approval.");
-                location.reload();
+                // No signout/reload here. Let the AuthStateChanged listener catch the 'pending' status and show the screen.
+                msg.innerText = "Success! Redirecting...";
             } catch (e) { msg.innerText = e.message; }
         });
 
@@ -578,7 +622,6 @@
                             else Object.keys(data.choices).sort().forEach(k => fChoices.push({ id: k, text: data.choices[k] }));
                         }
                         if (fChoices.length > 0 && data.question) {
-                            // ROBUST SOURCE LINK CHECK
                             const src = data.sourceLink || data.source || data.link || "";
                             questions.push({ 
                                 id: d.id, category: c, question: data.question,
@@ -651,7 +694,6 @@
                 </div>
             `).join('');
 
-            // NEW SOURCE LINK HTML GENERATION
             let sourceHTML = '';
             if(q.sourceLink && q.sourceLink.length > 5) {
                 sourceHTML = `
