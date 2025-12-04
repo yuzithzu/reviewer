@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-    
     <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -103,7 +103,7 @@
         .btn-ghost:hover { color: var(--text-main); background: rgba(255,255,255,0.05); }
 
         /* INPUTS */
-        .input-group { margin-bottom: 16px; position: relative; }
+        .input-group { margin-bottom: 12px; position: relative; }
         .input { 
             width: 100%; padding: 16px; background: rgba(0,0,0,0.4); border: 1px solid var(--glass-border); 
             color: white; border-radius: 12px; font-family: inherit; transition: 0.3s; font-size: 0.95rem;
@@ -125,74 +125,19 @@
             transform: rotate(-5deg);
         }
 
-        /* --- INTRO ANIMATION STYLES (Fixed Z-Index & Visibility) --- */
-        #view-intro {
-            position: fixed; inset: 0; 
-            z-index: 99999; /* Highest Z-Index to cover everything */
-            background: #000; /* Deep black for contrast */
-            display: flex; /* Flex by default, JS will hide it */
-            flex-direction: column; align-items: center; justify-content: center;
-            text-align: center;
+        /* ACTIVATION OVERLAY */
+        .activation-overlay {
+            position: fixed; inset: 0; background: var(--bg-deep); z-index: 200;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px;
         }
+        .act-title { font-size: 2rem; font-weight: 800; color: var(--success); margin-bottom: 10px; opacity: 0; transform: translateY(20px); }
+        .act-price { font-size: 3.5rem; font-family: var(--font-mono); color: white; margin: 10px 0; opacity: 0; transform: scale(0.8); }
+        .act-desc { color: var(--text-muted); font-size: 1.1rem; opacity: 0; }
+        .act-count { font-size: 6rem; font-weight: 900; color: var(--primary); margin-top: 30px; opacity: 0; text-shadow: 0 0 40px var(--primary); }
         
-        .intro-container {
-            position: relative;
-            width: 100%;
-            padding: 20px;
-        }
-
-        .anim-text-main {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 15px;
-            letter-spacing: -1px;
-            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
-
-        .anim-icon-check {
-            font-size: 5rem;
-            color: var(--success);
-            margin-bottom: 20px;
-            filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5));
-            animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        .anim-sub {
-            font-family: var(--font-mono);
-            color: var(--primary);
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            opacity: 0;
-            animation: fadeIn 0.8s ease forwards 0.5s;
-        }
-
-        .count-big {
-            font-size: 8rem;
-            font-weight: 900;
-            color: white;
-            text-shadow: 0 0 40px var(--primary);
-            animation: countdownPop 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
-
-        .ready-text {
-            font-size: 3rem;
-            font-weight: 900;
-            font-style: italic;
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: -2px;
-            animation: shake 0.5s ease-in-out infinite;
-        }
-
-        @keyframes scaleIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes slideUp { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
-        @keyframes countdownPop { 0% { transform: scale(3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -1px) rotate(-1deg); } 100% { transform: translate(1px, 1px) rotate(0deg); } }
-
+        .animate-pop { animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes popIn { to { opacity: 1; transform: scale(1) translateY(0); } }
 
         /* APP LAYOUT */
         .layout { display: flex; height: 100vh; overflow: hidden; }
@@ -272,7 +217,7 @@
         .choice-wrong { background: rgba(239, 68, 68, 0.1) !important; border-color: var(--danger) !important; color: white !important; }
         .choice-wrong .choice-key { background: var(--danger); }
 
-        /* RATIONALE BOX */
+        /* RATIONALE & SOURCE */
         .rationale-panel {
             margin-top: 30px; background: #0f1c30; border: 1px solid var(--primary-dim); border-left: 4px solid var(--primary);
             border-radius: 12px; overflow: hidden; box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
@@ -282,37 +227,16 @@
             display: flex; justify-content: space-between; align-items: center;
         }
         .rationale-content { padding: 25px; line-height: 1.7; font-size: 0.95rem; color: #cbd5e1; }
-
-        /* SOURCE LINK STYLING */
         .source-box {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 1px dashed rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 15px;
+            margin-top: 25px; padding-top: 20px; border-top: 1px dashed rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px;
         }
         .btn-source {
-            display: inline-flex; align-items: center; gap: 8px;
-            padding: 10px 20px;
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-weight: 700;
-            transition: 0.3s;
-            box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: rgba(6, 182, 212, 0.1);
+            border: 1px solid var(--primary); color: var(--primary); border-radius: 8px; text-decoration: none;
+            font-size: 0.85rem; font-weight: 700; transition: 0.3s; box-shadow: 0 0 10px rgba(6, 182, 212, 0.1);
         }
-        .btn-source:hover {
-            background: var(--primary);
-            color: #000;
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.6);
-            transform: translateY(-2px);
-        }
+        .btn-source:hover { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(6, 182, 212, 0.6); transform: translateY(-2px); }
 
         /* CIRCULAR TIMER */
         .circular-timer { width: 40px; height: 40px; position: relative; display: flex; justify-content: center; align-items: center; }
@@ -335,21 +259,22 @@
 
         .loader {
             width: 48px; height: 48px; border: 3px solid #FFF; border-bottom-color: var(--primary);
-            border-radius: 50%; display: inline-block; box-sizing: border-box;
-            animation: rotation 1s linear infinite;
+            border-radius: 50%; display: inline-block; box-sizing: border-box; animation: rotation 1s linear infinite;
         }
         @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="view-intro">
-        <div id="intro-content" class="intro-container">
-            <div style="color:white; font-family:var(--font-mono);">INITIALIZING...</div>
-        </div>
+    <div id="view-activation" class="activation-overlay hidden">
+        <div class="brand-logo" style="margin-bottom: 40px;"><i class='bx bxs-capsule'></i></div>
+        <div id="act-msg-1" class="act-title">SUBSCRIPTION ACTIVATED</div>
+        <div id="act-msg-2" class="act-price">₱ 499.00</div>
+        <div id="act-msg-3" class="act-desc">PREMIUM ACCESS VALID FOR 90 DAYS</div>
+        <div id="act-countdown" class="act-count">3</div>
     </div>
 
-    <div id="view-auth" class="auth-wrapper fade-in hidden">
+    <div id="view-auth" class="auth-wrapper fade-in">
         <div id="form-login" class="card auth-card">
             <div class="brand-logo"><i class='bx bxs-capsule'></i></div>
             <h2 style="text-align: center; margin-bottom: 5px;">PNLE ELITE</h2>
@@ -367,20 +292,20 @@
 
         <div id="form-register" class="card auth-card hidden">
             <h2 style="text-align: center; margin-bottom: 5px; color: var(--success);">REGISTER</h2>
-            <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Step 1: Send GCash Payment</p>
-             <p style="text-align: center; color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Subscription Php 499: 90 days</p>
+            <p style="text-align: center; color: var(--text-muted); margin-bottom: 15px; font-size: 0.9rem;">Subscription Php 499: 90 days</p>
+            
             <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 8px; border: 1px dashed var(--success); margin-bottom: 20px;">
                 <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--success); font-weight: bold;">Send to GCash</div>
                 <div style="font-size: 1.2rem; font-family: var(--font-mono); color: white; margin: 5px 0;">0948 374 8304</div>
                 <div style="font-size: 0.8rem; color: var(--text-muted);">Name: A...LO</div>
             </div>
 
-            <div class="input-group"><input type="text" id="reg-name" class="input" placeholder="Sender Name (Full Name)"></div>
-            <div class="input-group"><input type="number" id="reg-contact" class="input" placeholder="Contact Number"></div>
-            
             <div class="input-group"><input type="email" id="reg-email" class="input" placeholder="Email Address"></div>
             <div class="input-group"><input type="password" id="reg-pass" class="input" placeholder="Password (Min 6 chars)"></div>
-            <div class="input-group"><input type="text" id="reg-ref" class="input" placeholder="GCash Reference No." style="border-color: var(--success);"></div>
+            <div style="border-top: 1px solid var(--glass-border); margin: 15px 0;"></div>
+            <div class="input-group"><input type="text" id="reg-sender-name" class="input" placeholder="GCash Sender Name"></div>
+            <div class="input-group"><input type="number" id="reg-sender-num" class="input" placeholder="GCash Sender Number"></div>
+            <div class="input-group"><input type="text" id="reg-ref" class="input" placeholder="Reference No. (Required)" style="border-color: var(--success);"></div>
             
             <button id="btn-register" class="btn btn-primary" style="width: 100%; background: var(--success); color: #000;">SUBMIT REGISTRATION</button>
             <div style="text-align: center; margin-top: 20px;">
@@ -401,12 +326,12 @@
             <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 12px; margin-bottom: 25px; text-align: left;">
                 <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
                     <i class='bx bx-info-circle' style="color: var(--primary);"></i> 
-                    We are currently validating your GCash payment reference. This usually takes <strong>1-24 hours</strong>.
+                    We are validating your payment details. This screen will <strong>automatically update</strong> once approved.
                 </p>
             </div>
 
-            <button onclick="window.forceLogout()" class="btn btn-outline" style="width: 100%;">
-                <i class='bx bx-log-out'></i> Check Again Later (Logout)
+            <button onclick="window.forceLogoutManual()" class="btn btn-outline" style="width: 100%;">
+                <i class='bx bx-log-out'></i> Logout
             </button>
         </div>
     </div>
@@ -427,6 +352,7 @@
                         <span style="width:8px; height:8px; background:var(--success); border-radius:50%; box-shadow: 0 0 10px var(--success);"></span> Active
                     </div>
                     <div id="days-remaining" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">Checking...</div>
+                    <div id="expiry-date-txt" style="font-size: 0.65rem; color: var(--text-muted); opacity: 0.7;"></div>
                 </div>
             </div>
         </aside>
@@ -450,7 +376,7 @@
                 
                 <div id="view-loading" class="hidden" style="height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                     <span class="loader"></span>
-                    <p style="margin-top: 20px; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 2px; font-size: 0.8rem;">LOADING SYSTEM DATA...</p>
+                    <p style="margin-top: 20px; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 2px; font-size: 0.8rem;">SYNCING DATA...</p>
                 </div>
 
                 <div id="view-dashboard" class="fade-in">
@@ -520,19 +446,17 @@
                     </div>
                 </div>
 
-                <div id="view-quiz" class="hidden fade-in quiz-container">
-                    </div>
-
+                <div id="view-quiz" class="hidden fade-in quiz-container"></div>
             </div>
         </main>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, Timestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // CONFIG (Same Keys)
+        // FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyCmd6vmuXUPslLJf0w7I518C8UIaO2DoAA",
             authDomain: "pnle-class.firebaseapp.com",
@@ -547,7 +471,7 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // VARS
+        // GLOBAL VARS
         let questions = []; 
         let currentSet = [];
         let sessionResults = []; 
@@ -555,10 +479,13 @@
         let selectedTopic = "ALL";
         let questionTimerInterval;
         let nextTimerInterval;
+        let userDocListener = null; // To unsubscribe
+        let currentSessionID = null; // For Anti-Dual Login
+        
         const TIME_LIMIT = 60;
         const NEXT_TIME = 10;
 
-        // UI HELPERS
+        // --- UI HELPERS ---
         window.toggleSidebar = () => {
             document.getElementById('sidebar').classList.toggle('active');
             document.querySelector('.overlay').classList.toggle('active');
@@ -571,7 +498,8 @@
             document.getElementById('reg-msg').innerText = "";
         }
 
-        window.forceLogout = async () => {
+        window.forceLogoutManual = async () => {
+            if(userDocListener) userDocListener(); // Stop listening
             await signOut(auth);
             location.reload();
         }
@@ -599,130 +527,174 @@
             }
         };
 
-        // --- NEW INTRO ANIMATION LOGIC ---
-        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+        // --- AUTH & LOGIC ---
 
-        async function playOpeningSequence() {
-            const introView = document.getElementById('view-intro');
-            const introContent = document.getElementById('intro-content');
-            
-            // PHASE 1: Subscription Active
-            introContent.innerHTML = `
-                <i class='bx bxs-check-shield anim-icon-check'></i>
-                <div class="anim-text-main">SUBSCRIPTION ACTIVE</div>
-            `;
-            await wait(2000);
-
-            // PHASE 2: 90 Days Valid
-            introContent.innerHTML += `<div class="anim-sub">VALID FOR 90 DAYS ONLY</div>`;
-            await wait(2500);
-
-            // PHASE 3: Countdown 3, 2, 1
-            for (let i = 3; i > 0; i--) {
-                introContent.innerHTML = `<div class="count-big">${i}</div>`;
-                await wait(1000);
-            }
-
-            // PHASE 4: Ready?
-            introContent.innerHTML = `<div class="ready-text">ARE YOU READY?</div>`;
-            await wait(1500);
-
-            // PHASE 5: Transition to Dashboard
-            introView.classList.add('hidden');
-            document.getElementById('app-layout').classList.remove('hidden');
-            window.navTo('dashboard');
-        }
-
-
-        // AUTH & STATE MANAGEMENT
         onAuthStateChanged(auth, async (user) => {
-            const introView = document.getElementById('view-intro');
-            const introContent = document.getElementById('intro-content');
-            
             if (user) {
-                // If User Logged In:
-                // 1. Hide Auth Views
                 document.getElementById('view-auth').classList.add('hidden');
-                document.getElementById('view-pending').classList.add('hidden');
-
-                // 2. Show Loading State INSIDE the intro wrapper (keep background black)
-                introContent.innerHTML = `
-                    <span class="loader"></span>
-                    <p style="margin-top: 20px; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 2px; font-size: 0.8rem;">LOADING SYSTEM DATA...</p>
-                `;
+                document.getElementById('view-loading').classList.remove('hidden');
 
                 const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
-
-                if (userSnap.exists()) {
-                    const data = userSnap.data();
-
-                    if(data.status === 'pending') {
-                        // Special Case: Pending - Hide Intro, Show Pending
-                        introView.classList.add('hidden');
-                        document.getElementById('view-pending').classList.remove('hidden'); 
-                        return; 
+                
+                // 1. GENERATE SESSION ID FOR THIS DEVICE
+                currentSessionID = Date.now().toString() + Math.random().toString(36).substring(2);
+                
+                // 2. CHECK & UPDATE DOC (ANTI-DUAL LOGIN & LIVE UPDATES)
+                userDocListener = onSnapshot(userRef, async (snap) => {
+                    if(!snap.exists()) {
+                        // Create basic doc if missing
+                        await setDoc(userRef, { email: user.email, status: 'active', sessionId: currentSessionID, stats: {} });
+                        return;
                     }
 
-                    if(data.status === 'expired') { 
-                        alert("Account EXPIRED. Please renew subscription."); 
-                        await signOut(auth); 
-                        location.reload(); 
-                        return; 
+                    const data = snap.data();
+
+                    // A. STATUS CHECK
+                    if (data.status === 'pending') {
+                        document.getElementById('app-layout').classList.add('hidden');
+                        document.getElementById('view-pending').classList.remove('hidden');
+                        document.getElementById('view-loading').classList.add('hidden');
+                        return; // Stop here
                     }
 
+                    // B. ANTI-DUAL LOGIN CHECK
+                    // If DB sessionId is different from my currentSessionID, it means someone else logged in.
+                    if (data.sessionId && data.sessionId !== currentSessionID) {
+                        alert("Security Alert: You have logged in on another device. This session will be terminated.");
+                        window.forceLogoutManual();
+                        return;
+                    }
+
+                    // If we just got approved or logged in, set the Session ID in DB if it doesn't match
+                    // This happens once on init, or if admin changes status
+                    if (!data.sessionId || data.sessionId !== currentSessionID) {
+                         // Only update if I am the one initiating (simple check: if I don't have a listener running yet, or logic flow)
+                         // Actually, simpler: On initial load, we write.
+                    }
+
+                    // C. EXPIRY CHECK (90 Days)
                     const now = new Date();
                     let expiryDate;
-                    if(!data.activationDate) {
-                        expiryDate = new Date(); expiryDate.setDate(expiryDate.getDate() + 90); 
-                        await updateDoc(userRef, { activationDate: Timestamp.fromDate(now), expiryDate: Timestamp.fromDate(expiryDate) });
-                    } else { expiryDate = data.expiryDate.toDate(); }
+                    
+                    if (!data.activationDate) {
+                        // First time activation logic
+                        expiryDate = new Date(); 
+                        expiryDate.setDate(expiryDate.getDate() + 90);
+                        await updateDoc(userRef, { 
+                            activationDate: Timestamp.fromDate(now), 
+                            expiryDate: Timestamp.fromDate(expiryDate),
+                            sessionId: currentSessionID // Claim session
+                        });
+                    } else {
+                        expiryDate = data.expiryDate.toDate();
+                    }
 
-                    if(now > expiryDate) { await updateDoc(userRef, { status: 'expired' }); alert("Expired."); await signOut(auth); return; }
+                    if (now > expiryDate) {
+                        await updateDoc(userRef, { status: 'expired' });
+                        alert("Subscription Expired. Please renew.");
+                        window.forceLogoutManual();
+                        return;
+                    }
 
-                    const diffDays = Math.ceil(Math.abs(expiryDate - now) / (1000 * 60 * 60 * 24));
+                    // D. UPDATE DASHBOARD UI
+                    const diffDays = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
                     document.getElementById('days-remaining').innerText = `${diffDays} Days Remaining`;
+                    document.getElementById('expiry-date-txt').innerText = `Valid until: ${expiryDate.toLocaleDateString()}`;
                     document.getElementById('user-name').innerText = user.email.split('@')[0];
 
-                    await fetchQuestionsFromDB();
-                    await fetchUserStats(user.uid);
-                    
-                    // 3. DONE LOADING DATA -> PLAY ANIMATION
-                    playOpeningSequence();
+                    // E. SHOW APP (If hidden)
+                    document.getElementById('view-pending').classList.add('hidden');
+                    document.getElementById('view-loading').classList.add('hidden');
+                    document.getElementById('app-layout').classList.remove('hidden');
 
-                } else { await setDoc(userRef, { email: user.email, status: 'active', stats: {} }); location.reload(); }
+                    // F. WELCOME ACTIVATION ANIMATION
+                    if (!data.hasSeenWelcome) {
+                        playActivationAnimation(userRef);
+                    }
+                    
+                    // Initial Data Fetch
+                    if(questions.length === 0) {
+                        await fetchQuestionsFromDB();
+                        await fetchUserStats(user.uid);
+                        window.navTo('dashboard');
+                    }
+
+                }); // End Snapshot
+
+                // Force write session ID on initial load to claim session
+                await updateDoc(userRef, { sessionId: currentSessionID });
+
             } else {
-                // No User: Immediately Hide Intro, Show Auth
-                introView.classList.add('hidden');
+                // User logged out
                 document.getElementById('view-auth').classList.remove('hidden');
+                document.getElementById('app-layout').classList.add('hidden');
+                document.getElementById('view-pending').classList.add('hidden');
+                document.getElementById('view-activation').classList.add('hidden');
+                if(userDocListener) userDocListener();
             }
         });
 
-        // --- UPDATED REGISTRATION LOGIC ---
+        // ANIMATION FUNCTION
+        async function playActivationAnimation(userRef) {
+            const overlay = document.getElementById('view-activation');
+            const t1 = document.getElementById('act-msg-1');
+            const t2 = document.getElementById('act-msg-2');
+            const t3 = document.getElementById('act-msg-3');
+            const cnt = document.getElementById('act-countdown');
+
+            overlay.classList.remove('hidden');
+            
+            // Sequence
+            setTimeout(() => t1.classList.add('animate-pop'), 100);
+            setTimeout(() => t2.classList.add('animate-pop'), 800);
+            setTimeout(() => {
+                t3.classList.add('animate-pop');
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#06b6d4', '#10b981'] });
+            }, 1500);
+
+            // Countdown
+            setTimeout(() => {
+                let c = 3;
+                cnt.classList.add('animate-pop');
+                const int = setInterval(async () => {
+                    c--;
+                    if(c > 0) {
+                        cnt.innerText = c;
+                        // small pulse
+                        cnt.style.transform = "scale(1.2)";
+                        setTimeout(() => cnt.style.transform = "scale(1)", 100);
+                    } else {
+                        clearInterval(int);
+                        cnt.innerText = "LET'S START!";
+                        await updateDoc(userRef, { hasSeenWelcome: true });
+                        setTimeout(() => {
+                            overlay.classList.add('hidden'); // Hide overlay
+                        }, 1000);
+                    }
+                }, 1000);
+            }, 2500);
+        }
+
+        // REGISTRATION logic
         document.getElementById('btn-register').addEventListener('click', async () => {
-            const name = document.getElementById('reg-name').value;
-            const contact = document.getElementById('reg-contact').value;
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-pass').value;
             const ref = document.getElementById('reg-ref').value;
+            const senderName = document.getElementById('reg-sender-name').value;
+            const senderNum = document.getElementById('reg-sender-num').value;
             const msg = document.getElementById('reg-msg');
             
-            // VALIDATION
-            if(!email || !pass || !ref || !name || !contact) { 
-                msg.innerText = "All fields required (Name, Contact, Email, Pass, Ref)."; 
-                return; 
-            }
-            
+            if(!email || !pass || !ref || !senderName || !senderNum) { msg.innerText = "All fields required."; return; }
+            if(pass.length < 6) { msg.innerText = "Password must be 6+ chars."; return; }
+
             msg.innerText = "Processing...";
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                
-                // SAVE WITH NEW FIELDS
                 await setDoc(doc(db, "users", cred.user.uid), {
-                    fullName: name,
-                    contactNumber: contact,
                     email: email, 
                     gcashReference: ref, 
+                    senderName: senderName,
+                    senderNumber: senderNum,
                     status: 'pending', 
                     createdAt: Timestamp.fromDate(new Date()), 
                     stats: { ALL: { correct: 0, total: 0 } }
@@ -737,10 +709,10 @@
             document.getElementById('login-msg').innerText = "Verifying...";
             signInWithEmailAndPassword(auth, e, p).catch(err => { document.getElementById('login-msg').innerText = "Login Failed: " + err.message; });
         });
-        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
+        document.getElementById('btn-logout').addEventListener('click', () => window.forceLogoutManual());
 
 
-        // DB FETCH
+        // --- DB & QUIZ ENGINE (Standard) ---
         async function fetchQuestionsFromDB() {
             const cols = ['NP1', 'NP2', 'NP3', 'NP4', 'NP5'];
             questions = [];
@@ -791,7 +763,7 @@
             } catch (e) { console.log(e); }
         }
 
-        // QUIZ ENGINE
+        // QUIZ LOGIC
         window.selectTopic = (t) => {
             selectedTopic = t;
             document.getElementById('view-topics').classList.add('hidden');
@@ -900,10 +872,7 @@
 
             const rBox = document.getElementById('rationale-box');
             rBox.classList.remove('hidden');
-            
-            setTimeout(() => {
-                rBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
+            setTimeout(() => rBox.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
 
             let nt = NEXT_TIME;
             const nRing = document.getElementById('next-ring');
