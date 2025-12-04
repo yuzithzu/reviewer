@@ -14,7 +14,7 @@
 
     <style>
         :root {
-            /* MODERN TECH PALETTE - PNLE EDITION */
+            /* MODERN TECH PALETTE */
             --bg-deep: #030712;       /* Almost Black */
             --bg-surface: #0f172a;    /* Dark Slate */
             
@@ -52,24 +52,9 @@
             height: 100vh; 
             overflow: hidden; 
             position: relative;
-        }
-
-        /* --- AMBIENT BACKGROUND --- */
-        .ambient-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden;
-            background: radial-gradient(circle at center, #0f172a 0%, #030712 100%);
-        }
-        .orb {
-            position: absolute; border-radius: 50%;
-            filter: blur(80px); opacity: 0.4;
-            animation: floatOrb 20s infinite ease-in-out alternate;
-        }
-        .orb-1 { width: 300px; height: 300px; background: var(--primary); top: -50px; left: -50px; animation-duration: 25s; }
-        .orb-2 { width: 400px; height: 400px; background: var(--secondary); bottom: -100px; right: -50px; animation-duration: 30s; animation-delay: -5s; }
-
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, 50px) scale(1.1); }
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(6, 182, 212, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(99, 102, 241, 0.08), transparent 25%);
         }
 
         /* SCROLLBAR */
@@ -80,15 +65,7 @@
         /* UTILS */
         .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
-        .fade-out { animation: fadeOut 0.5s forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; pointer-events: none; } }
-
-        /* INTRO ANIMATIONS */
-        .pulse-text { animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.1); opacity: 0.8; } 100% { transform: scale(1); opacity: 1; } }
-        .scale-up { animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        @keyframes scaleUp { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
         /* GLASS CARD SYSTEM */
         .card { 
@@ -137,7 +114,8 @@
         /* AUTH SCREEN */
         .auth-wrapper { 
             display: flex; height: 100vh; width: 100%; justify-content: center; align-items: center; 
-            z-index: 100; position: fixed; inset: 0; padding: 20px;
+            background: radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, var(--bg-deep) 70%);
+            z-index: 100; position: fixed; inset: 0;
         }
         .auth-card { width: 100%; max-width: 400px; padding: 40px 30px; }
         .brand-logo { 
@@ -147,30 +125,82 @@
             transform: rotate(-5deg);
         }
 
-        /* INTRO OVERLAY */
+        /* --- INTRO ANIMATION STYLES (Fixed Z-Index & Visibility) --- */
         #view-intro {
-            position: fixed; inset: 0; z-index: 200; background: var(--bg-deep);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: fixed; inset: 0; 
+            z-index: 99999; /* Highest Z-Index to cover everything */
+            background: #000; /* Deep black for contrast */
+            display: flex; /* Flex by default, JS will hide it */
+            flex-direction: column; align-items: center; justify-content: center;
+            text-align: center;
+        }
+        
+        .intro-container {
+            position: relative;
+            width: 100%;
+            padding: 20px;
         }
 
-        /* MODAL */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 300;
-            display: flex; justify-content: center; align-items: center; padding: 20px;
+        .anim-text-main {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+            animation: slideUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
-        .modal-box {
-            max-width: 400px; width: 100%; text-align: center; border-color: var(--warning);
-            box-shadow: 0 0 50px rgba(245, 158, 11, 0.2); padding: 30px;
+
+        .anim-icon-check {
+            font-size: 5rem;
+            color: var(--success);
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.5));
+            animation: scaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+
+        .anim-sub {
+            font-family: var(--font-mono);
+            color: var(--primary);
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: fadeIn 0.8s ease forwards 0.5s;
+        }
+
+        .count-big {
+            font-size: 8rem;
+            font-weight: 900;
+            color: white;
+            text-shadow: 0 0 40px var(--primary);
+            animation: countdownPop 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        .ready-text {
+            font-size: 3rem;
+            font-weight: 900;
+            font-style: italic;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            animation: shake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes scaleIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes slideUp { 0% { transform: translateY(30px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+        @keyframes countdownPop { 0% { transform: scale(3); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 50% { transform: translate(-1px, -1px) rotate(-1deg); } 100% { transform: translate(1px, 1px) rotate(0deg); } }
+
 
         /* APP LAYOUT */
-        .layout { display: flex; height: 100vh; overflow: hidden; width: 100%; }
+        .layout { display: flex; height: 100vh; overflow: hidden; }
         
         /* SIDEBAR */
         .sidebar { 
-            width: 280px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-right: 1px solid var(--glass-border); 
+            width: 260px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(20px); border-right: 1px solid var(--glass-border); 
             display: flex; flex-direction: column; z-index: 50; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            flex-shrink: 0;
         }
         .sidebar-header { padding: 30px; display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.4rem; letter-spacing: -0.5px; }
         .sidebar-header i { color: var(--primary); font-size: 1.6rem; }
@@ -184,15 +214,8 @@
         .nav-item:hover { color: white; background: rgba(255,255,255,0.03); }
         .nav-item.active { background: var(--primary-dim); color: var(--primary); font-weight: 600; }
 
-        /* SUBSCRIPTION BOX */
-        .sub-box {
-            padding: 20px; margin: 20px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(15, 23, 42, 0.5));
-            border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 16px;
-        }
-        .sub-days { font-size: 1.8rem; font-weight: 800; color: var(--primary); line-height: 1; margin-bottom: 5px; }
-
         /* MAIN CONTENT */
-        .main { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; min-width: 0; }
+        .main { flex: 1; display: flex; flex-direction: column; position: relative; width: 100%; }
         
         .header { 
             height: 70px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; 
@@ -201,13 +224,6 @@
         
         .scroll-area { flex: 1; overflow-y: auto; padding: 25px; scroll-behavior: smooth; }
 
-        /* WELCOME BANNER */
-        .welcome-banner {
-            background: linear-gradient(135deg, var(--bg-surface), rgba(6, 182, 212, 0.1));
-            border: 1px solid var(--glass-border); border-radius: 16px; padding: 30px; margin-bottom: 25px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-
         /* DASHBOARD WIDGETS */
         .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
         
@@ -215,10 +231,7 @@
             grid-column: 1 / -1; background: linear-gradient(180deg, rgba(6, 182, 212, 0.05), rgba(15, 23, 42, 0.6));
             display: flex; align-items: center; justify-content: space-between; padding: 30px;
         }
-        @media (max-width: 768px) { 
-            .mastery-card { flex-direction: column-reverse; text-align: center; gap: 20px; } 
-            .welcome-banner { flex-direction: column; text-align: center; gap: 15px; }
-        }
+        @media (max-width: 768px) { .mastery-card { flex-direction: column-reverse; text-align: center; gap: 20px; } }
 
         .category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
         .cat-card {
@@ -330,25 +343,13 @@
 </head>
 <body>
 
-    <div class="ambient-bg">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-    </div>
-
-    <div id="view-intro" class="hidden">
-        <div id="intro-msg" class="scale-up" style="text-align: center; padding: 20px;">
-            <i class='bx bxs-badge-check' style="font-size: 5rem; color: var(--success); margin-bottom: 20px; text-shadow: 0 0 30px var(--success);"></i>
-            <h1 style="font-size: 2rem; margin-bottom: 10px; color: white;">SUBSCRIPTION ACTIVATED</h1>
-            <p style="font-size: 1.2rem; color: var(--primary); font-family: var(--font-mono); letter-spacing: 1px;">PREMIUM ACCESS: 90 DAYS</p>
-            <p style="margin-top: 10px; color: var(--text-muted);">Thank you for trusting PNLE Elite.</p>
-        </div>
-        <div id="intro-countdown" class="hidden" style="text-align: center;">
-            <div style="font-size: 1rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 20px;">Review Starting In</div>
-            <div id="cnt-val" style="font-size: 8rem; font-weight: 800; color: white; line-height: 1;" class="pulse-text">3</div>
+    <div id="view-intro">
+        <div id="intro-content" class="intro-container">
+            <div style="color:white; font-family:var(--font-mono);">INITIALIZING...</div>
         </div>
     </div>
 
-    <div id="view-auth" class="auth-wrapper fade-in">
+    <div id="view-auth" class="auth-wrapper fade-in hidden">
         <div id="form-login" class="card auth-card">
             <div class="brand-logo"><i class='bx bxs-capsule'></i></div>
             <h2 style="text-align: center; margin-bottom: 5px;">PNLE ELITE</h2>
@@ -404,20 +405,9 @@
                 </p>
             </div>
 
-            <button onclick="window.manualLogout()" class="btn btn-outline" style="width: 100%;">
+            <button onclick="window.forceLogout()" class="btn btn-outline" style="width: 100%;">
                 <i class='bx bx-log-out'></i> Check Again Later (Logout)
             </button>
-        </div>
-    </div>
-
-    <div id="view-kicked" class="modal-overlay hidden fade-in">
-        <div class="card modal-box" style="border-color: var(--danger);">
-            <div style="font-size: 3rem; color: var(--danger); margin-bottom: 10px;"><i class='bx bx-block'></i></div>
-            <h3 style="margin-bottom: 10px;">Session Expired</h3>
-            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 0.9rem;">
-                You have been logged out because your account was accessed from another device.
-            </p>
-            <button onclick="window.manualLogout()" class="btn btn-outline" style="width: 100%;">Return to Login</button>
         </div>
     </div>
 
@@ -430,16 +420,13 @@
                 <div class="nav-item active" onclick="navTo('dashboard'); toggleSidebar()"><i class='bx bxs-dashboard'></i> Dashboard</div>
                 <div class="nav-item" onclick="navTo('topics'); toggleSidebar()"><i class='bx bxs-layer'></i> Start Review</div>
             </div>
-            
-            <div class="sub-box">
-                <div style="font-size: 0.7rem; color: var(--primary); text-transform: uppercase; font-weight: 700; letter-spacing: 1px; margin-bottom: 5px;">
-                    <i class='bx bxs-crown'></i> ELITE ACCESS
-                </div>
-                <div id="days-remaining" class="sub-days">Checking...</div>
-                <div style="font-size: 0.8rem; color: var(--text-muted);">Days Remaining</div>
-                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">Expires: <span id="expire-date-txt" style="color:white;">-</span></div>
-                <div style="margin-top: 10px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
-                    <div id="days-progress" style="width: 0%; height: 100%; background: var(--primary); border-radius: 2px; transition: width 1s;"></div>
+            <div style="padding: 20px;">
+                <div class="card" style="padding: 15px; background: rgba(0,0,0,0.2); border: none;">
+                    <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Subscription</div>
+                    <div style="display:flex; align-items:center; gap:6px; margin-top: 5px; color: var(--success); font-weight: 600; font-size: 0.85rem;">
+                        <span style="width:8px; height:8px; background:var(--success); border-radius:50%; box-shadow: 0 0 10px var(--success);"></span> Active
+                    </div>
+                    <div id="days-remaining" style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;">Checking...</div>
                 </div>
             </div>
         </aside>
@@ -455,7 +442,7 @@
                         <div id="user-name" style="font-size: 0.9rem; font-weight: 600;">Nurse</div>
                     </div>
                     <div style="width: 35px; height: 35px; background: linear-gradient(to right, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white;">RN</div>
-                    <button onclick="window.manualLogout()" class="btn btn-ghost" style="padding: 8px;"><i class='bx bx-power-off' style="font-size: 1.2rem;"></i></button>
+                    <button id="btn-logout" class="btn btn-ghost" style="padding: 8px;"><i class='bx bx-power-off' style="font-size: 1.2rem;"></i></button>
                 </div>
             </header>
 
@@ -467,23 +454,15 @@
                 </div>
 
                 <div id="view-dashboard" class="fade-in">
-                    
-                    <div class="welcome-banner">
-                        <div>
-                            <h2 style="margin-bottom: 5px;">Welcome Back, Future RN!</h2>
-                            <p style="color: var(--text-muted);">Your dashboard is ready. Let's make today productive.</p>
-                        </div>
-                        <button onclick="navTo('topics')" class="btn btn-primary">
-                            Quick Start Review <i class='bx bx-play'></i>
-                        </button>
-                    </div>
-
                     <div class="stat-grid">
                         <div class="card mastery-card">
                             <div>
                                 <h4 style="color: var(--primary); font-family: var(--font-mono); letter-spacing: 1px; margin-bottom: 8px;">OVERALL MASTERY</h4>
                                 <div id="txt-ALL" style="font-size: 4rem; font-weight: 800; line-height: 1; letter-spacing: -2px; text-shadow: 0 0 30px rgba(6, 182, 212, 0.4);">0%</div>
                                 <div style="color: var(--text-muted); margin-top: 5px; font-size: 0.9rem;">Total Questions Answered: <span id="ans-ALL" style="color: white; font-weight: 700;">0</span></div>
+                                <div style="margin-top: 25px;">
+                                    <button onclick="navTo('topics')" class="btn btn-primary">Start New Session <i class='bx bx-right-arrow-alt'></i></button>
+                                </div>
                             </div>
                             <div style="position: relative; width: 180px; height: 180px;">
                                 <svg width="180" height="180" style="transform: rotate(-90deg);">
@@ -550,7 +529,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, Timestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, increment, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
         // CONFIG (Same Keys)
@@ -578,9 +557,6 @@
         let nextTimerInterval;
         const TIME_LIMIT = 60;
         const NEXT_TIME = 10;
-        
-        // SESSION LISTENER
-        let sessionListenerUnsubscribe = null;
 
         // UI HELPERS
         window.toggleSidebar = () => {
@@ -595,34 +571,9 @@
             document.getElementById('reg-msg').innerText = "";
         }
 
-        // STRICT MANUAL LOGOUT (UI + Auth)
-        window.manualLogout = async () => {
-            // 1. Unsubscribe listener to avoid errors
-            if(sessionListenerUnsubscribe) sessionListenerUnsubscribe();
-            
-            // 2. Clear Session ID on Server
-            if(auth.currentUser) {
-                try {
-                    await updateDoc(doc(db, "users", auth.currentUser.uid), {
-                        currentSessionId: null
-                    });
-                } catch(e) {}
-            }
-
-            // 3. Clear Local Storage
-            localStorage.removeItem('pnle_session_id');
-
-            // 4. Sign Out Firebase
+        window.forceLogout = async () => {
             await signOut(auth);
-
-            // 5. Force UI to Login (Without Reloading to be faster)
-            ['view-intro', 'app-layout', 'view-pending', 'view-kicked'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.getElementById('view-auth').classList.remove('hidden');
-            document.getElementById('form-login').classList.remove('hidden');
-            document.getElementById('form-register').classList.add('hidden');
-            document.getElementById('login-msg').innerText = "";
+            location.reload();
         }
 
         window.navTo = (page) => {
@@ -648,137 +599,66 @@
             }
         };
 
-        // --- ANIMATION LOGIC ---
-        function playWelcomeAnimation(userData) {
+        // --- NEW INTRO ANIMATION LOGIC ---
+        const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        async function playOpeningSequence() {
             const introView = document.getElementById('view-intro');
-            const introMsg = document.getElementById('intro-msg');
-            const introCount = document.getElementById('intro-countdown');
-            const cntVal = document.getElementById('cnt-val');
-
-            introView.classList.remove('hidden');
+            const introContent = document.getElementById('intro-content');
             
-            setTimeout(() => {
-                introMsg.classList.add('hidden');
-                introCount.classList.remove('hidden');
-                
-                let count = 3;
-                const countInterval = setInterval(() => {
-                    count--;
-                    if(count > 0) {
-                        cntVal.innerText = count;
-                    } else {
-                        clearInterval(countInterval);
-                        cntVal.innerText = "LET'S START!";
-                        cntVal.style.fontSize = "3rem";
-                        
-                        setTimeout(() => {
-                            introView.classList.add('fade-out'); 
-                            document.getElementById('app-layout').classList.remove('hidden');
-                            checkSubscription(userData);
-                            setTimeout(() => {
-                                introView.classList.add('hidden');
-                                introView.classList.remove('fade-out'); 
-                                window.navTo('dashboard');
-                            }, 500);
-                        }, 800);
-                    }
-                }, 1000); 
-            }, 2500);
+            // PHASE 1: Subscription Active
+            introContent.innerHTML = `
+                <i class='bx bxs-check-shield anim-icon-check'></i>
+                <div class="anim-text-main">SUBSCRIPTION ACTIVE</div>
+            `;
+            await wait(2000);
+
+            // PHASE 2: 90 Days Valid
+            introContent.innerHTML += `<div class="anim-sub">VALID FOR 90 DAYS ONLY</div>`;
+            await wait(2500);
+
+            // PHASE 3: Countdown 3, 2, 1
+            for (let i = 3; i > 0; i--) {
+                introContent.innerHTML = `<div class="count-big">${i}</div>`;
+                await wait(1000);
+            }
+
+            // PHASE 4: Ready?
+            introContent.innerHTML = `<div class="ready-text">ARE YOU READY?</div>`;
+            await wait(1500);
+
+            // PHASE 5: Transition to Dashboard
+            introView.classList.add('hidden');
+            document.getElementById('app-layout').classList.remove('hidden');
+            window.navTo('dashboard');
         }
 
-        // --- SUBSCRIPTION CHECKER ---
-        function checkSubscription(userData) {
-            let expiryDate;
-            if (userData.subscriptionExpired && typeof userData.subscriptionExpired.toDate === 'function') {
-                expiryDate = userData.subscriptionExpired.toDate();
-            } else if (userData.expiryDate && typeof userData.expiryDate.toDate === 'function') {
-                 expiryDate = userData.expiryDate.toDate(); 
-            } else {
-                expiryDate = new Date();
-                expiryDate.setDate(expiryDate.getDate() + 90);
-            }
-            
-            let today = new Date();
-            let timeDiff = expiryDate.getTime() - today.getTime();
-            let daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-            
-            if(daysLeft < 0) daysLeft = 0;
-
-            document.getElementById('days-remaining').innerText = daysLeft;
-            document.getElementById('expire-date-txt').innerText = expiryDate.toLocaleDateString();
-            
-            let percentage = (daysLeft / 90) * 100;
-            if(percentage > 100) percentage = 100;
-            
-            document.getElementById('days-progress').style.width = percentage + "%";
-            
-            const daysText = document.getElementById('days-remaining');
-            const daysBar = document.getElementById('days-progress');
-            if(daysLeft <= 10) {
-                daysText.style.color = "var(--danger)";
-                daysBar.style.background = "var(--danger)";
-            }
-        }
 
         // AUTH & STATE MANAGEMENT
         onAuthStateChanged(auth, async (user) => {
             const introView = document.getElementById('view-intro');
+            const introContent = document.getElementById('intro-content');
             
-            // Always cleanup old listener
-            if (sessionListenerUnsubscribe) {
-                sessionListenerUnsubscribe();
-                sessionListenerUnsubscribe = null;
-            }
-
             if (user) {
-                const userRef = doc(db, "users", user.uid);
-                
-                // --- STRICT SESSION MONITOR ---
-                sessionListenerUnsubscribe = onSnapshot(userRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        const dbSessionId = data.currentSessionId;
-                        const localSessionId = localStorage.getItem('pnle_session_id');
-
-                        // 1. SECURITY KICK (If DB session doesn't match Local, or Local is missing)
-                        if (!localSessionId || (dbSessionId && dbSessionId !== localSessionId)) {
-                            // KILL SWITCH
-                            signOut(auth); 
-                            document.getElementById('app-layout').classList.add('hidden');
-                            document.getElementById('view-pending').classList.add('hidden');
-                            document.getElementById('view-kicked').classList.remove('hidden');
-                            return;
-                        }
-
-                        // 2. Realtime Pending/Active check
-                        if(data.status === 'pending') {
-                            introView.classList.add('hidden');
-                            document.getElementById('view-pending').classList.remove('hidden');
-                            document.getElementById('app-layout').classList.add('hidden');
-                        } 
-                        // If status turns active while on pending screen
-                        else if (data.status === 'active' && !document.getElementById('view-pending').classList.contains('hidden')) {
-                             location.reload(); 
-                        }
-                    }
-                });
-
-                // Hide Auth Screens
+                // If User Logged In:
+                // 1. Hide Auth Views
                 document.getElementById('view-auth').classList.add('hidden');
-                
+                document.getElementById('view-pending').classList.add('hidden');
+
+                // 2. Show Loading State INSIDE the intro wrapper (keep background black)
+                introContent.innerHTML = `
+                    <span class="loader"></span>
+                    <p style="margin-top: 20px; color: var(--text-muted); font-family: var(--font-mono); letter-spacing: 2px; font-size: 0.8rem;">LOADING SYSTEM DATA...</p>
+                `;
+
+                const userRef = doc(db, "users", user.uid);
                 const userSnap = await getDoc(userRef);
 
                 if (userSnap.exists()) {
                     const data = userSnap.data();
 
-                    // --- INITIAL CHECK ON LOAD ---
-                    // If no local session set yet (but user is authed), kick them out to force login
-                    if(!localStorage.getItem('pnle_session_id')) {
-                        signOut(auth);
-                        return; // UI shows auth by default
-                    }
-
                     if(data.status === 'pending') {
+                        // Special Case: Pending - Hide Intro, Show Pending
                         introView.classList.add('hidden');
                         document.getElementById('view-pending').classList.remove('hidden'); 
                         return; 
@@ -791,35 +671,30 @@
                         return; 
                     }
 
-                    // Auto-fix dates
                     const now = new Date();
+                    let expiryDate;
                     if(!data.activationDate) {
-                        let expiryDate = new Date(); expiryDate.setDate(expiryDate.getDate() + 90); 
+                        expiryDate = new Date(); expiryDate.setDate(expiryDate.getDate() + 90); 
                         await updateDoc(userRef, { activationDate: Timestamp.fromDate(now), expiryDate: Timestamp.fromDate(expiryDate) });
-                        data.expiryDate = Timestamp.fromDate(expiryDate);
-                    }
+                    } else { expiryDate = data.expiryDate.toDate(); }
 
+                    if(now > expiryDate) { await updateDoc(userRef, { status: 'expired' }); alert("Expired."); await signOut(auth); return; }
+
+                    const diffDays = Math.ceil(Math.abs(expiryDate - now) / (1000 * 60 * 60 * 24));
+                    document.getElementById('days-remaining').innerText = `${diffDays} Days Remaining`;
                     document.getElementById('user-name').innerText = user.email.split('@')[0];
 
-                    // LOAD DATA IN BACKGROUND
-                    fetchQuestionsFromDB(); 
+                    await fetchQuestionsFromDB();
                     await fetchUserStats(user.uid);
                     
-                    playWelcomeAnimation(data);
+                    // 3. DONE LOADING DATA -> PLAY ANIMATION
+                    playOpeningSequence();
 
-                } else { 
-                     // First Time Setup (If doc missing)
-                     await signOut(auth);
-                     alert("Account error. Please register again.");
-                     location.reload();
-                }
+                } else { await setDoc(userRef, { email: user.email, status: 'active', stats: {} }); location.reload(); }
             } else {
-                // No User - Show Login
+                // No User: Immediately Hide Intro, Show Auth
                 introView.classList.add('hidden');
                 document.getElementById('view-auth').classList.remove('hidden');
-                document.getElementById('view-pending').classList.add('hidden');
-                document.getElementById('view-kicked').classList.add('hidden');
-                document.getElementById('app-layout').classList.add('hidden');
             }
         });
 
@@ -832,16 +707,17 @@
             const ref = document.getElementById('reg-ref').value;
             const msg = document.getElementById('reg-msg');
             
+            // VALIDATION
             if(!email || !pass || !ref || !name || !contact) { 
-                msg.innerText = "All fields required."; 
+                msg.innerText = "All fields required (Name, Contact, Email, Pass, Ref)."; 
                 return; 
             }
             
             msg.innerText = "Processing...";
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass);
-                const sessionID = Date.now().toString(); // Initial Session
                 
+                // SAVE WITH NEW FIELDS
                 await setDoc(doc(db, "users", cred.user.uid), {
                     fullName: name,
                     contactNumber: contact,
@@ -849,44 +725,19 @@
                     gcashReference: ref, 
                     status: 'pending', 
                     createdAt: Timestamp.fromDate(new Date()), 
-                    stats: { ALL: { correct: 0, total: 0 } },
-                    currentSessionId: sessionID
+                    stats: { ALL: { correct: 0, total: 0 } }
                 });
-                
-                // Set local storage so they don't get kicked immediately upon pending view
-                localStorage.setItem('pnle_session_id', sessionID);
-                
                 msg.innerText = "Success! Redirecting...";
             } catch (e) { msg.innerText = e.message; }
         });
 
-        // --- UPDATED LOGIN LOGIC (STRICT) ---
-        document.getElementById('btn-login').addEventListener('click', async () => {
+        document.getElementById('btn-login').addEventListener('click', () => {
             const e = document.getElementById('inp-email').value;
             const p = document.getElementById('inp-pass').value;
-            const msg = document.getElementById('login-msg');
-            msg.innerText = "Authenticating..."; 
-            
-            try {
-                // 1. Auth with Firebase
-                const cred = await signInWithEmailAndPassword(auth, e, p);
-                
-                // 2. Generate UNIQUE Session ID
-                const newSessionId = Date.now().toString() + Math.random().toString().slice(2,8);
-                
-                // 3. Set Local Storage FIRST
-                localStorage.setItem('pnle_session_id', newSessionId);
-                
-                // 4. Update Database (This kicks out old sessions)
-                await updateDoc(doc(db, "users", cred.user.uid), {
-                    currentSessionId: newSessionId
-                });
-
-                msg.innerText = "Success! Entering System...";
-            } catch(err) { 
-                msg.innerText = "Login Failed: " + err.message; 
-            }
+            document.getElementById('login-msg').innerText = "Verifying...";
+            signInWithEmailAndPassword(auth, e, p).catch(err => { document.getElementById('login-msg').innerText = "Login Failed: " + err.message; });
         });
+        document.getElementById('btn-logout').addEventListener('click', () => signOut(auth));
 
 
         // DB FETCH
@@ -950,7 +801,7 @@
 
         window.startQuiz = (n) => {
             let filtered = selectedTopic === "ALL" ? questions : questions.filter(q => q.category === selectedTopic);
-            if(filtered.length === 0) { alert("Questions are still loading in background. Please try again in a few seconds."); return; }
+            if(filtered.length === 0) { alert("No questions found."); return; }
             
             currentSet = filtered.sort(() => 0.5 - Math.random()).slice(0, n);
             sessionResults = [];
